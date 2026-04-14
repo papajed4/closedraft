@@ -1,134 +1,319 @@
-const express = require('express');
-const cors = require('cors');
 require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const { supabase } = require('./lib/supabase');
+const { generateEmail, buildPrompt } = require('./lib/gemini');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors()); // Allow frontend to communicate with backend
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/css', express.static(path.join(__dirname, 'css')));
 
-// Configuration
-const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
-const API_KEY = process.env.GEMINI_API_KEY;
+// Add body parsing debug
+app.use((req, res, next) => {
+    console.log('📨 Request:', req.method, req.path);
+    console.log('📨 Body:', req.body);
+    next();
+});
 
-// Prompt Construction Logic (Moved from Frontend)
-const constructPrompt = (type, data) => {
-    let context = "";
-    if (type === "Cold Outreach") {
-        context = `Write a ${data.tone} cold outreach email to ${data.clientName} at ${data.businessName}. 
-        Hook: I noticed ${data.observation}. 
-        My Service: ${data.service}.`;
-    } else if (type === "Follow-Up") {
-        context = `Write a ${data.tone} follow-up email to ${data.clientName}. 
-        Context: Sent a proposal for ${data.offer} ${data.days} days ago and haven't heard back.`;
-    } else if (type === "Payment Reminder") {
-        context = `Write a ${data.tone} payment reminder to ${data.clientName}. 
-        Project: ${data.project}. Amount: ${data.amount}. 
-        Overdue by: ${data.overdue} days.`;
-    }
-    return context;
-};
-
-// System Instruction
-const SYSTEM_INSTRUCTION = `
-Act as a high-level freelance sales strategist.
-
-Your task:
-1. Generate ONE compelling email subject line.
-2. Then generate the full email body.
-
-Output format MUST be exactly:
-
-Subject: <short compelling subject line>
-
-Email:
-<full email body>
-
-Subject Rules:
-- Under 7 words
-- Personalize when possible (include business name if natural)
-- Curiosity-driven OR benefit-driven
-- Avoid generic phrases
-- Make it feel like a 1-to-1 email
-- No salesy language
-Make the subject feel like something a real freelancer would send manually.
-
-Email Rules:
-- Under 180 words
-- Natural human tone
-- No AI clichés
-- No corporate buzzwords
-- Clear greeting
-- Clear value/context
-- Clear call-to-action
-- Confident sign-off
-- Match the requested tone perfectly
-
-Do not add anything outside this format.
-`;
-// API Route
-app.post('/generate', async (req, res) => {
+// Get all clients (exclude archived by default)
+app.get('/api/clients', async (req, res) => {
     try {
-        if (!API_KEY) {
-            console.error("Gemini API Key is missing in .env file");
-            return res.status(500).json({ error: "Server configuration error" });
+        const showArchived = req.query.showArchived === 'true';
+        
+        let query = supabase
+            .from('clients')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (!showArchived) {
+            query = query.eq('archived', false);
         }
-
-        const { emailType, formData } = req.body;
-
-        if (!emailType || !formData) {
-            return res.status(400).json({ error: "Missing required data" });
-        }
-
-        const prompt = constructPrompt(emailType, formData);
-
-        // Call Gemini API
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: {
-                    parts: [{ text: SYSTEM_INSTRUCTION }]
-                }
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Gemini API Error:", errorData);
-            throw new Error(`API Error: ${response.status}`);
-        }
-
-        const json = await response.json();
-
-        let resultText = "";
-        if (json.candidates && json.candidates[0].content) {
-            resultText = json.candidates[0].content.parts[0].text;
-        } else {
-            throw new Error("Invalid response structure from AI");
-        }
-
-        res.json({ result: resultText });
-
+        
+        const { data: clients, error } = await query;
+        
+        if (error) throw error;
+        
+        // Prevent caching
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        
+        res.status(200).json({ clients });
     } catch (error) {
-        console.error("Server Error:", error);
-        res.status(500).json({ error: "Failed to generate email" });
+        console.error('Error fetching clients:', error);
+        res.status(500).json({ error: 'Failed to fetch clients' });
     }
 });
 
-const path = require('path');
+// Add new client
+app.post('/api/clients', async (req, res) => {
+    const { name, business, email, project, amount, status } = req.body;
+    
+    if (!name) {
+        return res.status(400).json({ error: 'Client name is required' });
+    }
+    
+    try {
+        const { data, error } = await supabase
+            .from('clients')
+            .insert([{
+                name,
+                business,
+                email,
+                project,
+                amount,
+                status: status || 'active',
+                last_contacted: new Date().toISOString()
+            }])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        res.status(201).json({ client: data });
+    } catch (error) {
+        console.error('Error adding client:', error);
+        res.status(500).json({ error: 'Failed to add client' });
+    }
+});
 
-// Serve static files
-app.use(express.static(__dirname));
+// Update client
+app.patch('/api/clients/:id', async (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+    
+    console.log('📝 PATCH /api/clients/' + id);
+    console.log('📝 Updates received:', updates);
+    
+    try {
+        const { data: existing, error: fetchError } = await supabase
+            .from('clients')
+            .select('*')
+            .eq('id', id)
+            .single();
+        
+        if (fetchError || !existing) {
+            console.error('❌ Client not found:', id);
+            return res.status(404).json({ error: 'Client not found' });
+        }
+        
+        const { data, error } = await supabase
+            .from('clients')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (error) {
+            console.error('❌ Supabase update error:', error);
+            return res.status(500).json({ error: error.message });
+        }
+        
+        console.log('✅ Client updated successfully:', data);
+        res.status(200).json({ client: data });
+        
+    } catch (error) {
+        console.error('❌ Server error:', error);
+        res.status(500).json({ error: 'Failed to update client' });
+    }
+});
 
-// Serve index.html on root
+// Delete client
+app.delete('/api/clients/:id', async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const { error } = await supabase
+            .from('clients')
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error deleting client:', error);
+        res.status(500).json({ error: 'Failed to delete client' });
+    }
+});
+
+// Generate email endpoint
+app.post('/api/generate-email', async (req, res) => {
+    console.log('📧 Generate email endpoint hit');
+    console.log('📧 req.body:', req.body);
+    
+    if (!req.body) {
+        return res.status(400).json({ error: 'No request body' });
+    }
+    
+    const { clientId, type, tone, freelancerName } = req.body;
+    
+    console.log('📧 Parsed:', { clientId, type, tone, freelancerName });
+    
+    if (!clientId || !type || !tone) {
+        return res.status(400).json({ 
+            error: 'Missing required fields',
+            received: { clientId, type, tone }
+        });
+    }
+    
+    try {
+        const { data: client, error } = await supabase
+            .from('clients')
+            .select('*')
+            .eq('id', clientId)
+            .single();
+        
+        if (error || !client) {
+            console.error('❌ Client not found:', clientId);
+            return res.status(404).json({ error: 'Client not found' });
+        }
+        
+        console.log('✅ Client found:', client.name);
+        
+        const prompt = buildPrompt(client, type, tone, freelancerName || '');
+        console.log('📝 Calling Gemini...');
+        
+        const generatedText = await generateEmail(prompt);
+        console.log('✅ Gemini responded');
+        
+        let subject = '';
+        let body = generatedText;
+        
+        const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
+        if (subjectMatch) {
+            subject = subjectMatch[1].trim();
+            body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
+        }
+        
+        // Save to emails table
+        const { data: savedEmail, error: saveError } = await supabase
+            .from('emails')
+            .insert([{
+                client_id: clientId,
+                subject,
+                body,
+                type,
+                tone
+            }])
+            .select()
+            .single();
+        
+        if (saveError) {
+            console.error('❌ Failed to save email:', saveError);
+        } else {
+            console.log('✅ Email saved to history:', savedEmail.id);
+        }
+        
+        res.status(200).json({
+            subject,
+            body,
+            fullText: generatedText,
+            emailId: savedEmail?.id
+        });
+        
+    } catch (error) {
+        console.error('❌ Email generation error:', error);
+        res.status(500).json({ error: error.message || 'Failed to generate email' });
+    }
+});
+
+// Get email history for a client
+app.get('/api/emails/:clientId', async (req, res) => {
+    const { clientId } = req.params;
+    
+    try {
+        const { data: emails, error } = await supabase
+            .from('emails')
+            .select('*')
+            .eq('client_id', clientId)
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.status(200).json({ emails });
+    } catch (error) {
+        console.error('Error fetching emails:', error);
+        res.status(500).json({ error: 'Failed to fetch emails' });
+    }
+});
+
+// Get all email history
+app.get('/api/emails', async (req, res) => {
+    try {
+        const { data: emails, error } = await supabase
+            .from('emails')
+            .select(`
+                *,
+                clients:client_id (name, business)
+            `)
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.status(200).json({ emails });
+    } catch (error) {
+        console.error('Error fetching all emails:', error);
+        res.status(500).json({ error: 'Failed to fetch emails' });
+    }
+});
+
+// Archive client
+app.patch('/api/clients/:id/archive', async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const { data, error } = await supabase
+            .from('clients')
+            .update({ archived: true })
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        res.status(200).json({ client: data });
+    } catch (error) {
+        console.error('Error archiving client:', error);
+        res.status(500).json({ error: 'Failed to archive client' });
+    }
+});
+
+// Restore client (unarchive)
+app.patch('/api/clients/:id/restore', async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const { data, error } = await supabase
+            .from('clients')
+            .update({ archived: false })
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        res.status(200).json({ client: data });
+    } catch (error) {
+        console.error('Error restoring client:', error);
+        res.status(500).json({ error: 'Failed to restore client' });
+    }
+});
+
+// Serve dashboard
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'app.html'));
+});
+
+// Health check
+app.get('/ping', (req, res) => {
+    res.status(200).send('pong');
 });
 
 app.listen(port, () => {
-    console.log(`CloseDraft Server running at http://localhost:${port}`);
+    console.log(`✅ CloseDraft running at http://localhost:${port}`);
 });

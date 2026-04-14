@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloseDraft | Dashboard</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6366f1',
+                        background: '#0b1326',
+                        surface: '#131b2e',
+                        'surface-light': '#171f33',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1326;
+            color: #dae2fd;
+        }
+
+        .glass-card {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .glass-sidebar {
+            background: rgba(11, 19, 38, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .status-waiting {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .status-payment {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .input-glass {
+            background: rgba(11, 19, 38, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .input-glass:focus {
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #14532d;
+        }
+
+        .toast.error {
+            background: #7f1d1d;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0b1326;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2d3449;
+            border-radius: 10px;
+        }
+
+        /* ============================================
+   TABLET STYLES (769px - 1024px)
+   ============================================ */
+        @media (min-width: 769px) and (max-width: 1024px) {
+
+            /* Sidebar - collapsed icons only */
+            aside {
+                width: 80px !important;
+                padding-top: 24px !important;
+            }
+
+            aside .px-6 {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            aside .flex.items-center.gap-3 {
+                justify-content: center !important;
+            }
+
+            aside .sidebar-text {
+                display: none !important;
+            }
+
+            aside nav a {
+                justify-content: center !important;
+                padding: 12px 0 !important;
+            }
+
+            aside nav a span:last-child {
+                display: none !important;
+            }
+
+            aside nav a svg {
+                width: 22px !important;
+                height: 22px !important;
+            }
+
+            aside .mt-auto {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            aside .mt-auto button {
+                padding: 8px !important;
+            }
+
+            aside .mt-auto button span:last-child {
+                display: none !important;
+            }
+
+            /* Main content */
+            main {
+                margin-left: 80px !important;
+            }
+
+            /* Header */
+            header {
+                padding: 16px 24px !important;
+            }
+
+            header h2 {
+                font-size: 22px !important;
+            }
+
+            /* Stats cards - 2 columns */
+            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 16px !important;
+            }
+
+            /* Client list container */
+            #clientListContainer>div {
+                flex-wrap: wrap !important;
+                gap: 12px !important;
+            }
+
+            #clientListContainer .flex.items-center.gap-6 {
+                width: 100% !important;
+                justify-content: space-between !important;
+                flex-wrap: wrap !important;
+            }
+
+            #clientListContainer .hidden.md\\:block {
+                display: block !important;
+            }
+
+            #clientListContainer .hidden.lg\\:block {
+                display: none !important;
+            }
+
+            /* Detail panel */
+            #clientDetailPanel {
+                width: 360px !important;
+            }
+        }
+
+        /* ============================================
+   MOBILE STYLES (max-width: 768px)
+   ============================================ */
+        @media (max-width: 768px) {
+
+            /* Sidebar becomes bottom nav */
+            aside {
+                position: fixed !important;
+                bottom: 0 !important;
+                top: auto !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                height: 72px !important;
+                flex-direction: row !important;
+                padding: 0 !important;
+                border-right: none !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+                z-index: 50 !important;
+                background: rgba(11, 19, 38, 0.95) !important;
+            }
+
+            aside>div:first-child {
+                display: none !important;
+            }
+
+            aside nav {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                width: 100% !important;
+                height: 100% !important;
+                padding: 0 8px !important;
+            }
+
+            aside nav a {
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                padding: 8px 0 !important;
+                gap: 4px !important;
+                border-left: none !important;
+                border-bottom: 2px solid transparent !important;
+                background: transparent !important;
+                min-width: 64px !important;
+            }
+
+            aside nav a svg {
+                width: 22px !important;
+                height: 22px !important;
+            }
+
+            aside nav a span:last-child {
+                font-size: 10px !important;
+                font-weight: 600 !important;
+                display: block !important;
+            }
+
+            aside nav a.text-white {
+                border-bottom-color: #6366f1 !important;
+                border-left: none !important;
+                background: transparent !important;
+            }
+
+            aside .mt-auto {
+                display: none !important;
+            }
+
+            /* Main content */
+            main {
+                margin-left: 0 !important;
+                margin-bottom: 72px !important;
+                padding-bottom: 16px !important;
+            }
+
+            /* Header */
+            header {
+                padding: 16px !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+            }
+
+            header>div {
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+            }
+
+            header h2 {
+                font-size: 24px !important;
+                text-align: center !important;
+            }
+
+            header .flex.items-center.gap-4 {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+            }
+
+            #statusFilter {
+                flex: 1 !important;
+                max-width: none !important;
+                font-size: 13px !important;
+            }
+
+            header button {
+                white-space: nowrap !important;
+            }
+
+            /* Stats cards - 2 columns */
+            .px-8 {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+
+            .glass-card.rounded-2xl.p-5 {
+                padding: 16px !important;
+            }
+
+            .glass-card .text-3xl {
+                font-size: 24px !important;
+            }
+
+            .glass-card .text-xs {
+                font-size: 10px !important;
+            }
+
+            /* Client list */
+            .glass-card.rounded-2xl.overflow-hidden {
+                border-radius: 16px !important;
+            }
+
+            #clientListContainer>div {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 16px !important;
+                gap: 12px !important;
+            }
+
+            #clientListContainer .flex.items-center.gap-4 {
+                width: 100% !important;
+            }
+
+            #clientListContainer .flex.items-center.gap-6 {
+                width: 100% !important;
+                flex-wrap: wrap !important;
+                justify-content: flex-start !important;
+                gap: 16px !important;
+                margin-top: 4px !important;
+            }
+
+            #clientListContainer .text-right {
+                text-align: left !important;
+            }
+
+            #clientListContainer .hidden.md\\:block {
+                display: block !important;
+            }
+
+            #clientListContainer .hidden.lg\\:block {
+                display: block !important;
+            }
+
+            #clientListContainer .status-badge {
+                margin-left: 0 !important;
+            }
+
+            /* Detail panel - full screen */
+            #clientDetailPanel {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            #clientDetailPanel .p-6 {
+                padding: 20px !important;
+            }
+
+            /* Modals */
+            #addModal .max-w-md,
+            #editModal .max-w-md {
+                margin: 0 12px !important;
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+            }
+
+            .glass-card.rounded-3xl.p-6 {
+                padding: 20px !important;
+            }
+
+            /* Toast */
+            .toast {
+                bottom: 90px !important;
+                padding: 10px 20px !important;
+                font-size: 13px !important;
+                white-space: nowrap !important;
+            }
+        }
+
+        /* ============================================
+   SMALL MOBILE (max-width: 480px)
+   ============================================ */
+        @media (max-width: 480px) {
+
+            /* Stats cards */
+            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+
+            .glass-card.rounded-2xl.p-5 {
+                padding: 12px !important;
+            }
+
+            .glass-card .text-3xl {
+                font-size: 20px !important;
+            }
+
+            .glass-card svg {
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            /* Header buttons */
+            header .flex.items-center.gap-4 {
+                flex-wrap: wrap !important;
+            }
+
+            #statusFilter {
+                min-width: 130px !important;
+            }
+
+            header button {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+            }
+
+            header button svg {
+                width: 14px !important;
+                height: 14px !important;
+            }
+
+            /* Client list items */
+            #clientListContainer .flex.items-center.gap-6>div {
+                min-width: 100px !important;
+            }
+
+            /* Bottom nav */
+            aside nav a {
+                min-width: 56px !important;
+            }
+
+            aside nav a span:last-child {
+                font-size: 9px !important;
+            }
+
+            /* Detail panel header */
+            #detailAvatar {
+                width: 60px !important;
+                height: 60px !important;
+                font-size: 20px !important;
+            }
+
+            #detailName {
+                font-size: 18px !important;
+            }
+
+            /* Modals */
+            .glass-card.rounded-3xl.p-6 {
+                padding: 16px !important;
+            }
+
+            .glass-card h2 {
+                font-size: 18px !important;
+            }
+        }
+
+        /* ============================================
+   DESKTOP (above 1024px)
+   ============================================ */
+        @media (min-width: 1025px) {
+            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+
+            #clientListContainer .hidden.lg\\:block {
+                display: block !important;
+            }
+        }
+
+        /* Fix for client list items on all screens */
+        #clientListContainer>div {
+            transition: all 0.2s ease;
+        }
+
+        #clientListContainer .status-badge {
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            #clientListContainer .status-badge {
+                margin-left: 0;
+            }
+        }
+
+        /* Ensure modals are scrollable on small screens */
+        @media (max-height: 700px) {
+
+            #addModal .max-h-\[90vh\],
+            #editModal .max-h-\[90vh\] {
+                max-height: 85vh !important;
+                overflow-y: auto !important;
+            }
+        }
+
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-left-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Ensure scrolling works on all devices */
+        main {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 100px !important;
+        }
+
+        /* Extra bottom space on mobile for the bottom nav */
+        @media (max-width: 768px) {
+            main {
+                padding-bottom: 140px !important;
+            }
+        }
+
+        /* Loading Skeletons */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-card {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .skeleton-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .skeleton-text {
+            height: 14px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-text-sm {
+            height: 12px;
+            width: 60%;
+            border-radius: 4px;
+        }
+
+        .skeleton-badge {
+            width: 70px;
+            height: 24px;
+            border-radius: 100px;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="glass-sidebar fixed left-0 top-0 h-full w-[260px] flex flex-col py-8 z-40">
+        <div class="px-6 mb-10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+                <div class="sidebar-text">
+                    <h1 class="text-lg font-bold text-white leading-none">CloseDraft</h1>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 mt-0.5">Free Plan</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a href="#" onclick="switchPage('dashboard'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Dashboard</span>
+            </a>
+
+            <a href="#" onclick="switchPage('clients'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-white border-l-2 border-indigo-500 bg-indigo-500/10 transition-all"
+                id="clientsNav">
+                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Clients</span>
+            </a>
+
+            <!-- NEW: Email History Nav Item -->
+            <a href="#" onclick="switchPage('emails'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
+                id="emailsNav">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Emails</span>
+            </a>
+
+            <a href="#" onclick="switchPage('settings'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
+                id="settingsNav">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                    </path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Settings</span>
+            </a>
+        </nav>
+
+        <div class="px-6 mt-auto pt-8">
+            <button
+                class="w-full py-2.5 gradient-primary rounded-lg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/20 hover:opacity-90 transition-opacity">
+                Upgrade to Pro
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-[260px] h-screen overflow-y-auto pb-8">
+
+        <div id="clientsPage">
+
+            <!-- Clients Page Header -->
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-2xl font-bold text-white tracking-tight">Clients</h2>
+
+                        <!-- Search Bar -->
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" id="clientSearch" placeholder="Search clients..."
+                                class="w-64 pl-10 pr-4 py-2 rounded-xl input-glass text-white placeholder-slate-500 text-sm">
+                        </div>
+
+                        <!-- ADD THIS SORT DROPDOWN -->
+                        <select id="sortClients" onchange="sortClientsList()"
+                            class="px-4 py-2 rounded-xl input-glass text-white text-sm">
+                            <option value="name-asc">Name (A-Z)</option>
+                            <option value="name-desc">Name (Z-A)</option>
+                            <option value="date-newest">Last Contact (Newest)</option>
+                            <option value="date-oldest">Last Contact (Oldest)</option>
+                            <option value="value-highest">Value (Highest)</option>
+                            <option value="value-lowest">Value (Lowest)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <select id="statusFilter" onchange="filterClients()"
+                            class="px-4 py-2 rounded-xl input-glass text-white text-sm">
+                            <option value="all">All Clients</option>
+                            <option value="attention">⚠️ Needs Attention</option>
+                            <option value="active">Active</option>
+                            <option value="waiting">Waiting</option>
+                            <option value="payment_due">Payment Due</option>
+                        </select>
+
+                        <!-- Import Button -->
+                        <button onclick="openImportModal()"
+                            class="bg-slate-700/50 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-white/10">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                            </svg>
+                            Import
+                        </button>
+
+                        <!-- Export Button -->
+                        <button onclick="exportToCSV()"
+                            class="bg-slate-700/50 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-white/10">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Export
+                        </button>
+
+                        <!-- Archived Toggle Switch -->
+                        <div
+                            class="flex items-center gap-2 bg-slate-700/30 rounded-xl px-3 py-1.5 border border-white/10">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                                </path>
+                            </svg>
+                            <span class="text-xs text-slate-400 font-medium">Archived</span>
+                            <span id="archivedCount"
+                                class="bg-slate-600/50 text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                            <label class="relative inline-flex items-center cursor-pointer ml-1">
+                                <input type="checkbox" id="archivedToggle" class="sr-only peer"
+                                    onchange="toggleShowArchived()">
+                                <div
+                                    class="w-9 h-5 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500">
+                                </div>
+                            </label>
+                        </div>
+
+                        <button onclick="openAddModal()"
+                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-indigo-500/20 hover:opacity-90 transition-opacity">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Add Client
+                        </button>
+                        <div
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            JD
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="px-8 py-6 pb-25">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Total Clients</span>
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="totalClients">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Active</span>
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="activeClients">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Needs
+                                Attention</span>
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="needsAttention">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Payment Due</span>
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="paymentDue">0</p>
+                    </div>
+                </div>
+
+                <!-- Needs Attention Section -->
+                <div id="attentionSection" class="mb-6 hidden">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400">Needs Follow-up</h3>
+                        <span id="attentionCount"
+                            class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="attentionList" class="grid grid-cols-1 gap-3 mb-6">
+                        <!-- Urgent clients appear here -->
+                    </div>
+                </div>
+
+                <!-- Client List -->
+                <div class="glass-card rounded-2xl overflow-hidden mb-8">
+                    <div class="px-6 py-4 border-b border-white/5">
+                        <h3 class="font-semibold text-white text-sm uppercase tracking-wider">All Clients</h3>
+                    </div>
+
+                    <div id="clientListContainer" class="divide-y divide-white/5">
+                        <!-- Template for skeleton - always hidden -->
+                        <template id="clientListSkeletonTemplate">
+                            <div class="flex items-center gap-4">
+                                <div class="skeleton skeleton-avatar"></div>
+                                <div class="flex-1">
+                                    <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                                    <div class="skeleton skeleton-text-sm"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mt-4">
+                                <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                                <div class="skeleton skeleton-badge"></div>
+                            </div>
+                        </template>
+                        <!-- Clients loaded here -->
+                    </div>
+                    <!-- No Search Results State -->
+                    <div id="noSearchResults" class="p-12 text-center hidden">
+                        <div class="max-w-xs mx-auto">
+                            <div
+                                class="w-24 h-24 mx-auto mb-4 bg-slate-700/30 rounded-full flex items-center justify-center">
+                                <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">No clients found</h3>
+                            <p class="text-slate-400 text-sm mb-4">Try adjusting your search or filters</p>
+                            <button onclick="clearSearchAndFilters()"
+                                class="text-indigo-400 text-sm font-medium hover:text-indigo-300">
+                                Clear search and filters →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="p-12 text-center hidden">
+                        <div class="max-w-xs mx-auto">
+                            <!-- Illustration: Person with magnifying glass looking at empty list -->
+                            <div
+                                class="w-32 h-32 mx-auto mb-6 bg-indigo-500/5 rounded-full flex items-center justify-center">
+                                <svg class="w-20 h-20 text-indigo-400/60" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">No clients yet</h3>
+                            <p class="text-slate-400 text-sm mb-6">Start tracking your freelance clients and never miss
+                                a follow-up again.</p>
+                            <div class="flex flex-col gap-3">
+                                <button onclick="openAddModal()"
+                                    class="gradient-primary text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Add Your First Client
+                                </button>
+                                <button onclick="openImportModal()"
+                                    class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                    </svg>
+                                    Import from CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== EMAILS PAGE ==================== -->
+        <div id="emailsPage" class="hidden">
+            <!-- Top Bar -->
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white tracking-tight">Email History</h2>
+                        <p class="text-slate-400 text-sm mt-0.5">Review your AI-generated emails and communication logs
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" id="emailSearch" placeholder="Search emails..."
+                                class="w-64 pl-10 pr-4 py-2.5 rounded-xl input-glass text-white placeholder-slate-500 text-sm">
+                        </div>
+                        <button onclick="switchPage('clients')"
+                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            New Email
+                        </button>
+                        <div
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            JD
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="flex items-center gap-6 mt-4 border-b border-white/5">
+                    <button onclick="filterEmails('all')" id="emailTabAll"
+                        class="pb-3 text-sm font-bold text-indigo-300 border-b-2 border-indigo-500 flex items-center gap-2">
+                        All <span id="emailCountAll"
+                            class="bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full text-[10px]">0</span>
+                    </button>
+                    <button onclick="filterEmails('Follow-up')" id="emailTabFollowup"
+                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2">
+                        Follow-ups <span id="emailCountFollowup"
+                            class="bg-white/5 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">0</span>
+                    </button>
+                    <button onclick="filterEmails('Payment Reminder')" id="emailTabPayment"
+                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2">
+                        Payment Reminders <span id="emailCountPayment"
+                            class="bg-white/5 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">0</span>
+                    </button>
+                    <button onclick="filterEmails('Cold Outreach')" id="emailTabCold"
+                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2">
+                        Cold Outreach <span id="emailCountCold"
+                            class="bg-white/5 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">0</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="px-8 py-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Total Sent</span>
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="totalEmailsSent">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">This Month</span>
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="emailsThisMonth">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Most Used
+                                Tone</span>
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="mostUsedTone">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email List -->
+            <div class="px-8 pb-8">
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <!-- Table Header -->
+                    <div class="grid grid-cols-12 px-6 py-3 bg-white/5 border-b border-white/5">
+                        <div class="col-span-3 text-[10px] uppercase font-bold tracking-wider text-slate-500">Client
+                        </div>
+                        <div class="col-span-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Subject
+                        </div>
+                        <div class="col-span-2 text-[10px] uppercase font-bold tracking-wider text-slate-500">Type</div>
+                        <div class="col-span-2 text-[10px] uppercase font-bold tracking-wider text-slate-500">Date</div>
+                        <div
+                            class="col-span-1 text-[10px] uppercase font-bold tracking-wider text-slate-500 text-right">
+                            Tone</div>
+                    </div>
+
+                    <!-- Email List Container -->
+                    <div id="emailHistoryList" class="divide-y divide-white/5">
+                        <!-- Template for email skeleton - always hidden -->
+                        <template id="emailListSkeletonTemplate">
+                            <div class="col-span-3 flex items-center gap-3">
+                                <div class="skeleton skeleton-avatar"></div>
+                                <div class="flex-1">
+                                    <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                                    <div class="skeleton skeleton-text-sm"></div>
+                                </div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="skeleton skeleton-text" style="width: 80%;"></div>
+                                <div class="skeleton skeleton-text-sm" style="width: 60%;"></div>
+                            </div>
+                            <div class="col-span-2">
+                                <div class="skeleton skeleton-badge"></div>
+                            </div>
+                            <div class="col-span-2">
+                                <div class="skeleton skeleton-text" style="width: 60px;"></div>
+                            </div>
+                            <div class="col-span-1">
+                                <div class="skeleton skeleton-badge" style="width: 50px;"></div>
+                            </div>
+                        </template>
+                        <!-- Emails loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emailEmptyState" class="p-12 text-center hidden">
+                        <div class="max-w-xs mx-auto">
+                            <div
+                                class="w-32 h-32 mx-auto mb-6 bg-indigo-500/5 rounded-full flex items-center justify-center">
+                                <svg class="w-20 h-20 text-indigo-400/60" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M8 12h.01M12 12h.01M16 12h.01"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">No emails yet</h3>
+                            <p class="text-slate-400 text-sm mb-6">Generate your first AI-powered email and start
+                                closing more deals.</p>
+                            <button onclick="switchPage('clients')"
+                                class="gradient-primary text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Go to Clients
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- No Email Search Results -->
+            <div id="noEmailResults" class="p-12 text-center hidden">
+                <div class="max-w-xs mx-auto">
+                    <div class="w-24 h-24 mx-auto mb-4 bg-slate-700/30 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">No emails found</h3>
+                    <p class="text-slate-400 text-sm mb-4">Try a different search term</p>
+                    <button onclick="clearEmailSearch()"
+                        class="text-indigo-400 text-sm font-medium hover:text-indigo-300">
+                        Clear search →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SETTINGS PAGE ==================== -->
+        <div id="settingsPage" class="hidden">
+            <!-- Top Bar -->
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Settings</h2>
+                    <div
+                        class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                        JD
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Content -->
+            <div class="px-8 py-6">
+                <div class="glass-card rounded-2xl p-6">
+                    <p class="text-slate-400">Settings coming soon...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Detail Slide-Out Panel -->
+        <div id="clientDetailPanel"
+            class="fixed right-0 top-0 h-full w-[400px] glass-card border-l border-white/10 z-50 transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+
+            <!-- Panel Header -->
+            <div class="p-6 border-b border-white/5">
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="closeDetailPanel()"
+                        class="p-2 -ml-2 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2" id="detailPanelActions">
+                        <!-- Buttons will be dynamically updated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Client Avatar & Name -->
+                <div class="flex flex-col items-center text-center">
+                    <div id="detailAvatar"
+                        class="w-20 h-20 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-2xl mb-3 shadow-lg">
+                        JD
+                    </div>
+                    <h3 id="detailName" class="text-xl font-bold text-white">Client Name</h3>
+                    <p id="detailBusiness" class="text-sm text-indigo-300 font-medium">Business Name</p>
+
+                    <!-- Quick Actions -->
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="markAsContacted()"
+                            class="bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-indigo-500/20 transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Mark Contacted
+                        </button>
+                        <button onclick="openEditModal()"
+                            class="bg-slate-700/50 text-slate-300 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-slate-700 transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                </path>
+                            </svg>
+                            Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Content -->
+            <div class="p-6 space-y-6 overflow-y-auto flex-1"
+                style="max-height: calc(100vh - 320px); padding-bottom: 100px;">
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Contact Information</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3 text-sm">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span id="detailEmail" class="text-slate-300">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Info -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Project Details</h4>
+                    <div class="glass-card rounded-xl p-4 space-y-3">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Project</p>
+                            <p id="detailProject" class="text-white font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Value</p>
+                            <p id="detailAmount" class="text-white font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Status</p>
+                            <div id="detailStatus"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Activity</h4>
+                    <div class="space-y-3">
+                        <div class="flex gap-3">
+                            <div
+                                class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-white">Last Contacted</p>
+                                <p id="detailLastContact" class="text-xs text-slate-500">-</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div
+                                class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-white">Client Since</p>
+                                <p id="detailCreated" class="text-xs text-slate-500">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Notes</h4>
+                    <textarea id="detailNotes" rows="3"
+                        class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500 text-sm resize-none"
+                        placeholder="Add notes about this client..."></textarea>
+                    <button onclick="saveNotes()"
+                        class="mt-2 text-xs text-indigo-400 font-bold hover:text-indigo-300 transition-colors">
+                        Save Notes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel Footer -->
+            <div class="absolute bottom-0 left-0 right-0 p-6 bg-surface/90 border-t border-white/5">
+                <button onclick="generateEmailForClient()"
+                    class="w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    Generate Email
+                </button>
+            </div>
+        </div>
+
+        <!-- Edit Client Modal -->
+        <div id="editModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeEditModal()"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Edit Client</h2>
+
+                    <form id="editClientForm" class="space-y-4">
+                        <input type="hidden" id="editClientId">
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Client
+                                Name *</label>
+                            <input type="text" id="editClientName" required
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Business</label>
+                            <input type="text" id="editClientBusiness"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Email</label>
+                            <input type="email" id="editClientEmail"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Project</label>
+                            <input type="text" id="editClientProject"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Value
+                                ($)</label>
+                            <input type="number" id="editClientAmount"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
+                            <select id="editClientStatus" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                <option value="active">Active</option>
+                                <option value="waiting">Waiting (Needs Follow-up)</option>
+                                <option value="payment_due">Payment Due</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="closeEditModal()"
+                                class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeDeleteModal()"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm px-4">
+                <div class="glass-card rounded-3xl p-6 text-center">
+                    <div class="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Delete Client?</h3>
+                    <p class="text-slate-400 text-sm mb-6">This action cannot be undone.</p>
+                    <div class="flex gap-3">
+                        <button onclick="closeDeleteModal()"
+                            class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                            Cancel
+                        </button>
+                        <button onclick="confirmDelete()"
+                            class="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Client Modal -->
+    <div id="addModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeAddModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
+            <div class="glass-card rounded-3xl p-6">
+                <h2 class="text-xl font-bold text-white mb-4">Add New Client</h2>
+
+                <form id="addClientForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Client
+                            Name *</label>
+                        <input type="text" id="clientName" required
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
+                            placeholder="e.g. Sarah Chen">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Business</label>
+                        <input type="text" id="clientBusiness"
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
+                            placeholder="e.g. Bright Analytics">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Email</label>
+                        <input type="email" id="clientEmail"
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
+                            placeholder="sarah@brightanalytics.com">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Project</label>
+                        <input type="text" id="clientProject"
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
+                            placeholder="e.g. Dashboard Redesign">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Value
+                            ($)</label>
+                        <input type="number" id="clientAmount"
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
+                            placeholder="e.g. 3500">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
+                        <select id="clientStatus" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                            <option value="active">Active</option>
+                            <option value="waiting">Waiting (Needs Follow-up)</option>
+                            <option value="payment_due">Payment Due</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeAddModal()"
+                            class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium shadow-lg shadow-indigo-500/20">
+                            Add Client
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Email Modal -->
+    <div id="emailModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeEmailModal()"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl px-4 max-h-[90vh] overflow-y-auto">
+            <div class="glass-card rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Generate Email for <span id="emailClientName">Client</span>
+                    </h2>
+                    <button onclick="closeEmailModal()" class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Configuration -->
+                <div id="emailConfig" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Email
+                                Type</label>
+                            <select id="emailType" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Payment Reminder">Payment Reminder</option>
+                                <option value="Cold Outreach">Cold Outreach</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Tone</label>
+                            <select id="emailTone" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                <option value="Friendly">Friendly</option>
+                                <option value="Professional">Professional</option>
+                                <option value="Firm">Firm</option>
+                                <option value="Casual">Casual</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="generateEmail()" id="generateEmailBtn"
+                        class="w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                            </path>
+                        </svg>
+                        Generate Draft
+                    </button>
+                </div>
+
+                <!-- Result -->
+                <div id="emailResult" class="hidden space-y-4">
+                    <div class="bg-slate-800/50 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Subject</p>
+                            <button onclick="copySubject()"
+                                class="text-xs text-indigo-400 hover:text-indigo-300">Copy</button>
+                        </div>
+                        <p id="generatedSubject" class="text-white font-medium"></p>
+                    </div>
+
+                    <div class="bg-slate-800/50 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Body</p>
+                            <button onclick="copyBody()"
+                                class="text-xs text-indigo-400 hover:text-indigo-300">Copy</button>
+                        </div>
+                        <pre id="generatedBody"
+                            class="text-slate-300 whitespace-pre-wrap font-sans text-sm leading-relaxed"></pre>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="copyFullEmail()"
+                            class="flex-1 bg-slate-700/50 hover:bg-slate-700 text-white py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            Copy Full Email
+                        </button>
+                        <button onclick="openInGmail()"
+                            class="flex-1 gradient-primary text-white py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            Open in Gmail
+                        </button>
+                    </div>
+
+                    <button onclick="resetEmailModal()" class="w-full text-xs text-slate-500 hover:text-slate-400 py-2">
+                        Generate Another
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Detail Modal -->
+    <div id="emailDetailModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeEmailDetailModal()"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl px-4 max-h-[90vh] overflow-y-auto">
+            <div class="glass-card rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Email Details
+                    </h2>
+                    <button onclick="closeEmailDetailModal()"
+                        class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Email Metadata -->
+                <div class="bg-slate-800/30 rounded-xl p-4 mb-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">To</p>
+                            <p id="detailEmailTo" class="text-white font-medium"></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Date</p>
+                            <p id="detailEmailDate" class="text-white font-medium"></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Type</p>
+                            <p id="detailEmailType" class="text-white font-medium"></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Tone</p>
+                            <p id="detailEmailTone" class="text-white font-medium"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject -->
+                <div class="bg-slate-800/50 rounded-xl p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs text-slate-500 uppercase tracking-wider">Subject</p>
+                        <button onclick="copyDetailSubject()"
+                            class="text-xs text-indigo-400 hover:text-indigo-300">Copy</button>
+                    </div>
+                    <p id="detailEmailSubject" class="text-white font-medium"></p>
+                </div>
+
+                <!-- Body -->
+                <div class="bg-slate-800/50 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs text-slate-500 uppercase tracking-wider">Body</p>
+                        <button onclick="copyDetailBody()"
+                            class="text-xs text-indigo-400 hover:text-indigo-300">Copy</button>
+                    </div>
+                    <pre id="detailEmailBody"
+                        class="text-slate-300 whitespace-pre-wrap font-sans text-sm leading-relaxed"></pre>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3 mt-6">
+                    <button onclick="copyFullDetailEmail()"
+                        class="flex-1 bg-slate-700/50 hover:bg-slate-700 text-white py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Copy Full Email
+                    </button>
+                    <button onclick="openDetailInGmail()"
+                        class="flex-1 gradient-primary text-white py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Open in Gmail
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import CSV Modal -->
+    <div id="importModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeImportModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg px-4">
+            <div class="glass-card rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white">Import Clients</h2>
+                    <button onclick="closeImportModal()" class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-slate-400 text-sm mb-4">
+                    Upload a CSV file with your clients. The file should have headers:
+                    <span class="text-white">Name, Business, Email, Project, Amount, Status</span>
+                </p>
+
+                <div class="bg-slate-800/50 rounded-xl p-6 text-center border-2 border-dashed border-white/10 hover:border-indigo-500/50 transition-all cursor-pointer"
+                    onclick="document.getElementById('csvFileInput').click()">
+                    <input type="file" id="csvFileInput" accept=".csv" class="hidden"
+                        onchange="handleFileSelect(event)">
+                    <svg class="w-10 h-10 text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                        </path>
+                    </svg>
+                    <p class="text-white font-medium mb-1">Click to select a CSV file</p>
+                    <p class="text-xs text-slate-500">or drag and drop</p>
+                </div>
+
+                <div id="previewContainer" class="mt-4 hidden">
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">Preview</p>
+                    <div class="bg-slate-800/30 rounded-xl p-3 max-h-40 overflow-y-auto">
+                        <pre id="csvPreview" class="text-xs text-slate-300 font-mono"></pre>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Ready to import <span id="rowCount">0</span> clients</p>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button onclick="closeImportModal()"
+                        class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                        Cancel
+                    </button>
+                    <button onclick="importClients()" id="importBtn"
+                        class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Import
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <svg id="toastIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span id="toastMsg" class="text-sm"></span>
+    </div>
+
+    <script src="js/clients.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
