@@ -135,6 +135,13 @@ window.addEventListener('pageshow', function (event) {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Set initial page transition styles
+    const clientsPage = document.getElementById('clientsPage');
+    if (clientsPage) {
+        clientsPage.style.opacity = '1';
+        clientsPage.style.transform = 'translateY(0)';
+    }
+
     loadClients();
     document.getElementById('addClientForm').addEventListener('submit', handleAddClient);
     document.getElementById('editClientForm').addEventListener('submit', handleEditClient);
@@ -145,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emailSearch.addEventListener('input', handleEmailSearch);
     }
 
-    // Set up client search  ← ADD THIS
+    // Set up client search
     const clientSearch = document.getElementById('clientSearch');
     if (clientSearch) {
         clientSearch.addEventListener('input', handleClientSearch);
@@ -153,58 +160,95 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================
-// PAGE NAVIGATION (Sidebar)
+// PAGE NAVIGATION (Sidebar) with Smooth Transitions
 // ============================================
 
 function switchPage(page) {
-    currentPage = page;
+    if (currentPage === page) return; // Already on this page
 
     const clientsPage = document.getElementById('clientsPage');
     const emailsPage = document.getElementById('emailsPage');
     const settingsPage = document.getElementById('settingsPage');
 
-    if (clientsPage) clientsPage.classList.add('hidden');
-    if (emailsPage) emailsPage.classList.add('hidden');
-    if (settingsPage) settingsPage.classList.add('hidden');
-
     const clientsNav = document.getElementById('clientsNav');
     const emailsNav = document.getElementById('emailsNav');
     const settingsNav = document.getElementById('settingsNav');
 
-    if (clientsNav) {
-        clientsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
-        clientsNav.classList.add('text-slate-400');
-    }
-    if (emailsNav) {
-        emailsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
-        emailsNav.classList.add('text-slate-400');
-    }
-    if (settingsNav) {
-        settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
-        settingsNav.classList.add('text-slate-400');
+    // Get the current active page
+    const currentActivePage = document.getElementById(`${currentPage}Page`);
+    const newActivePage = document.getElementById(`${page}Page`);
+
+    if (!newActivePage) return;
+
+    // Add exit animation to current page
+    if (currentActivePage) {
+        currentActivePage.style.opacity = '0';
+        currentActivePage.style.transform = 'translateY(-5px)';
+        currentActivePage.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
     }
 
-    if (page === 'clients') {
-        if (clientsPage) clientsPage.classList.remove('hidden');
+    // Wait for exit animation, then switch
+    setTimeout(() => {
+        // Hide all pages
+        if (clientsPage) clientsPage.classList.add('hidden');
+        if (emailsPage) emailsPage.classList.add('hidden');
+        if (settingsPage) settingsPage.classList.add('hidden');
+
+        // Show new page
+        newActivePage.classList.remove('hidden');
+        newActivePage.style.opacity = '0';
+        newActivePage.style.transform = 'translateY(5px)';
+        newActivePage.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+
+        // Trigger enter animation
+        requestAnimationFrame(() => {
+            newActivePage.style.opacity = '1';
+            newActivePage.style.transform = 'translateY(0)';
+        });
+
+        // Reset current page styles
+        if (currentActivePage) {
+            currentActivePage.style.opacity = '';
+            currentActivePage.style.transform = '';
+            currentActivePage.style.transition = '';
+        }
+
+        // Update navigation active states
         if (clientsNav) {
+            clientsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            clientsNav.classList.add('text-slate-400');
+        }
+        if (emailsNav) {
+            emailsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            emailsNav.classList.add('text-slate-400');
+        }
+        if (settingsNav) {
+            settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            settingsNav.classList.add('text-slate-400');
+        }
+
+        // Activate new nav item
+        if (page === 'clients' && clientsNav) {
             clientsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             clientsNav.classList.remove('text-slate-400');
-        }
-        loadClients();
-    } else if (page === 'emails') {
-        if (emailsPage) emailsPage.classList.remove('hidden');
-        if (emailsNav) {
+            loadClients();
+        } else if (page === 'emails' && emailsNav) {
             emailsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             emailsNav.classList.remove('text-slate-400');
-        }
-        loadEmailHistory();
-    } else if (page === 'settings') {
-        if (settingsPage) settingsPage.classList.remove('hidden');
-        if (settingsNav) {
+            loadEmailHistory();
+        } else if (page === 'settings' && settingsNav) {
             settingsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             settingsNav.classList.remove('text-slate-400');
         }
-    }
+
+        currentPage = page;
+
+        // Clean up transition styles after animation completes
+        setTimeout(() => {
+            newActivePage.style.transition = '';
+        }, 200);
+
+    }, 100); // Short delay for exit animation
 }
 // ============================================
 // MORE OPTIONS DROPDOWN
@@ -225,10 +269,10 @@ function closeMoreOptions() {
 }
 
 // Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     const menu = document.getElementById('moreOptionsMenu');
     const button = event.target.closest('button[onclick="toggleMoreOptions()"]');
-    
+
     if (menu && !menu.contains(event.target) && !button) {
         menu.classList.add('hidden');
     }
@@ -267,7 +311,7 @@ function renderClientList() {
     const container = document.getElementById('clientListContainer');
     const emptyState = document.getElementById('emptyState');
     const noSearchResults = document.getElementById('noSearchResults');
-    
+
     if (!container) return;
 
     container.innerHTML = '';
@@ -277,10 +321,10 @@ function renderClientList() {
     if (currentFilter !== 'all' && currentFilter !== 'attention') {
         filteredClients = clients.filter(c => c.status === currentFilter);
     }
-    
+
     // Apply search filter
     filteredClients = filterClientsBySearch(filteredClients);
-    
+
     // Apply sorting
     filteredClients = sortClientsArray(filteredClients);
 
@@ -290,10 +334,10 @@ function renderClientList() {
 
     if (filteredClients.length === 0) {
         // Check if there's an active search or filter
-        const hasSearchOrFilter = currentSearchQuery || 
+        const hasSearchOrFilter = currentSearchQuery ||
             (currentFilter !== 'all' && currentFilter !== 'attention') ||
             showArchived;
-        
+
         if (hasSearchOrFilter) {
             if (noSearchResults) noSearchResults.classList.remove('hidden');
         } else {
@@ -861,7 +905,7 @@ function clearSearchAndFilters() {
 function clearEmailSearch() {
     const searchInput = document.getElementById('emailSearch');
     if (searchInput) searchInput.value = '';
-    
+
     // Reset to all emails
     currentEmailFilter = 'all';
     filterEmails('all');
@@ -1168,7 +1212,7 @@ function updateEmailTabCounts() {
 
 function filterEmails(filter) {
     currentEmailFilter = filter;
-    
+
     // Update active tab styling
     ['All', 'Followup', 'Payment', 'Cold'].forEach(tab => {
         const btn = document.getElementById(`emailTab${tab}`);
@@ -1188,7 +1232,7 @@ function filterEmails(filter) {
             btn.classList.add('text-slate-400');
         }
     });
-    
+
     renderEmailHistoryList();
 }
 
@@ -1196,20 +1240,20 @@ function renderEmailHistoryList() {
     const container = document.getElementById('emailHistoryList');
     const emptyState = document.getElementById('emailEmptyState');
     const noResults = document.getElementById('noEmailResults');
-    
+
     if (!container) return;
-    
+
     container.innerHTML = '';
 
     let filteredEmails = allEmails;
     if (currentEmailFilter !== 'all') {
         filteredEmails = allEmails.filter(e => e.type === currentEmailFilter);
     }
-    
+
     // Hide both states initially
     if (emptyState) emptyState.classList.add('hidden');
     if (noResults) noResults.classList.add('hidden');
-    
+
     if (filteredEmails.length === 0) {
         // Check if there are any emails at all
         if (allEmails.length === 0) {
@@ -1320,11 +1364,11 @@ function handleEmailSearch(e) {
     const container = document.getElementById('emailHistoryList');
     const emptyState = document.getElementById('emailEmptyState');
     const noResults = document.getElementById('noEmailResults');
-    
+
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     if (emptyState) emptyState.classList.add('hidden');
     if (noResults) noResults.classList.add('hidden');
 

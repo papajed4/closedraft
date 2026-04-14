@@ -4,7 +4,7 @@ async function fetchClients(showArchived = false) {
     try {
         const cacheBuster = Date.now() + '-' + Math.random().toString(36);
         const url = `/api/clients?cb=${cacheBuster}&showArchived=${showArchived}`;
-        
+
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -13,7 +13,7 @@ async function fetchClients(showArchived = false) {
                 'Expires': '0'
             }
         });
-        
+
         const data = await response.json();
         console.log('📥 Fetched clients:', data.clients?.length || 0);
         return data.clients || [];
@@ -30,12 +30,12 @@ async function addClient(clientData) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(clientData)
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Failed to add client');
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error('Failed to add client:', error);
@@ -50,7 +50,7 @@ async function updateClientStatus(clientId, status) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status })
         });
-        
+
         if (!response.ok) throw new Error('Failed to update client');
         return await response.json();
     } catch (error) {
@@ -64,7 +64,7 @@ async function deleteClient(clientId) {
         const response = await fetch(`/api/clients/${clientId}`, {
             method: 'DELETE'
         });
-        
+
         if (!response.ok) throw new Error('Failed to delete client');
         return true;
     } catch (error) {
@@ -80,12 +80,12 @@ async function updateClient(clientId, updates) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updates)
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Failed to update client');
         }
-        
+
         const data = await response.json();
         return data; // Make sure this returns the updated client
     } catch (error) {
@@ -101,12 +101,12 @@ async function archiveClient(clientId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ archived: true })
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Failed to archive client');
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error('Failed to archive client:', error);
