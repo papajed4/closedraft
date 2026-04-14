@@ -206,6 +206,33 @@ function switchPage(page) {
         }
     }
 }
+// ============================================
+// MORE OPTIONS DROPDOWN
+// ============================================
+
+function toggleMoreOptions() {
+    const menu = document.getElementById('moreOptionsMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+function closeMoreOptions() {
+    const menu = document.getElementById('moreOptionsMenu');
+    if (menu) {
+        menu.classList.add('hidden');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('moreOptionsMenu');
+    const button = event.target.closest('button[onclick="toggleMoreOptions()"]');
+    
+    if (menu && !menu.contains(event.target) && !button) {
+        menu.classList.add('hidden');
+    }
+});
 
 // ============================================
 // CLIENTS PAGE FUNCTIONS
