@@ -11,15 +11,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             anonKey: SUPABASE_ANON_KEY
         });
     }
-    
+
     if (message.action === 'openLogin') {
         chrome.tabs.create({ url: 'https://closedraft.onrender.com/login.html' });
     }
-    
+
     if (message.action === 'openPricing') {
         chrome.tabs.create({ url: 'https://closedraft.onrender.com/pricing.html' });
     }
-    
+
     return true;
 });
 

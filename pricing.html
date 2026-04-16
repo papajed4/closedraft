@@ -30,6 +30,14 @@
         }
     </script>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://txibbsaodcpaturobeok.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24';
+        window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -48,8 +56,6 @@
         .gradient-primary {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
-
-        /* Smooth page transitions */
 
         @keyframes fadeIn {
             0% {
@@ -92,10 +98,11 @@
                     class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
                 <a href="/pricing.html"
                     class="text-indigo-400 font-semibold border-b-2 border-indigo-400 pb-1">Pricing</a>
-                <a href="#" class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+                <a href="/resources.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
             </div>
 
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4" id="navAuth">
                 <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
                 <a href="/signup.html"
                     class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
@@ -114,14 +121,14 @@
 
             <!-- Billing Toggle -->
             <div class="flex items-center justify-center gap-4 mt-8">
-                <span class="text-sm font-medium" id="monthlyLabel">Monthly</span>
+                <span class="text-sm font-medium text-white" id="monthlyLabel">Monthly</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="billingToggle" class="sr-only peer" onchange="toggleBilling()">
                     <div
                         class="w-14 h-7 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-500">
                     </div>
                 </label>
-                <span class="text-sm font-medium" id="yearlyLabel">Yearly <span
+                <span class="text-sm font-medium text-slate-400" id="yearlyLabel">Yearly <span
                         class="text-indigo-400 text-xs ml-1 bg-indigo-500/20 px-1.5 py-0.5 rounded-full">Save
                         17%</span></span>
             </div>
@@ -188,10 +195,14 @@
                         <span class="text-5xl font-bold text-white" id="proPrice">$29</span>
                         <span class="text-slate-400" id="proPeriod">/month</span>
                     </div>
-                    <a href="/signup.html?plan=pro"
+                    <button onclick="handleUpgrade('monthly')" id="proMonthlyBtn"
                         class="block w-full py-3 rounded-xl gradient-primary text-white font-bold text-center hover:opacity-90 transition-all mb-8 shadow-lg shadow-indigo-500/25">
                         Start Free Trial
-                    </a>
+                    </button>
+                    <button onclick="handleUpgrade('yearly')" id="proYearlyBtn"
+                        class="hidden w-full py-3 rounded-xl gradient-primary text-white font-bold text-center hover:opacity-90 transition-all mb-8 shadow-lg shadow-indigo-500/25">
+                        Get Pro Yearly
+                    </button>
                     <ul class="space-y-4">
                         <li class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,12 +243,13 @@
                 </div>
             </div>
 
-            <!-- Beta Lifetime Deal Banner (Subtle) -->
+            <!-- Beta Lifetime Deal Banner -->
             <div class="mt-8 text-center">
                 <p class="text-slate-500 text-sm">
                     🎉 Beta users: <span class="text-white">Lifetime Pro</span> available for <span
                         class="text-indigo-400 font-bold">$149</span> —
-                    <a href="/signup.html" class="text-indigo-400 hover:text-indigo-300 underline">claim your spot</a>
+                    <button onclick="handleUpgrade('lifetime')"
+                        class="text-indigo-400 hover:text-indigo-300 underline">claim your spot</button>
                 </p>
             </div>
         </section>
@@ -350,15 +362,24 @@
     </footer>
 
     <script>
-        // Billing toggle
+        // Product IDs from Polar.sh (Test Mode)
+        const PRODUCT_IDS = {
+            monthly: '5d5c4dd0-6a3b-4b76-bcec-fbd7bd22cd1b',     // Replace with actual ID
+            yearly: '63c76fe9-4ac3-40b3-b65f-25773c471aa9',       // Replace with actual ID
+            lifetime: 'c2a9ba67-3025-43b0-9b6d-c8bf7908c1fd'   // Replace with actual ID
+        };
+
         let isYearly = false;
 
+        // Billing toggle
         function toggleBilling() {
             isYearly = !isYearly;
             const proPrice = document.getElementById('proPrice');
             const proPeriod = document.getElementById('proPeriod');
             const monthlyLabel = document.getElementById('monthlyLabel');
             const yearlyLabel = document.getElementById('yearlyLabel');
+            const monthlyBtn = document.getElementById('proMonthlyBtn');
+            const yearlyBtn = document.getElementById('proYearlyBtn');
 
             if (isYearly) {
                 proPrice.textContent = '$24';
@@ -367,6 +388,8 @@
                 monthlyLabel.classList.add('text-slate-400');
                 yearlyLabel.classList.remove('text-slate-400');
                 yearlyLabel.classList.add('text-white');
+                monthlyBtn.classList.add('hidden');
+                yearlyBtn.classList.remove('hidden');
             } else {
                 proPrice.textContent = '$29';
                 proPeriod.textContent = '/month';
@@ -374,8 +397,82 @@
                 monthlyLabel.classList.add('text-white');
                 yearlyLabel.classList.remove('text-white');
                 yearlyLabel.classList.add('text-slate-400');
+                monthlyBtn.classList.remove('hidden');
+                yearlyBtn.classList.add('hidden');
             }
         }
+
+        // Get auth token
+        async function getAuthToken() {
+            const { data: { session } } = await window.supabase.auth.getSession();
+            return session?.access_token || null;
+        }
+
+        // Check if user is logged in
+        async function checkAuth() {
+            const { data: { user } } = await window.supabase.auth.getUser();
+            if (user) {
+                // Update nav for logged in user
+                const navAuth = document.getElementById('navAuth');
+                if (navAuth) {
+                    const initial = (user.user_metadata?.full_name || user.email).charAt(0).toUpperCase();
+                    navAuth.innerHTML = `
+                        <a href="/app.html" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold">Dashboard</a>
+                        <div class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">${initial}</div>
+                    `;
+                }
+            }
+            return user;
+        }
+
+        // Handle upgrade
+        async function handleUpgrade(plan) {
+            const user = await checkAuth();
+
+            if (!user) {
+                // Redirect to login with return URL
+                window.location.href = '/login.html?redirect=pricing';
+                return;
+            }
+
+            const productId = PRODUCT_IDS[plan];
+            if (!productId || productId.includes('YOUR_')) {
+                alert('Product ID not configured. Please add your Polar.sh product IDs.');
+                return;
+            }
+
+            const token = await getAuthToken();
+            if (!token) {
+                window.location.href = '/login.html?redirect=pricing';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/create-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ productId })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Failed to start checkout. Please try again.');
+                    console.error('Checkout error:', data);
+                }
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+
+        // Check auth on page load
+        checkAuth();
     </script>
 
 </body>

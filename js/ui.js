@@ -5,8 +5,13 @@ function showToast(message, type = 'info') {
     const msgEl = document.getElementById('toastMsg');
     const iconEl = document.getElementById('toastIcon');
     
+    if (!toast || !msgEl || !iconEl) return;
+    
     msgEl.textContent = message;
     toast.classList.remove('success', 'error');
+    
+    // Reset any inline styles
+    toast.style.background = '';
     
     if (type === 'success') {
         toast.classList.add('success');
@@ -15,11 +20,16 @@ function showToast(message, type = 'info') {
         toast.classList.add('error');
         iconEl.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
     } else {
+        // Info type - dark background
+        toast.style.background = '#1e293b';
         iconEl.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
     }
     
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
+    
+    // Longer timeout for info messages
+    const timeout = type === 'info' ? 6000 : 4000;
+    setTimeout(() => toast.classList.remove('show'), timeout);
 }
 
 function openAddModal() {

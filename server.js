@@ -527,6 +527,200 @@ app.delete('/api/templates/:id', async (req, res) => {
     }
 });
 
+// ==================== POLAR PAYMENTS ====================
+const { polarApi } = require('./lib/polar');
+
+// Create checkout session
+app.post('/api/create-checkout', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    
+    const { productId } = req.body;
+    
+    if (!productId) {
+        return res.status(400).json({ error: 'Product ID is required' });
+    }
+    
+    try {
+        const checkout = await polarApi.checkouts.create({
+            products: [productId],
+            customerEmail: user.email,
+            successUrl: `${req.headers.origin}/app.html?checkout=success`,
+            cancelUrl: `${req.headers.origin}/pricing.html?checkout=cancelled`,
+            metadata: {
+                userId: user.id
+            }
+        });
+        
+        console.log('✅ Checkout created:', checkout.id);
+        
+        // 🔥 CRITICAL: Store payment record
+        const { error: insertError } = await supabase
+            .from('payments')
+            .insert([{
+                user_id: user.id,
+                checkout_id: checkout.id,
+                product_id: productId,
+                status: 'pending',
+                created_at: new Date().toISOString()
+            }]);
+        
+        if (insertError) {
+            console.error('❌ Failed to store payment:', insertError);
+        } else {
+            console.log('✅ Payment record stored for checkout:', checkout.id);
+        }
+        
+        res.json({ url: checkout.url });
+    } catch (error) {
+        console.error('❌ Checkout error:', error);
+        res.status(500).json({ 
+            error: error.message || 'Failed to create checkout session' 
+        });
+    }
+});
+
+// Polar webhook endpoint
+app.post('/api/polar-webhook', async (req, res) => {
+    const event = req.body;
+    
+    console.log('📦 Polar webhook received:', event.type);
+    
+    try {
+        // ========== CHECKOUT.UPDATED ==========
+        if (event.type === 'checkout.updated') {
+            const checkout = event.data;
+            
+            console.log(`📦 Checkout ${checkout.id} status: ${checkout.status}`);
+            
+            // Update payment status
+            const { error: updateError } = await supabase
+                .from('payments')
+                .update({ 
+                    status: checkout.status,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('checkout_id', checkout.id);
+            
+            if (updateError) {
+                console.error('❌ Failed to update payment:', updateError);
+            } else {
+                console.log(`✅ Payment ${checkout.id} updated to ${checkout.status}`);
+            }
+            
+            // If checkout succeeded, upgrade the user
+            if (checkout.status === 'succeeded') {
+                console.log('🔍 Looking up payment for checkout:', checkout.id);
+                
+                // Get the payment record
+                const { data: payment, error: fetchError } = await supabase
+                    .from('payments')
+                    .select('user_id, product_id')
+                    .eq('checkout_id', checkout.id)
+                    .single();
+                
+                if (fetchError) {
+                    console.error('❌ Failed to fetch payment:', fetchError);
+                } else if (!payment) {
+                    console.error('❌ No payment found for checkout:', checkout.id);
+                } else {
+                    console.log('✅ Found payment for user:', payment.user_id);
+                    console.log('📦 Product ID:', payment.product_id);
+                    
+                    // Determine plan type based on product ID
+                    let plan = 'pro_monthly';
+                    if (payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9') {
+                        plan = 'pro_yearly';
+                        console.log('📦 Detected yearly plan');
+                    } else if (payment.product_id === 'YOUR_LIFETIME_ID') {
+                        plan = 'pro_lifetime';
+                        console.log('📦 Detected lifetime plan');
+                    } else if (payment.product_id === '5d5c4dd0-6a3b-4b76-bcec-fbd7bd22cd1b') {
+                        plan = 'pro_monthly';
+                        console.log('📦 Detected monthly plan');
+                    }
+                    
+                   // Update the user's profile using ADMIN client
+const { error: profileError } = await supabaseAdmin
+    .from('profiles')
+    .update({ 
+        plan: plan,
+        updated_at: new Date().toISOString()
+    })
+    .eq('id', payment.user_id);
+
+if (profileError) {
+    console.error('❌ Failed to upgrade user:', profileError);
+} else {
+    console.log(`✅ User ${payment.user_id} upgraded to ${plan}`);
+}
+                }
+            }
+        }
+        
+        // ========== SUBSCRIPTION.CREATED ==========
+        if (event.type === 'subscription.created') {
+            const subscription = event.data;
+            const checkoutId = subscription.checkoutId;
+            
+            console.log('📦 Subscription created:', subscription.id);
+            console.log('📦 Linked to checkout:', checkoutId);
+            
+            if (checkoutId) {
+                const { error } = await supabase
+                    .from('payments')
+                    .update({ 
+                        subscription_id: subscription.id,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('checkout_id', checkoutId);
+                
+                if (error) {
+                    console.error('❌ Failed to link subscription:', error);
+                } else {
+                    console.log('✅ Subscription linked to payment');
+                }
+            }
+        }
+        
+        // ========== SUBSCRIPTION.CANCELED (Optional) ==========
+        if (event.type === 'subscription.canceled') {
+            const subscription = event.data;
+            
+            console.log('📦 Subscription canceled:', subscription.id);
+            
+            // Find the user with this subscription and downgrade to free
+            const { data: payment, error: fetchError } = await supabase
+                .from('payments')
+                .select('user_id')
+                .eq('subscription_id', subscription.id)
+                .single();
+            
+            if (!fetchError && payment) {
+                const { error: downgradeError } = await supabaseAdmin
+                    .from('profiles')
+                    .update({ 
+                        plan: 'free',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', payment.user_id);
+                
+                if (downgradeError) {
+                    console.error('❌ Failed to downgrade user:', downgradeError);
+                } else {
+                    console.log(`✅ User ${payment.user_id} downgraded to free`);
+                }
+            }
+        }
+        
+        res.status(200).json({ received: true });
+        
+    } catch (error) {
+        console.error('❌ Webhook error:', error);
+        res.status(500).json({ error: 'Webhook processing failed' });
+    }
+});
+
 // ==================== SERVE PAGES ====================
 
 // Serve landing page

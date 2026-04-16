@@ -52,6 +52,50 @@ function refreshUserSettings() {
     }
 }
 
+// ============================================
+// PLAN LIMITS
+// ============================================
+
+function getUserPlan() {
+    // Get plan from profiles table (set during auth/webhook)
+    // For now, default to 'free' if not set
+    return window.userPlan || 'free';
+}
+
+function getClientLimit() {
+    const plan = getUserPlan();
+    return plan === 'free' ? 10 : Infinity;
+}
+
+function getEmailLimit() {
+    const plan = getUserPlan();
+    return plan === 'free' ? 20 : Infinity;
+}
+
+function checkClientLimit() {
+    const limit = getClientLimit();
+    const currentCount = clients.filter(c => !c.archived).length;
+
+    if (currentCount >= limit) {
+        showUpgradeModal('clients');
+        return false;
+    }
+    return true;
+}
+
+function showUpgradeModal(type) {
+    const message = type === 'clients'
+        ? "You've reached the free limit of 10 clients."
+        : "You've reached the free limit of 20 AI emails this month.";
+
+    // Store the upgrade type for later
+    window.upgradeType = type;
+
+    // Show the modal (we'll create this in Step 2)
+    document.getElementById('upgradeMessage').textContent = message;
+    document.getElementById('upgradeModal').classList.remove('hidden');
+}
+
 // ==================== AUTH TOKEN HELPER ====================
 async function getAuthToken() {
     const { data: { session } } = await window.supabase.auth.getSession();
@@ -511,6 +555,8 @@ function updateDashboardStats() {
     const total = clients.length || 1;
     document.getElementById('dashActiveBar').style.width = `${(activeCount / total) * 100}%`;
     document.getElementById('dashPaymentBar').style.width = `${(paymentDueCount / total) * 100}%`;
+
+    updateEmailLimitDisplay();
 }
 
 function renderDashboardAttentionList() {
@@ -585,6 +631,10 @@ async function generateQuickEmail() {
     if (!clientId) {
         showToast('Please select a client', 'error');
         return;
+    }
+        // 🔥 CHECK EMAIL LIMIT
+    if (!checkEmailLimit()) {
+        return false;
     }
 
     const type = document.getElementById('dashboardQuickEmailType').value;
@@ -699,49 +749,61 @@ function renderClientList() {
     filteredClients.forEach(client => {
         const isStale = needsAttention(client);
         html += `
-            <div class="glass-card p-5 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-all ${isStale ? 'border-l-2 border-amber-500' : ''}" onclick="selectClient('${client.id}')">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm">
-                        ${client.name.charAt(0)}
-                    </div>
-                    <div>
-                       <h3 class="font-semibold text-white flex items-center gap-2">
-    ${client.name}
-    ${isStale ? `
-        <span class="text-amber-400" title="Needs follow-up (${getDaysStale(client.last_contacted)} days)">
-            <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-        </span>
-    ` : ''}
-    ${client.archived ? `
-        <span class="status-badge bg-slate-700/50 text-slate-400 border border-white/10">Archived</span>
-    ` : ''}
-</h3>
-                        <p class="text-sm text-slate-400">${client.business || 'No business'}</p>
-                    </div>
+        <div class="glass-card p-5 flex items-center justify-between transition-all ${isStale ? 'border-l-2 border-amber-500' : ''}">
+            <div class="flex items-center gap-4">
+                <!-- Checkbox -->
+                <input type="checkbox" 
+                       class="client-checkbox w-4 h-4 rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                       data-client-id="${client.id}"
+                       onclick="event.stopPropagation()">
+                
+                <!-- Avatar -->
+                <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm cursor-pointer" 
+                     onclick="selectClient('${client.id}')">
+                    ${client.name.charAt(0)}
                 </div>
-                <div class="flex items-center gap-6">
-                    ${client.project ? `
-                        <div class="text-right hidden md:block">
-                            <p class="text-xs text-slate-500 uppercase tracking-wider">Project</p>
-                            <p class="text-sm text-white">${client.project}</p>
-                        </div>
-                    ` : ''}
-                    ${client.amount ? `
-                        <div class="text-right hidden lg:block">
-                            <p class="text-xs text-slate-500 uppercase tracking-wider">Value</p>
-                            <p class="text-sm text-white font-medium">$${client.amount.toLocaleString()}</p>
-                        </div>
-                    ` : ''}
-                    <div class="text-right">
-                        <p class="text-xs text-slate-500 uppercase tracking-wider">Last Contact</p>
-                        <p class="text-sm ${isStale ? 'text-amber-400 font-medium' : 'text-white'}">${formatDate(client.last_contacted)}</p>
-                    </div>
-                    ${getStatusBadge(client.status)}
+                
+                <!-- Client Info -->
+                <div class="cursor-pointer" onclick="selectClient('${client.id}')">
+                    <h3 class="font-semibold text-white flex items-center gap-2">
+                        ${client.name}
+                        ${isStale ? `
+                            <span class="text-amber-400" title="Needs follow-up (${getDaysStale(client.last_contacted)} days)">
+                                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </span>
+                        ` : ''}
+                        ${client.archived ? `
+                            <span class="status-badge bg-slate-700/50 text-slate-400 border border-white/10">Archived</span>
+                        ` : ''}
+                    </h3>
+                    <p class="text-sm text-slate-400">${client.business || 'No business'}</p>
                 </div>
             </div>
-        `;
+            
+            <!-- Right Side Info -->
+            <div class="flex items-center gap-6 cursor-pointer" onclick="selectClient('${client.id}')">
+                ${client.project ? `
+                    <div class="text-right hidden md:block">
+                        <p class="text-xs text-slate-500 uppercase tracking-wider">Project</p>
+                        <p class="text-sm text-white">${client.project}</p>
+                    </div>
+                ` : ''}
+                ${client.amount ? `
+                    <div class="text-right hidden lg:block">
+                        <p class="text-xs text-slate-500 uppercase tracking-wider">Value</p>
+                        <p class="text-sm text-white font-medium">$${client.amount.toLocaleString()}</p>
+                    </div>
+                ` : ''}
+                <div class="text-right">
+                    <p class="text-xs text-slate-500 uppercase tracking-wider">Last Contact</p>
+                    <p class="text-sm ${isStale ? 'text-amber-400 font-medium' : 'text-white'}">${formatDate(client.last_contacted)}</p>
+                </div>
+                ${getStatusBadge(client.status)}
+            </div>
+        </div>
+    `;
     });
 
     container.innerHTML = html;
@@ -770,7 +832,11 @@ async function handleAddClient(e) {
         e.stopPropagation();
         e.stopImmediatePropagation();
     }
-    
+    // 🔥 CHECK CLIENT LIMIT
+    if (!checkClientLimit()) {
+        return false;  // Stop execution, modal shown
+    }
+
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
@@ -799,7 +865,7 @@ async function handleAddClient(e) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }
-    
+
     return false;  // ← ADD THIS TOO
 }
 
@@ -1380,6 +1446,11 @@ function resetEmailModal() {
 
 async function generateEmail() {
     if (!currentEmailClient) return;
+        // 🔥 CHECK EMAIL LIMIT
+    if (!checkEmailLimit()) {
+        return false;
+    }
+
     const type = document.getElementById('emailType').value;
     const tone = document.getElementById('emailTone').value;
     const btn = document.getElementById('generateEmailBtn');
@@ -1558,6 +1629,17 @@ async function importClients() {
         return;
     }
 
+    const limit = getClientLimit();
+    const currentCount = clients.filter(c => !c.archived).length;
+    const availableSlots = limit - currentCount;
+
+    // Check if user can import any clients
+    if (availableSlots <= 0) {
+        showUpgradeModal('clients');
+        closeImportModal();
+        return;
+    }
+
     const btn = document.getElementById('importBtn');
     const originalText = btn.textContent;
     btn.disabled = true;
@@ -1565,8 +1647,17 @@ async function importClients() {
 
     let successCount = 0;
     let failCount = 0;
+    let skippedCount = 0;
 
-    for (const row of csvData) {
+    for (let i = 0; i < csvData.length; i++) {
+        const row = csvData[i];
+
+        // Check if we've hit the limit
+        if (successCount >= availableSlots) {
+            skippedCount = csvData.length - i;
+            break;
+        }
+
         if (!row.name) {
             failCount++;
             continue;
@@ -1590,7 +1681,23 @@ async function importClients() {
         }
     }
 
-    showToast(`Imported ${successCount} clients (${failCount} failed)`, 'success');
+    // Show appropriate message
+    if (skippedCount > 0) {
+        showToast(
+            `✅ ${successCount} clients imported. ⚠️ ${skippedCount} skipped (free limit reached). Upgrade to Pro for unlimited clients.`,
+            'info'
+        );
+
+        // Show upgrade modal after a short delay
+        setTimeout(() => {
+            showUpgradeModal('clients');
+        }, 1500);
+    } else if (failCount > 0) {
+        showToast(`Imported ${successCount} clients (${failCount} failed)`, 'success');
+    } else {
+        showToast(`Imported ${successCount} clients`, 'success');
+    }
+
     closeImportModal();
     await loadClients();
 
@@ -1749,6 +1856,33 @@ async function loadEmailHistory() {
     } catch (error) {
         console.error('Failed to load email history:', error);
         showToast('Failed to load email history', 'error');
+    }
+}
+
+function updateEmailLimitDisplay() {
+    const plan = getUserPlan();
+    const statsContainer = document.getElementById('dashEmailsSent');
+    
+    if (plan === 'free' && statsContainer) {
+        const used = getEmailsThisMonth();
+        const limit = 20;
+        const remaining = limit - used;
+        
+        // Add a small indicator
+        const parent = statsContainer.parentElement;
+        let indicator = parent.querySelector('.email-limit-indicator');
+        
+        if (!indicator) {
+            indicator = document.createElement('span');
+            indicator.className = 'email-limit-indicator text-xs text-slate-500 ml-2';
+            statsContainer.after(indicator);
+        }
+        
+        indicator.textContent = `${used}/${limit} this month`;
+        
+        if (remaining <= 5) {
+            indicator.classList.add('text-amber-400');
+        }
     }
 }
 
@@ -2028,4 +2162,173 @@ function updateDetailPanelActions(client) {
         `;
     }
 }
+// ============================================
+// BULK SELECT & DELETE
+// ============================================
 
+// Toggle select all checkboxes
+function toggleSelectAll(selectAllCheckbox) {
+    const isChecked = selectAllCheckbox.checked;
+    const checkboxes = document.querySelectorAll('.client-checkbox');
+    
+    checkboxes.forEach(cb => {
+        cb.checked = isChecked;
+    });
+    
+    updateBulkDeleteButton();
+}
+
+// Update bulk delete button visibility and count
+function updateBulkDeleteButton() {
+    const selectedCheckboxes = document.querySelectorAll('.client-checkbox:checked');
+    const selectedCount = selectedCheckboxes.length;
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    
+    if (bulkDeleteBtn) {
+        if (selectedCount > 0) {
+            bulkDeleteBtn.classList.remove('hidden');
+            selectedCountSpan.textContent = selectedCount;
+        } else {
+            bulkDeleteBtn.classList.add('hidden');
+        }
+    }
+    
+    // Update select all checkbox state
+    const allCheckboxes = document.querySelectorAll('.client-checkbox');
+    const selectAllCheckbox = document.getElementById('selectAllClients');
+    if (selectAllCheckbox && allCheckboxes.length > 0) {
+        const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+        selectAllCheckbox.checked = allChecked;
+        selectAllCheckbox.indeterminate = !allChecked && selectedCount > 0;
+    }
+}
+
+// Listen for checkbox changes
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('client-checkbox')) {
+        updateBulkDeleteButton();
+    }
+});
+
+// Open bulk delete confirmation modal
+function openBulkDeleteModal() {
+    const selectedCheckboxes = document.querySelectorAll('.client-checkbox:checked');
+    const selectedCount = selectedCheckboxes.length;
+    
+    if (selectedCount === 0) return;
+    
+    // Store selected client IDs for deletion
+    window.bulkDeleteClientIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.clientId);
+    
+    // Update modal message
+    document.getElementById('bulkDeleteCount').textContent = selectedCount;
+    document.getElementById('bulkDeleteModal').classList.remove('hidden');
+}
+
+// Close bulk delete modal
+function closeBulkDeleteModal() {
+    document.getElementById('bulkDeleteModal').classList.add('hidden');
+    window.bulkDeleteClientIds = [];
+}
+
+// Confirm bulk delete
+async function confirmBulkDelete() {
+    const clientIds = window.bulkDeleteClientIds;
+    if (!clientIds || clientIds.length === 0) return;
+    
+    const btn = document.querySelector('#bulkDeleteModal .confirm-delete-btn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    for (const clientId of clientIds) {
+        try {
+            await deleteClient(clientId);
+            successCount++;
+        } catch (error) {
+            console.error('Failed to delete client:', clientId, error);
+            failCount++;
+        }
+    }
+    
+    showToast(`Deleted ${successCount} clients${failCount > 0 ? ` (${failCount} failed)` : ''}`, 'success');
+    
+    closeBulkDeleteModal();
+    await loadClients();
+    
+    btn.disabled = false;
+    btn.textContent = originalText;
+}
+
+// ============================================
+// UPGRADE MODAL
+// ============================================
+
+function showUpgradeModal(type) {
+    const modal = document.getElementById('upgradeModal');
+    const messageEl = document.getElementById('upgradeMessage');
+    
+    if (!modal || !messageEl) {
+        console.error('❌ Upgrade modal elements not found');
+        return;
+    }
+    
+    // Set the message based on what limit was hit
+    if (type === 'clients') {
+        messageEl.textContent = "You've reached the free limit of 10 clients.";
+    } else if (type === 'emails') {
+        messageEl.textContent = "You've reached the free limit of 20 AI emails this month.";
+    } else {
+        messageEl.textContent = "You've reached the free limit.";
+    }
+    
+    // Store the upgrade type
+    window.upgradeType = type;
+    
+    // Show the modal
+    modal.classList.remove('hidden');
+}
+
+function closeUpgradeModal() {
+    const modal = document.getElementById('upgradeModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// ============================================
+// EMAIL LIMITS
+// ============================================
+
+function getEmailsThisMonth() {
+    const now = new Date();
+    const thisMonth = allEmails.filter(email => {
+        const emailDate = new Date(email.created_at);
+        return emailDate.getMonth() === now.getMonth() && 
+               emailDate.getFullYear() === now.getFullYear();
+    });
+    return thisMonth.length;
+}
+
+function checkEmailLimit() {
+    const plan = getUserPlan();
+    
+    // Pro users have no limit
+    if (plan !== 'free') {
+        return true;
+    }
+    
+    const limit = 20;
+    const currentCount = getEmailsThisMonth();
+    
+    if (currentCount >= limit) {
+        showUpgradeModal('emails');
+        return false;
+    }
+    
+    return true;
+}

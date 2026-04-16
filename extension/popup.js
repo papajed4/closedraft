@@ -52,22 +52,23 @@ async function checkAuth() {
 
     currentUser = session.user;
 
-    // Get actual plan from database
-const { data: userData } = await supabaseClient
-    .from('profiles')
-    .select('plan')
-    .eq('id', currentUser.id)
-    .single();
+    // Get actual plan from profiles table
+    const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('plan')
+        .eq('id', currentUser.id)
+        .single();
 
-    userPlan = userData?.plan || 'free';
+    userPlan = profile?.plan || 'free';
     
-    const planStatus = document.getElementById('planStatus');
-    if (planStatus) {
-        planStatus.textContent = userPlan === 'pro' ? 'Pro' : 'Free';
-        planStatus.className = `status ${userPlan}`;
-    }
+    document.getElementById('planStatus').textContent = userPlan === 'pro' ? 'Pro' : 'Free';
+    document.getElementById('planStatus').className = `status ${userPlan}`;
 
-    showState(userPlan);
+    if (userPlan !== 'free') {
+        showState('pro');
+    } else {
+        showState('free');
+    }
 }
 
 

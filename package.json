@@ -8,6 +8,7 @@
         "dev": "node server.js"
     },
     "dependencies": {
+        "@polar-sh/sdk": "^0.47.0",
         "@supabase/supabase-js": "^2.102.1",
         "dotenv": "^17.4.1",
         "express": "^5.2.1"
