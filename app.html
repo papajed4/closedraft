@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,681 +32,24 @@
             }
         }
     </script>
-
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b1326;
-            color: #dae2fd;
-        }
-
-        .glass-card {
-            background: rgba(23, 31, 51, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .glass-sidebar {
-            background: rgba(11, 19, 38, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .gradient-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-        }
-
-        .status-active {
-            background: rgba(16, 185, 129, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.25);
-        }
-
-        .status-waiting {
-            background: rgba(245, 158, 11, 0.12);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.25);
-        }
-
-        .status-payment {
-            background: rgba(239, 68, 68, 0.12);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.25);
-        }
-
-        .input-glass {
-            background: rgba(11, 19, 38, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: white;
-            transition: all 0.2s ease;
-        }
-
-        .input-glass:focus {
-            border-color: #6366f1;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 24px;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            background: #14532d;
-        }
-
-        .toast.error {
-            background: #7f1d1d;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0b1326;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #2d3449;
-            border-radius: 10px;
-        }
-
-        /* ============================================
-   TABLET STYLES (769px - 1024px)
-   ============================================ */
-        @media (min-width: 769px) and (max-width: 1024px) {
-
-            /* Sidebar - collapsed icons only */
-            aside {
-                width: 80px !important;
-                padding-top: 24px !important;
-            }
-
-            aside .px-6 {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-
-            aside .flex.items-center.gap-3 {
-                justify-content: center !important;
-            }
-
-            aside .sidebar-text {
-                display: none !important;
-            }
-
-            aside nav a {
-                justify-content: center !important;
-                padding: 12px 0 !important;
-            }
-
-            aside nav a span:last-child {
-                display: none !important;
-            }
-
-            aside nav a svg {
-                width: 22px !important;
-                height: 22px !important;
-            }
-
-            aside .mt-auto {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-
-            aside .mt-auto button {
-                padding: 8px !important;
-            }
-
-            aside .mt-auto button span:last-child {
-                display: none !important;
-            }
-
-            /* Main content */
-            main {
-                margin-left: 80px !important;
-            }
-
-            /* Header */
-            header {
-                padding: 16px 24px !important;
-            }
-
-            header h2 {
-                font-size: 22px !important;
-            }
-
-            /* Stats cards - 2 columns */
-            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 16px !important;
-            }
-
-            /* Client list container */
-            #clientListContainer>div {
-                flex-wrap: wrap !important;
-                gap: 12px !important;
-            }
-
-            #clientListContainer .flex.items-center.gap-6 {
-                width: 100% !important;
-                justify-content: space-between !important;
-                flex-wrap: wrap !important;
-            }
-
-            #clientListContainer .hidden.md\\:block {
-                display: block !important;
-            }
-
-            #clientListContainer .hidden.lg\\:block {
-                display: none !important;
-            }
-
-            /* Detail panel */
-            #clientDetailPanel {
-                width: 360px !important;
-            }
-        }
-
-        /* ============================================
-   MOBILE STYLES (max-width: 768px)
-   ============================================ */
-        @media (max-width: 768px) {
-
-            /* Sidebar becomes bottom nav */
-            aside {
-                position: fixed !important;
-                bottom: 0 !important;
-                top: auto !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                height: 72px !important;
-                flex-direction: row !important;
-                padding: 0 !important;
-                border-right: none !important;
-                border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-                z-index: 50 !important;
-                background: rgba(11, 19, 38, 0.95) !important;
-            }
-
-            aside>div:first-child {
-                display: none !important;
-            }
-
-            aside nav {
-                display: flex !important;
-                flex-direction: row !important;
-                justify-content: space-around !important;
-                align-items: center !important;
-                width: 100% !important;
-                height: 100% !important;
-                padding: 0 8px !important;
-            }
-
-            aside nav a {
-                flex-direction: column !important;
-                justify-content: center !important;
-                align-items: center !important;
-                padding: 8px 0 !important;
-                gap: 4px !important;
-                border-left: none !important;
-                border-bottom: 2px solid transparent !important;
-                background: transparent !important;
-                min-width: 64px !important;
-            }
-
-            aside nav a svg {
-                width: 22px !important;
-                height: 22px !important;
-            }
-
-            aside nav a span:last-child {
-                font-size: 10px !important;
-                font-weight: 600 !important;
-                display: block !important;
-            }
-
-            aside nav a.text-white {
-                border-bottom-color: #6366f1 !important;
-                border-left: none !important;
-                background: transparent !important;
-            }
-
-            aside .mt-auto {
-                display: none !important;
-            }
-
-            /* Main content */
-            main {
-                margin-left: 0 !important;
-                margin-bottom: 72px !important;
-                padding-bottom: 16px !important;
-            }
-
-            /* Header */
-            header {
-                padding: 16px !important;
-                flex-direction: column !important;
-                align-items: stretch !important;
-                gap: 12px !important;
-            }
-
-            header>div {
-                flex-direction: column !important;
-                gap: 12px !important;
-                width: 100% !important;
-            }
-
-            header h2 {
-                font-size: 24px !important;
-                text-align: center !important;
-            }
-
-            header .flex.items-center.gap-4 {
-                flex-direction: row !important;
-                justify-content: space-between !important;
-                width: 100% !important;
-            }
-
-            #statusFilter {
-                flex: 1 !important;
-                max-width: none !important;
-                font-size: 13px !important;
-            }
-
-            header button {
-                white-space: nowrap !important;
-            }
-
-            /* Stats cards - 2 columns */
-            .px-8 {
-                padding-left: 16px !important;
-                padding-right: 16px !important;
-            }
-
-            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 12px !important;
-            }
-
-            .glass-card.rounded-2xl.p-5 {
-                padding: 16px !important;
-            }
-
-            .glass-card .text-3xl {
-                font-size: 24px !important;
-            }
-
-            .glass-card .text-xs {
-                font-size: 10px !important;
-            }
-
-            /* Client list */
-            .glass-card.rounded-2xl.overflow-hidden {
-                border-radius: 16px !important;
-            }
-
-            #clientListContainer>div {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                padding: 16px !important;
-                gap: 12px !important;
-            }
-
-            #clientListContainer .flex.items-center.gap-4 {
-                width: 100% !important;
-            }
-
-            #clientListContainer .flex.items-center.gap-6 {
-                width: 100% !important;
-                flex-wrap: wrap !important;
-                justify-content: flex-start !important;
-                gap: 16px !important;
-                margin-top: 4px !important;
-            }
-
-            #clientListContainer .text-right {
-                text-align: left !important;
-            }
-
-            #clientListContainer .hidden.md\\:block {
-                display: block !important;
-            }
-
-            #clientListContainer .hidden.lg\\:block {
-                display: block !important;
-            }
-
-            #clientListContainer .status-badge {
-                margin-left: 0 !important;
-            }
-
-            /* Detail panel - full screen */
-            #clientDetailPanel {
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-
-            #clientDetailPanel .p-6 {
-                padding: 20px !important;
-            }
-
-            /* Modals */
-            #addModal .max-w-md,
-            #editModal .max-w-md {
-                margin: 0 12px !important;
-                max-height: 90vh !important;
-                overflow-y: auto !important;
-            }
-
-            .glass-card.rounded-3xl.p-6 {
-                padding: 20px !important;
-            }
-
-            /* Toast */
-            .toast {
-                bottom: 90px !important;
-                padding: 10px 20px !important;
-                font-size: 13px !important;
-                white-space: nowrap !important;
-            }
-        }
-
-        /* ============================================
-   SMALL MOBILE (max-width: 480px)
-   ============================================ */
-        @media (max-width: 480px) {
-
-            /* Stats cards */
-            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
-            }
-
-            .glass-card.rounded-2xl.p-5 {
-                padding: 12px !important;
-            }
-
-            .glass-card .text-3xl {
-                font-size: 20px !important;
-            }
-
-            .glass-card svg {
-                width: 18px !important;
-                height: 18px !important;
-            }
-
-            /* Header buttons */
-            header .flex.items-center.gap-4 {
-                flex-wrap: wrap !important;
-            }
-
-            #statusFilter {
-                min-width: 130px !important;
-            }
-
-            header button {
-                padding: 8px 12px !important;
-                font-size: 12px !important;
-            }
-
-            header button svg {
-                width: 14px !important;
-                height: 14px !important;
-            }
-
-            /* Client list items */
-            #clientListContainer .flex.items-center.gap-6>div {
-                min-width: 100px !important;
-            }
-
-            /* Bottom nav */
-            aside nav a {
-                min-width: 56px !important;
-            }
-
-            aside nav a span:last-child {
-                font-size: 9px !important;
-            }
-
-            /* Detail panel header */
-            #detailAvatar {
-                width: 60px !important;
-                height: 60px !important;
-                font-size: 20px !important;
-            }
-
-            #detailName {
-                font-size: 18px !important;
-            }
-
-            /* Modals */
-            .glass-card.rounded-3xl.p-6 {
-                padding: 16px !important;
-            }
-
-            .glass-card h2 {
-                font-size: 18px !important;
-            }
-        }
-
-        /* ============================================
-   DESKTOP (above 1024px)
-   ============================================ */
-        @media (min-width: 1025px) {
-            .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-                grid-template-columns: repeat(4, 1fr) !important;
-            }
-
-            #clientListContainer .hidden.lg\\:block {
-                display: block !important;
-            }
-        }
-
-        /* Fix for client list items on all screens */
-        #clientListContainer>div {
-            transition: all 0.2s ease;
-        }
-
-        #clientListContainer .status-badge {
-            margin-left: auto;
-        }
-
-        @media (max-width: 768px) {
-            #clientListContainer .status-badge {
-                margin-left: 0;
-            }
-        }
-
-        /* Ensure modals are scrollable on small screens */
-        @media (max-height: 700px) {
-
-            #addModal .max-h-\[90vh\],
-            #editModal .max-h-\[90vh\] {
-                max-height: 85vh !important;
-                overflow-y: auto !important;
-            }
-        }
-
-        .loader {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-left-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Ensure scrolling works on all devices */
-        main {
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 100px !important;
-        }
-
-        /* Extra bottom space on mobile for the bottom nav */
-        @media (max-width: 768px) {
-            main {
-                padding-bottom: 140px !important;
-            }
-        }
-
-        /* Loading Skeletons */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        .skeleton-card {
-            background: rgba(23, 31, 51, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 20px;
-        }
-
-        .skeleton-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .skeleton-text {
-            height: 14px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
-        .skeleton-text-sm {
-            height: 12px;
-            width: 60%;
-            border-radius: 4px;
-        }
-
-        .skeleton-badge {
-            width: 70px;
-            height: 24px;
-            border-radius: 100px;
-        }
-
-        @media (max-width: 768px) {
-            header .flex.items-center.gap-4 {
-                flex-wrap: wrap !important;
-            }
-
-            #clientSearch {
-                width: 100% !important;
-                max-width: 200px !important;
-            }
-        }
-
-        /* Page Transitions */
-        .page-transition {
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .page-enter {
-            opacity: 0;
-            transform: translateY(8px);
-        }
-
-        .page-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .page-exit {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .page-exit-active {
-            opacity: 0;
-            transform: translateY(-8px);
-        }
-
-        /* Fade animation for page content */
-        #clientsPage,
-        #emailsPage,
-        #settingsPage {
-            animation: fadeIn 0.25s ease-out;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 </head>
 
 <body class="flex min-h-screen overflow-hidden">
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 z-[100] bg-background flex items-center justify-center">
+        <div class="text-center">
+            <div
+                class="w-12 h-12 rounded-full gradient-primary flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
+                <svg class="w-6 h-6 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+            </div>
+            <p class="text-indigo-400 font-medium">Loading CloseDraft...</p>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <aside class="glass-sidebar fixed left-0 top-0 h-full w-[260px] flex flex-col py-8 z-40">
@@ -738,10 +82,11 @@
                 <span class="text-xs font-bold uppercase tracking-wider">Dashboard</span>
             </a>
 
+            <!-- Clients Nav Item - INACTIVE BY DEFAULT -->
             <a href="#" onclick="switchPage('clients'); return false;"
-                class="flex items-center gap-3 px-6 py-3 text-white border-l-2 border-indigo-500 bg-indigo-500/10 transition-all"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
                 id="clientsNav">
-                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
                     </path>
@@ -833,15 +178,6 @@
                         <button onclick="switchPage('clients')"
                             class="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-sm font-medium transition-all">
                             + New Client
-                        </button>
-                        <button onclick="openQuickEmailFromDashboard()"
-                            class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            Quick Email
                         </button>
                         <div
                             class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
@@ -2107,7 +1443,7 @@
                             class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
                             Cancel
                         </button>
-                        <button type="submit"
+                        <button type="button" onclick="submitAddClientForm()"
                             class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium shadow-lg shadow-indigo-500/20">
                             Add Client
                         </button>
@@ -2383,59 +1719,115 @@
         <span id="toastMsg" class="text-sm"></span>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-         // Supabase config
+    <script>
+        // Conditional logging
+        const isDevelopment = window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1';
+
+        const originalLog = console.log;
+        console.log = function (...args) {
+            if (isDevelopment) {
+                originalLog.apply(console, args);
+            }
+        };
+
+        // Rest of your auth code...
+        // Supabase config, checkAuth, etc.
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase config
         const SUPABASE_URL = 'https://txibbsaodcpaturobeok.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24';
 
-    // Initialize Supabase globally
-    window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Initialize Supabase globally
+        window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Check if user is logged in
-    async function checkAuth() {
-        const { data: { user }, error } = await window.supabase.auth.getUser();
+        // Check if user is logged in
+        async function checkAuth() {
+            const { data: { user }, error } = await window.supabase.auth.getUser();
 
-        if (!user) {
-            window.location.href = '/login.html';
-            return null;
+            if (!user) {
+                window.location.href = '/login.html';
+                return null;
+            }
+
+            updateUserUI(user);
+            return user;
         }
 
-        updateUserUI(user);
-        return user;
-    }
+        // Update UI with user info
+        function updateUserUI(user) {
+            const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+            const initial = displayName.charAt(0).toUpperCase();
 
-    // Update UI with user info
-    function updateUserUI(user) {
-        const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-        const initial = displayName.charAt(0).toUpperCase();
+            // Update all avatar elements
+            const avatars = document.querySelectorAll('.w-8.h-8.rounded-full.gradient-primary');
+            avatars.forEach(avatar => {
+                avatar.textContent = initial;
+            });
 
-        const avatars = document.querySelectorAll('.w-8.h-8.rounded-full.gradient-primary');
-        avatars.forEach(avatar => {
-            avatar.textContent = initial;
+            // Store user settings globally
+            window.userSettings = {
+                name: displayName,
+                email: user.email,
+                id: user.id
+            };
+
+            // SET THE GREETING IMMEDIATELY (before app.js loads)
+            const greetingEl = document.getElementById('dashboardUserName');
+            if (greetingEl) {
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+                greetingEl.textContent = `${greeting}, ${displayName}`;
+            }
+
+            console.log('✅ User settings updated:');
+        }
+
+        // Logout function
+        async function logout() {
+            await window.supabase.auth.signOut();
+            window.location.href = '/login.html';
+        }
+
+        // Wait for auth, THEN load the dashboard scripts
+        checkAuth().then(user => {
+            if (user) {
+                console.log('✅ Auth complete, loading dashboard...');
+
+                const clientsScript = document.createElement('script');
+                clientsScript.src = 'js/clients.js';
+                document.body.appendChild(clientsScript);
+
+                const uiScript = document.createElement('script');
+                uiScript.src = 'js/ui.js';
+                document.body.appendChild(uiScript);
+
+                const appScript = document.createElement('script');
+                appScript.src = 'js/app.js';
+                document.body.appendChild(appScript);
+
+                // Hide loading overlay after scripts load
+                appScript.onload = () => {
+                    setTimeout(() => {
+                        const overlay = document.getElementById('loadingOverlay');
+                        if (overlay) {
+                            overlay.style.opacity = '0';
+                            overlay.style.transition = 'opacity 0.3s ease';
+                            setTimeout(() => overlay.remove(), 300);
+                        }
+                    }, 200); // Small delay for smooth transition
+                };
+            }
         });
-
-        window.userSettings = {
-            name: displayName,
-            email: user.email,
-            id: user.id
-        };
-    }
-
-    // Logout function
-    async function logout() {
-        await window.supabase.auth.signOut();
-        window.location.href = '/login.html';
-    }
-
-    // Run auth check immediately
-    checkAuth();
-</script>
+    </script>
 
 
-    <script src="js/clients.js"></script>
+    <!-- <script src="js/clients.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/app.js"></script> -->
 </body>
 
 </html>

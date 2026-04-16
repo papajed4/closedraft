@@ -12,7 +12,7 @@ let currentSort = 'name-asc';  // ← ADD THIS
 let generatedSubject = '';
 let generatedBody = '';
 let currentEmailClient = null;
-let currentPage = 'clients';
+let currentPage = 'dashboard';
 let currentEmailFilter = 'all';
 let allEmails = [];
 let currentDetailEmail = null;
@@ -22,6 +22,35 @@ let showArchived = false;
 let templates = [];
 let currentTemplate = null;
 let templateToDelete = null;
+
+
+
+// Wait for auth to set userSettings
+if (!window.userSettings || window.userSettings.name === 'Freelancer') {
+    console.log('⏳ Waiting for user settings...');
+    // Retry after a short delay
+    setTimeout(() => {
+        refreshUserSettings();
+        if (currentPage === 'dashboard') {
+            updateDashboardGreeting();
+        }
+    }, 500);
+}
+
+let userSettings = window.userSettings || {
+    name: 'Freelancer',
+    email: '',
+    id: null
+};
+
+// Function to refresh settings from global
+function refreshUserSettings() {
+    if (window.userSettings) {
+        userSettings.name = window.userSettings.name;
+        userSettings.email = window.userSettings.email;
+        userSettings.id = window.userSettings.id;
+    }
+}
 
 // ==================== AUTH TOKEN HELPER ====================
 async function getAuthToken() {
@@ -35,7 +64,7 @@ async function authFetch(url, options = {}) {
         console.error('❌ No auth token available');
         throw new Error('Not authenticated');
     }
-    
+
     return fetch(url, {
         ...options,
         headers: {
@@ -46,10 +75,7 @@ async function authFetch(url, options = {}) {
 }
 
 // ==================== USER SETTINGS ====================
-const userSettings = {
-    name: 'Jedidiah',  // ← CHANGE TO YOUR REAL NAME
-    email: 'your-email@gmail.com'
-};
+
 
 // ============================================
 // LOADING SKELETONS
@@ -241,10 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadEmailHistory();   // Need emails for activity feed
     loadDashboard();      // Load dashboard with data
     loadTemplates();      // Preload templates for faster switching
-
-    // Set up form listeners
-    const addClientForm = document.getElementById('addClientForm');
-    if (addClientForm) addClientForm.addEventListener('submit', handleAddClient);
 
     const editClientForm = document.getElementById('editClientForm');
     if (editClientForm) editClientForm.addEventListener('submit', handleEditClient);
@@ -444,11 +466,14 @@ async function loadDashboard() {
 }
 
 function updateDashboardGreeting() {
+    // Use window.userSettings directly if available
+    const settings = window.userSettings || userSettings;
+
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
     const icon = hour < 12 ? '☀️' : hour < 18 ? '🌤️' : '🌙';
 
-    document.getElementById('dashboardUserName').textContent = `${greeting}, ${userSettings.name}`;
+    document.getElementById('dashboardUserName').textContent = `${greeting}, ${settings.name}`;
     document.getElementById('dashboardGreetingIcon').textContent = icon;
 
     const dateEl = document.getElementById('dashboardDate');
@@ -555,11 +580,6 @@ function populateQuickEmailClients() {
         clients.map(client => `<option value="${client.id}">${client.name} (${client.business || 'No business'})</option>`).join('');
 }
 
-function openQuickEmailFromDashboard() {
-    switchPage('clients');
-    setTimeout(() => openAddModal(), 100);
-}
-
 async function generateQuickEmail() {
     const clientId = document.getElementById('dashboardQuickEmailClient').value;
     if (!clientId) {
@@ -579,7 +599,7 @@ async function generateQuickEmail() {
         const response = await authFetch('/api/generate-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ clientId, type, tone, freelancerName: userSettings.name })
+            body: JSON.stringify({ clientId, type, tone, freelancerName: window.userSettings?.name || userSettings.name })
         });
 
         const data = await response.json();
@@ -745,7 +765,12 @@ function filterClients() {
 }
 
 async function handleAddClient(e) {
-    e.preventDefault();
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+    }
+    
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
@@ -765,14 +790,17 @@ async function handleAddClient(e) {
     try {
         await addClient(clientData);
         showToast('Client added successfully', 'success');
-        closeAddModal();
-        await loadClients();
+        closeAddModal();  // Close modal FIRST
+        await loadClients();  // Then reload clients
+        return false;  // ← ADD THIS
     } catch (error) {
         showToast(error.message || 'Failed to add client', 'error');
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }
+    
+    return false;  // ← ADD THIS TOO
 }
 
 // ============================================
@@ -903,7 +931,7 @@ async function handleEditTemplate(e) {
     };
 
     try {
-        const response = await fetch(`/api/templates/${templateId}`, {
+        const response = await authFetch(`/api/templates/${templateId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(templateData)
@@ -937,7 +965,7 @@ async function confirmDeleteTemplate() {
     if (!templateToDelete) return;
 
     try {
-        const response = await fetch(`/api/templates/${templateToDelete}`, {
+        const response = await authFetch(`/api/templates/${templateToDelete}`, {
             method: 'DELETE'
         });
 
@@ -1048,6 +1076,40 @@ async function saveNotes() {
         showToast('Notes saved', 'success');
     } catch (error) {
         showToast('Failed to save notes', 'error');
+    }
+}
+
+
+async function submitAddClientForm() {
+    const clientData = {
+        name: document.getElementById('clientName').value,
+        business: document.getElementById('clientBusiness').value || null,
+        email: document.getElementById('clientEmail').value || null,
+        project: document.getElementById('clientProject').value || null,
+        amount: document.getElementById('clientAmount').value ? parseFloat(document.getElementById('clientAmount').value) : null,
+        status: document.getElementById('clientStatus').value
+    };
+
+    if (!clientData.name) {
+        showToast('Client name is required', 'error');
+        return;
+    }
+
+    const submitBtn = document.querySelector('#addClientForm button[onclick="submitAddClientForm()"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+
+    try {
+        await addClient(clientData);
+        showToast('Client added successfully', 'success');
+        closeAddModal();
+        await loadClients();
+    } catch (error) {
+        showToast(error.message || 'Failed to add client', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
     }
 }
 
@@ -1334,7 +1396,7 @@ async function generateEmail() {
                 clientId: currentEmailClient.id,
                 type,
                 tone,
-                freelancerName: userSettings.name
+                freelancerName: window.userSettings?.name || userSettings.name
             })
         });
 

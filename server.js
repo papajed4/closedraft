@@ -25,10 +25,10 @@ app.use((req, res, next) => {
 async function getUserFromToken(req) {
     const authHeader = req.headers.authorization;
     if (!authHeader) return null;
-    
+
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-    
+
     if (error) return null;
     return user;
 }
@@ -50,8 +50,8 @@ app.get('/ping', (req, res) => {
 
 // Health check - detailed
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'healthy', 
+    res.status(200).json({
+        status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime()
     });
@@ -63,7 +63,7 @@ app.get('/api/health', (req, res) => {
 app.get('/api/clients', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     try {
         const showArchived = req.query.showArchived === 'true';
 
@@ -96,7 +96,7 @@ app.get('/api/clients', async (req, res) => {
 app.post('/api/clients', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { name, business, email, project, amount, status } = req.body;
 
     if (!name) {
@@ -131,7 +131,7 @@ app.post('/api/clients', async (req, res) => {
 app.patch('/api/clients/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { id } = req.params;
     const updates = req.body;
 
@@ -165,7 +165,7 @@ app.patch('/api/clients/:id', async (req, res) => {
             return res.status(500).json({ error: error.message });
         }
 
-        console.log('✅ Client updated successfully:', data);
+        console.log('✅ Client updated successfully:');
         res.status(200).json({ client: data });
 
     } catch (error) {
@@ -178,7 +178,7 @@ app.patch('/api/clients/:id', async (req, res) => {
 app.delete('/api/clients/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { id } = req.params;
 
     try {
@@ -200,7 +200,7 @@ app.delete('/api/clients/:id', async (req, res) => {
 app.patch('/api/clients/:id/archive', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { id } = req.params;
 
     try {
@@ -224,7 +224,7 @@ app.patch('/api/clients/:id/archive', async (req, res) => {
 app.patch('/api/clients/:id/restore', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { id } = req.params;
 
     try {
@@ -246,12 +246,10 @@ app.patch('/api/clients/:id/restore', async (req, res) => {
 
 // Generate email endpoint
 app.post('/api/generate-email', async (req, res) => {
-    // RESTORE AUTH CHECK
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     console.log('📧 Generate email endpoint hit');
-    console.log('📧 req.body:', req.body);
 
     if (!req.body) {
         return res.status(400).json({ error: 'No request body' });
@@ -264,28 +262,6 @@ app.post('/api/generate-email', async (req, res) => {
             error: 'Missing required fields',
             received: { type, tone }
         });
-    }
-
-    // If no clientId but we have recipient, create or find client
-    if (!clientId && recipient) {
-        // Try to find client by email
-        const { data: existingClient } = await supabase
-            .from('clients')
-            .select('*')
-            .eq('user_id', user.id)
-            .ilike('email', `%${recipient}%`)
-            .single();
-        
-        if (existingClient) {
-            // Use existing client
-            return generateEmailForClient(existingClient, type, tone, freelancerName, res);
-        } else {
-            // Return mock for unknown recipient
-            return res.status(200).json({
-                subject: `${type}: Quick follow-up`,
-                body: `Hi there,\n\nJust following up. Let me know if you have any questions!\n\nBest,\n${freelancerName || 'Freelancer'}`
-            });
-        }
     }
 
     // If clientId provided, fetch and generate
@@ -301,18 +277,58 @@ app.post('/api/generate-email', async (req, res) => {
             return res.status(404).json({ error: 'Client not found' });
         }
 
-        return generateEmailForClient(client, type, tone, freelancerName, res);
+        return generateEmailForClient(client, type, tone, freelancerName, res, user);
     }
 
-    // Fallback
+    // If no clientId but we have recipient, try to find client
+    if (recipient) {
+        const { data: existingClient } = await supabase
+            .from('clients')
+            .select('*')
+            .eq('user_id', user.id)
+            .ilike('email', `%${recipient}%`)
+            .single();
+
+        if (existingClient) {
+            return generateEmailForClient(existingClient, type, tone, freelancerName, res, user);
+        }
+    }
+
+    // Fallback - no client found, generate mock email and save
+    const mockSubject = `${type}: Quick follow-up`;
+    const mockBody = `Hi there,\n\nJust following up. Let me know if you have any questions!\n\nBest,\n${freelancerName || 'Freelancer'}`;
+
+    const { data: savedEmail, error: saveError } = await supabase
+        .from('emails')
+        .insert([{
+            user_id: user.id,
+            client_id: null,
+            subject: mockSubject,
+            body: mockBody,
+            type,
+            tone
+        }])
+        .select()
+        .single();
+
+    if (saveError) {
+        console.error('❌ Failed to save mock email:', saveError);
+    } else {
+        console.log('✅ Mock email saved:', savedEmail.id);
+    }
+
     return res.status(200).json({
-        subject: `${type}: Quick follow-up`,
-        body: `Hi there,\n\nJust following up. Let me know if you have any questions!\n\nBest,\n${freelancerName || 'Freelancer'}`
+        subject: mockSubject,
+        body: mockBody,
+        emailId: savedEmail?.id
     });
 });
 
+
+
 // Helper function
-async function generateEmailForClient(client, type, tone, freelancerName, res) {
+
+async function generateEmailForClient(client, type, tone, freelancerName, res, user) {
     try {
         console.log('✅ Client found:', client.name);
 
@@ -331,10 +347,31 @@ async function generateEmailForClient(client, type, tone, freelancerName, res) {
             body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
         }
 
+        // SAVE TO EMAILS TABLE
+        const { data: savedEmail, error: saveError } = await supabase
+            .from('emails')
+            .insert([{
+                user_id: user.id,
+                client_id: client.id,
+                subject,
+                body,
+                type,
+                tone
+            }])
+            .select()
+            .single();
+
+        if (saveError) {
+            console.error('❌ Failed to save email:', saveError);
+        } else {
+            console.log('✅ Email saved to history:', savedEmail.id);
+        }
+
         res.status(200).json({
             subject,
             body,
-            fullText: generatedText
+            fullText: generatedText,
+            emailId: savedEmail?.id
         });
     } catch (error) {
         console.error('❌ Email generation error:', error);
@@ -346,7 +383,7 @@ async function generateEmailForClient(client, type, tone, freelancerName, res) {
 app.get('/api/emails/:clientId', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { clientId } = req.params;
 
     try {
@@ -369,7 +406,7 @@ app.get('/api/emails/:clientId', async (req, res) => {
 app.get('/api/emails', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     try {
         const { data: emails, error } = await supabase
             .from('emails')
@@ -394,14 +431,14 @@ app.get('/api/emails', async (req, res) => {
 app.get('/api/templates', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     try {
         const { data: templates, error } = await supabase
             .from('templates')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         res.status(200).json({ templates });
     } catch (error) {
@@ -414,27 +451,27 @@ app.get('/api/templates', async (req, res) => {
 app.post('/api/templates', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { name, type, tone, subject, body } = req.body;
-    
+
     if (!name || !body) {
         return res.status(400).json({ error: 'Name and body are required' });
     }
-    
+
     try {
         const { data, error } = await supabase
             .from('templates')
-            .insert([{ 
+            .insert([{
                 user_id: user.id,
-                name, 
-                type, 
-                tone, 
-                subject, 
-                body 
+                name,
+                type,
+                tone,
+                subject,
+                body
             }])
             .select()
             .single();
-        
+
         if (error) throw error;
         res.status(201).json({ template: data });
     } catch (error) {
@@ -447,10 +484,10 @@ app.post('/api/templates', async (req, res) => {
 app.patch('/api/templates/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { id } = req.params;
     const updates = req.body;
-    
+
     try {
         const { data, error } = await supabase
             .from('templates')
@@ -459,7 +496,7 @@ app.patch('/api/templates/:id', async (req, res) => {
             .eq('user_id', user.id)
             .select()
             .single();
-        
+
         if (error) throw error;
         res.status(200).json({ template: data });
     } catch (error) {
@@ -472,16 +509,16 @@ app.patch('/api/templates/:id', async (req, res) => {
 app.delete('/api/templates/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { id } = req.params;
-    
+
     try {
         const { error } = await supabase
             .from('templates')
             .delete()
             .eq('id', id)
             .eq('user_id', user.id);
-        
+
         if (error) throw error;
         res.status(200).json({ success: true });
     } catch (error) {
