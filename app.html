@@ -726,9 +726,11 @@
         </div>
 
         <nav class="flex-1 space-y-1">
+            <!-- Dashboard Nav Item -->
             <a href="#" onclick="switchPage('dashboard'); return false;"
-                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="flex items-center gap-3 px-6 py-3 text-white border-l-2 border-indigo-500 bg-indigo-500/10 transition-all"
+                id="dashboardNav">
+                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
                     </path>
@@ -759,6 +761,31 @@
                 <span class="text-xs font-bold uppercase tracking-wider">Emails</span>
             </a>
 
+            <!-- Templates Nav Item -->
+            <a href="#" onclick="switchPage('templates'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
+                id="templatesNav">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Templates</span>
+            </a>
+
+            <!-- Analytics Nav Item -->
+            <a href="#" onclick="switchPage('analytics'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
+                id="analyticsNav">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Analytics</span>
+            </a>
+
+            <!-- Settings Nav Item -->
             <a href="#" onclick="switchPage('settings'); return false;"
                 class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
                 id="settingsNav">
@@ -774,8 +801,13 @@
         </nav>
 
         <div class="px-6 mt-auto pt-8">
+            <button onclick="logout()"
+                class="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-bold uppercase tracking-wider border border-red-500/20 transition-all">
+                Sign Out
+            </button>
+
             <button
-                class="w-full py-2.5 gradient-primary rounded-lg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/20 hover:opacity-90 transition-opacity">
+                class="w-full py-2.5 gradient-primary rounded-lg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/20 hover:opacity-90 transition-opacity mt-3">
                 Upgrade to Pro
             </button>
         </div>
@@ -784,8 +816,226 @@
     <!-- Main Content -->
     <main class="flex-1 ml-[260px] h-screen overflow-y-auto pb-8">
 
-        <div id="clientsPage">
+        <!-- ==================== DASHBOARD PAGE ==================== -->
+        <div id="dashboardPage">
 
+            <!-- Top Bar -->
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
+                            <span id="dashboardUserName">Freelancer</span>
+                            <span id="dashboardGreetingIcon" class="text-indigo-400">☀️</span>
+                        </h2>
+                        <p class="text-slate-400 text-sm mt-0.5" id="dashboardDate"></p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="switchPage('clients')"
+                            class="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-sm font-medium transition-all">
+                            + New Client
+                        </button>
+                        <button onclick="openQuickEmailFromDashboard()"
+                            class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            Quick Email
+                        </button>
+                        <div
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            JD
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="px-8 py-6">
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Total Clients</span>
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="dashTotalClients">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Needs
+                                Attention</span>
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="dashNeedsAttention">0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Pending
+                                Payments</span>
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="dashPendingPayments">$0</p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Emails Sent</span>
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-3xl font-bold text-white mt-2" id="dashEmailsSent">0</p>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="grid grid-cols-12 gap-6">
+
+                    <!-- Left Column -->
+                    <div class="col-span-12 lg:col-span-7 space-y-6">
+
+                        <!-- Needs Attention Section -->
+                        <div class="glass-card rounded-2xl overflow-hidden">
+                            <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                                <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Needs Attention
+                                </h3>
+                                <a href="#" onclick="switchPage('clients'); filterAttentionClients(); return false;"
+                                    class="text-xs text-indigo-400 hover:text-indigo-300">View All →</a>
+                            </div>
+                            <div id="dashboardAttentionList" class="divide-y divide-white/5">
+                                <!-- Attention clients loaded here -->
+                            </div>
+                            <div id="dashboardAttentionEmpty" class="p-8 text-center hidden">
+                                <p class="text-slate-400 text-sm">No clients need attention right now 🎉</p>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <h3 class="font-semibold text-white text-sm uppercase tracking-wider mb-4">Recent Activity
+                            </h3>
+                            <div id="dashboardActivityList" class="space-y-4">
+                                <!-- Activity loaded here -->
+                            </div>
+                            <div id="dashboardActivityEmpty" class="text-center py-4 hidden">
+                                <p class="text-slate-400 text-sm">No recent activity</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-span-12 lg:col-span-5 space-y-6">
+
+                        <!-- Quick Email Card -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                                    </path>
+                                </svg>
+                                <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Quick Email</h3>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Select
+                                        Client</label>
+                                    <select id="dashboardQuickEmailClient"
+                                        class="w-full px-4 py-3 rounded-xl input-glass text-white text-sm">
+                                        <option value="">-- Select a client --</option>
+                                    </select>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Type</label>
+                                        <select id="dashboardQuickEmailType"
+                                            class="w-full px-3 py-2 rounded-xl input-glass text-white text-sm">
+                                            <option value="Follow-up">Follow-up</option>
+                                            <option value="Payment Reminder">Payment</option>
+                                            <option value="Cold Outreach">Cold</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Tone</label>
+                                        <select id="dashboardQuickEmailTone"
+                                            class="w-full px-3 py-2 rounded-xl input-glass text-white text-sm">
+                                            <option value="Friendly">Friendly</option>
+                                            <option value="Professional">Professional</option>
+                                            <option value="Firm">Firm</option>
+                                            <option value="Casual">Casual</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button onclick="generateQuickEmail()" id="dashboardGenerateBtn"
+                                    class="w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                                        </path>
+                                    </svg>
+                                    Generate Draft
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <h3 class="font-semibold text-white text-sm uppercase tracking-wider mb-4">Quick Stats</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-400">Active Clients</span>
+                                        <span class="text-white font-medium" id="dashActiveClients">0</span>
+                                    </div>
+                                    <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full gradient-primary rounded-full" id="dashActiveBar"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-400">Payment Due</span>
+                                        <span class="text-white font-medium" id="dashPaymentDueCount">0</span>
+                                    </div>
+                                    <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-red-400 rounded-full" id="dashPaymentBar"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CLIENTS PAGE ==================== -->
+        <div id="clientsPage" class="hidden">
             <!-- Clients Page Header -->
             <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
                 <div class="flex items-center justify-between">
@@ -1229,23 +1479,316 @@
             </div>
         </div>
 
+        <!-- ==================== TEMPLATES PAGE ==================== -->
+        <div id="templatesPage" class="hidden">
+
+            <!-- Top Bar -->
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white tracking-tight">Email Templates</h2>
+                        <p class="text-slate-400 text-sm mt-0.5">Save and reuse your best emails</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="openAddTemplateModal()"
+                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            New Template
+                        </button>
+                        <div
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            JD
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Templates Grid -->
+            <div class="px-8 py-6">
+                <div id="templatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Templates loaded here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="templatesEmptyState" class="p-12 text-center hidden">
+                    <div class="max-w-xs mx-auto">
+                        <div
+                            class="w-24 h-24 mx-auto mb-4 bg-indigo-500/10 rounded-full flex items-center justify-center">
+                            <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">No templates yet</h3>
+                        <p class="text-slate-400 text-sm mb-6">Save your best emails as templates to reuse them anytime.
+                        </p>
+                        <button onclick="openAddTemplateModal()"
+                            class="gradient-primary text-white px-6 py-3 rounded-xl text-sm font-bold">
+                            Create Your First Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Template Modal -->
+        <div id="addTemplateModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeAddTemplateModal()"></div>
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl px-4 max-h-[90vh] overflow-y-auto">
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Create Template</h2>
+
+                    <form id="addTemplateForm" class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Template
+                                Name</label>
+                            <input type="text" id="templateName" required placeholder="e.g. Friendly Follow-up"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Type</label>
+                                <select id="templateType" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                    <option value="Follow-up">Follow-up</option>
+                                    <option value="Payment Reminder">Payment Reminder</option>
+                                    <option value="Cold Outreach">Cold Outreach</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Tone</label>
+                                <select id="templateTone" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                    <option value="Friendly">Friendly</option>
+                                    <option value="Professional">Professional</option>
+                                    <option value="Firm">Firm</option>
+                                    <option value="Casual">Casual</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Subject</label>
+                            <input type="text" id="templateSubject" placeholder="Email subject line"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Body</label>
+                            <textarea id="templateBody" rows="6" required
+                                placeholder="Write your email template here... Use [Client Name] as placeholder"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500 resize-none"></textarea>
+                        </div>
+
+                        <div class="bg-slate-800/30 rounded-xl p-3">
+                            <p class="text-xs text-slate-400">Use placeholders: <code
+                                    class="text-indigo-300">[Client Name]</code> will be replaced with the client's
+                                actual name.</p>
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="closeAddTemplateModal()"
+                                class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium">
+                                Save Template
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Template Modal -->
+        <div id="editTemplateModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeEditTemplateModal()"></div>
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl px-4 max-h-[90vh] overflow-y-auto">
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Edit Template</h2>
+
+                    <form id="editTemplateForm" class="space-y-4">
+                        <input type="hidden" id="editTemplateId">
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Template
+                                Name</label>
+                            <input type="text" id="editTemplateName" required
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Type</label>
+                                <select id="editTemplateType"
+                                    class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                    <option value="Follow-up">Follow-up</option>
+                                    <option value="Payment Reminder">Payment Reminder</option>
+                                    <option value="Cold Outreach">Cold Outreach</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Tone</label>
+                                <select id="editTemplateTone"
+                                    class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                    <option value="Friendly">Friendly</option>
+                                    <option value="Professional">Professional</option>
+                                    <option value="Firm">Firm</option>
+                                    <option value="Casual">Casual</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Subject</label>
+                            <input type="text" id="editTemplateSubject"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Body</label>
+                            <textarea id="editTemplateBody" rows="6" required
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white resize-none"></textarea>
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="closeEditTemplateModal()"
+                                class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Template Confirmation Modal -->
+        <div id="deleteTemplateModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeDeleteTemplateModal()"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm px-4">
+                <div class="glass-card rounded-3xl p-6 text-center">
+                    <div class="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Delete Template?</h3>
+                    <p class="text-slate-400 text-sm mb-6" id="deleteTemplateName">This action cannot be undone.</p>
+                    <div class="flex gap-3">
+                        <button onclick="closeDeleteTemplateModal()"
+                            class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
+                            Cancel
+                        </button>
+                        <button onclick="confirmDeleteTemplate()"
+                            class="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ANALYTICS PAGE ==================== -->
+        <div id="analyticsPage" class="hidden">
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Analytics</h2>
+                    <div
+                        class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                        JD</div>
+                </div>
+            </header>
+
+            <div class="flex items-center justify-center min-h-[60vh]">
+                <div class="text-center max-w-md px-4">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-indigo-500/10 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3">Analytics Coming Soon</h2>
+                    <p class="text-slate-400 mb-2">We're building insights to help you track:</p>
+                    <ul class="text-slate-300 text-sm space-y-1 mb-6">
+                        <li>• Response rates by email type</li>
+                        <li>• Revenue recovered from reminders</li>
+                        <li>• Best performing tones</li>
+                        <li>• Client engagement over time</li>
+                    </ul>
+                    <p class="text-xs text-slate-500">Stay tuned! This feature will be available soon.</p>
+                </div>
+            </div>
+        </div>
+
         <!-- ==================== SETTINGS PAGE ==================== -->
         <div id="settingsPage" class="hidden">
-            <!-- Top Bar -->
             <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-white tracking-tight">Settings</h2>
                     <div
                         class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
-                        JD
-                    </div>
+                        JD</div>
                 </div>
             </header>
 
-            <!-- Settings Content -->
-            <div class="px-8 py-6">
+            <div class="px-8 py-6 max-w-2xl">
+                <!-- Profile Section -->
+                <div class="glass-card rounded-2xl p-6 mb-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Profile</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Name</label>
+                            <input type="text" id="settingsName" value="Jedidiah"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Email</label>
+                            <input type="email" id="settingsEmail" value="your-email@gmail.com"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+                        <button onclick="saveSettings()"
+                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold">Save
+                            Changes</button>
+                    </div>
+                </div>
+
+                <!-- Plan Section -->
                 <div class="glass-card rounded-2xl p-6">
-                    <p class="text-slate-400">Settings coming soon...</p>
+                    <h3 class="text-lg font-bold text-white mb-4">Plan</h3>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-white font-medium">Free Plan</p>
+                            <p class="text-slate-400 text-sm">10 clients • 20 AI emails/month</p>
+                        </div>
+                        <button class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold">Upgrade to
+                            Pro</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1498,6 +2041,7 @@
                 </div>
             </div>
         </div>
+
     </main>
 
     <!-- Add Client Modal -->
@@ -1838,6 +2382,56 @@
         </svg>
         <span id="toastMsg" class="text-sm"></span>
     </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+         // Supabase config
+        const SUPABASE_URL = 'https://txibbsaodcpaturobeok.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24';
+
+    // Initialize Supabase globally
+    window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Check if user is logged in
+    async function checkAuth() {
+        const { data: { user }, error } = await window.supabase.auth.getUser();
+
+        if (!user) {
+            window.location.href = '/login.html';
+            return null;
+        }
+
+        updateUserUI(user);
+        return user;
+    }
+
+    // Update UI with user info
+    function updateUserUI(user) {
+        const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+        const initial = displayName.charAt(0).toUpperCase();
+
+        const avatars = document.querySelectorAll('.w-8.h-8.rounded-full.gradient-primary');
+        avatars.forEach(avatar => {
+            avatar.textContent = initial;
+        });
+
+        window.userSettings = {
+            name: displayName,
+            email: user.email,
+            id: user.id
+        };
+    }
+
+    // Logout function
+    async function logout() {
+        await window.supabase.auth.signOut();
+        window.location.href = '/login.html';
+    }
+
+    // Run auth check immediately
+    checkAuth();
+</script>
+
 
     <script src="js/clients.js"></script>
     <script src="js/ui.js"></script>

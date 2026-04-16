@@ -19,6 +19,31 @@ let currentDetailEmail = null;
 let csvData = [];
 let csvHeaders = [];
 let showArchived = false;
+let templates = [];
+let currentTemplate = null;
+let templateToDelete = null;
+
+// ==================== AUTH TOKEN HELPER ====================
+async function getAuthToken() {
+    const { data: { session } } = await window.supabase.auth.getSession();
+    return session?.access_token || null;
+}
+
+async function authFetch(url, options = {}) {
+    const token = await getAuthToken();
+    if (!token) {
+        console.error('❌ No auth token available');
+        throw new Error('Not authenticated');
+    }
+    
+    return fetch(url, {
+        ...options,
+        headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`
+        }
+    });
+}
 
 // ==================== USER SETTINGS ====================
 const userSettings = {
@@ -131,32 +156,111 @@ function sortClientsArray(clientsArray) {
 window.addEventListener('pageshow', function (event) {
     if (event.persisted || performance.navigation.type === 1) {
         loadClients();
+        loadEmailHistory();
+        loadTemplates();
+        if (currentPage === 'dashboard') {
+            loadDashboard();
+        } else if (currentPage === 'clients') {
+            loadClients();
+        } else if (currentPage === 'emails') {
+            loadEmailHistory();
+        } else if (currentPage === 'templates') {
+            loadTemplates();
+        }
     }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Set initial page transition styles
+    // Get all page elements
+    const dashboardPage = document.getElementById('dashboardPage');
     const clientsPage = document.getElementById('clientsPage');
-    if (clientsPage) {
-        clientsPage.style.opacity = '1';
-        clientsPage.style.transform = 'translateY(0)';
+    const emailsPage = document.getElementById('emailsPage');
+    const templatesPage = document.getElementById('templatesPage');
+    const analyticsPage = document.getElementById('analyticsPage');
+    const settingsPage = document.getElementById('settingsPage');
+
+    // Hide all pages except dashboard
+    if (clientsPage) clientsPage.classList.add('hidden');
+    if (emailsPage) emailsPage.classList.add('hidden');
+    if (templatesPage) templatesPage.classList.add('hidden');
+    if (analyticsPage) analyticsPage.classList.add('hidden');
+    if (settingsPage) settingsPage.classList.add('hidden');
+
+    // Show dashboard with initial styles
+    if (dashboardPage) {
+        dashboardPage.classList.remove('hidden');
+        dashboardPage.style.opacity = '1';
+        dashboardPage.style.transform = 'translateY(0)';
     }
 
-    loadClients();
-    document.getElementById('addClientForm').addEventListener('submit', handleAddClient);
-    document.getElementById('editClientForm').addEventListener('submit', handleEditClient);
+    // Set default page to dashboard
+    currentPage = 'dashboard';
 
-    // Set up email search
+    // Set active nav item to dashboard
+    const dashboardNav = document.getElementById('dashboardNav');
+    const clientsNav = document.getElementById('clientsNav');
+    const emailsNav = document.getElementById('emailsNav');
+    const templatesNav = document.getElementById('templatesNav');
+    const analyticsNav = document.getElementById('analyticsNav');
+    const settingsNav = document.getElementById('settingsNav');
+
+    // Remove active state from all nav items first
+    if (dashboardNav) {
+        dashboardNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        dashboardNav.classList.add('text-slate-400');
+    }
+    if (clientsNav) {
+        clientsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        clientsNav.classList.add('text-slate-400');
+    }
+    if (emailsNav) {
+        emailsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        emailsNav.classList.add('text-slate-400');
+    }
+    if (templatesNav) {
+        templatesNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        templatesNav.classList.add('text-slate-400');
+    }
+    if (analyticsNav) {
+        analyticsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        analyticsNav.classList.add('text-slate-400');
+    }
+    if (settingsNav) {
+        settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        settingsNav.classList.add('text-slate-400');
+    }
+
+    // Set dashboard nav as active
+    if (dashboardNav) {
+        dashboardNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        dashboardNav.classList.remove('text-slate-400');
+    }
+
+    // Load initial data
+    loadClients();        // Need clients for dashboard stats and templates dropdown
+    loadEmailHistory();   // Need emails for activity feed
+    loadDashboard();      // Load dashboard with data
+    loadTemplates();      // Preload templates for faster switching
+
+    // Set up form listeners
+    const addClientForm = document.getElementById('addClientForm');
+    if (addClientForm) addClientForm.addEventListener('submit', handleAddClient);
+
+    const editClientForm = document.getElementById('editClientForm');
+    if (editClientForm) editClientForm.addEventListener('submit', handleEditClient);
+
+    const addTemplateForm = document.getElementById('addTemplateForm');
+    if (addTemplateForm) addTemplateForm.addEventListener('submit', handleAddTemplate);
+
+    const editTemplateForm = document.getElementById('editTemplateForm');
+    if (editTemplateForm) editTemplateForm.addEventListener('submit', handleEditTemplate);
+
+    // Set up search listeners
     const emailSearch = document.getElementById('emailSearch');
-    if (emailSearch) {
-        emailSearch.addEventListener('input', handleEmailSearch);
-    }
+    if (emailSearch) emailSearch.addEventListener('input', handleEmailSearch);
 
-    // Set up client search
     const clientSearch = document.getElementById('clientSearch');
-    if (clientSearch) {
-        clientSearch.addEventListener('input', handleClientSearch);
-    }
+    if (clientSearch) clientSearch.addEventListener('input', handleClientSearch);
 });
 
 // ============================================
@@ -166,12 +270,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function switchPage(page) {
     if (currentPage === page) return; // Already on this page
 
+    // Get all page elements
+    const dashboardPage = document.getElementById('dashboardPage');
     const clientsPage = document.getElementById('clientsPage');
     const emailsPage = document.getElementById('emailsPage');
+    const templatesPage = document.getElementById('templatesPage');
+    const analyticsPage = document.getElementById('analyticsPage');
     const settingsPage = document.getElementById('settingsPage');
 
+    // Get all nav elements
+    const dashboardNav = document.getElementById('dashboardNav');
     const clientsNav = document.getElementById('clientsNav');
     const emailsNav = document.getElementById('emailsNav');
+    const templatesNav = document.getElementById('templatesNav');
+    const analyticsNav = document.getElementById('analyticsNav');
     const settingsNav = document.getElementById('settingsNav');
 
     // Get the current active page
@@ -190,8 +302,11 @@ function switchPage(page) {
     // Wait for exit animation, then switch
     setTimeout(() => {
         // Hide all pages
+        if (dashboardPage) dashboardPage.classList.add('hidden');
         if (clientsPage) clientsPage.classList.add('hidden');
         if (emailsPage) emailsPage.classList.add('hidden');
+        if (templatesPage) templatesPage.classList.add('hidden');
+        if (analyticsPage) analyticsPage.classList.add('hidden');
         if (settingsPage) settingsPage.classList.add('hidden');
 
         // Show new page
@@ -213,7 +328,11 @@ function switchPage(page) {
             currentActivePage.style.transition = '';
         }
 
-        // Update navigation active states
+        // Remove active state from all nav items
+        if (dashboardNav) {
+            dashboardNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            dashboardNav.classList.add('text-slate-400');
+        }
         if (clientsNav) {
             clientsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             clientsNav.classList.add('text-slate-400');
@@ -222,13 +341,25 @@ function switchPage(page) {
             emailsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             emailsNav.classList.add('text-slate-400');
         }
+        if (templatesNav) {
+            templatesNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            templatesNav.classList.add('text-slate-400');
+        }
+        if (analyticsNav) {
+            analyticsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            analyticsNav.classList.add('text-slate-400');
+        }
         if (settingsNav) {
             settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             settingsNav.classList.add('text-slate-400');
         }
 
-        // Activate new nav item
-        if (page === 'clients' && clientsNav) {
+        // Activate new nav item and load appropriate data
+        if (page === 'dashboard' && dashboardNav) {
+            dashboardNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            dashboardNav.classList.remove('text-slate-400');
+            loadDashboard();
+        } else if (page === 'clients' && clientsNav) {
             clientsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             clientsNav.classList.remove('text-slate-400');
             loadClients();
@@ -236,9 +367,18 @@ function switchPage(page) {
             emailsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             emailsNav.classList.remove('text-slate-400');
             loadEmailHistory();
+        } else if (page === 'templates' && templatesNav) {
+            templatesNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            templatesNav.classList.remove('text-slate-400');
+            loadTemplates();
+        } else if (page === 'analytics' && analyticsNav) {
+            analyticsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            analyticsNav.classList.remove('text-slate-400');
+            // Analytics is a static page, no data loading needed
         } else if (page === 'settings' && settingsNav) {
             settingsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             settingsNav.classList.remove('text-slate-400');
+            // Settings is static for now
         }
 
         currentPage = page;
@@ -250,6 +390,7 @@ function switchPage(page) {
 
     }, 100); // Short delay for exit animation
 }
+
 // ============================================
 // MORE OPTIONS DROPDOWN
 // ============================================
@@ -277,6 +418,192 @@ document.addEventListener('click', function (event) {
         menu.classList.add('hidden');
     }
 });
+
+// ============================================
+// DASHBOARD PAGE FUNCTIONS
+// ============================================
+
+async function loadDashboard() {
+    // Set greeting and date
+    updateDashboardGreeting();
+
+    // Load clients for stats
+    await loadClients();
+
+    // Update dashboard stats
+    updateDashboardStats();
+
+    // Load attention list
+    renderDashboardAttentionList();
+
+    // Load recent activity
+    renderDashboardActivity();
+
+    // Populate quick email dropdown
+    populateQuickEmailClients();
+}
+
+function updateDashboardGreeting() {
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const icon = hour < 12 ? '☀️' : hour < 18 ? '🌤️' : '🌙';
+
+    document.getElementById('dashboardUserName').textContent = `${greeting}, ${userSettings.name}`;
+    document.getElementById('dashboardGreetingIcon').textContent = icon;
+
+    const dateEl = document.getElementById('dashboardDate');
+    if (dateEl) {
+        const options = { weekday: 'long', month: 'long', day: 'numeric' };
+        dateEl.textContent = new Date().toLocaleDateString('en-US', options);
+    }
+}
+
+function updateDashboardStats() {
+    // Total clients
+    document.getElementById('dashTotalClients').textContent = clients.length;
+
+    // Needs attention
+    const attentionClients = getAttentionClients();
+    document.getElementById('dashNeedsAttention').textContent = attentionClients.length;
+
+    // Pending payments
+    const pendingTotal = clients
+        .filter(c => c.status === 'payment_due')
+        .reduce((sum, c) => sum + (c.amount || 0), 0);
+    document.getElementById('dashPendingPayments').textContent = `$${pendingTotal.toLocaleString()}`;
+
+    // Emails sent (from allEmails)
+    document.getElementById('dashEmailsSent').textContent = allEmails.length;
+
+    // Quick stats
+    const activeCount = clients.filter(c => c.status === 'active').length;
+    const paymentDueCount = clients.filter(c => c.status === 'payment_due').length;
+
+    document.getElementById('dashActiveClients').textContent = activeCount;
+    document.getElementById('dashPaymentDueCount').textContent = paymentDueCount;
+
+    // Progress bars
+    const total = clients.length || 1;
+    document.getElementById('dashActiveBar').style.width = `${(activeCount / total) * 100}%`;
+    document.getElementById('dashPaymentBar').style.width = `${(paymentDueCount / total) * 100}%`;
+}
+
+function renderDashboardAttentionList() {
+    const container = document.getElementById('dashboardAttentionList');
+    const emptyState = document.getElementById('dashboardAttentionEmpty');
+
+    const attentionClients = getAttentionClients().slice(0, 3);
+
+    if (attentionClients.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+    }
+
+    emptyState.classList.add('hidden');
+
+    container.innerHTML = attentionClients.map(client => `
+        <div class="p-4 flex items-center justify-between hover:bg-white/5 cursor-pointer" onclick="switchPage('clients'); setTimeout(() => selectClient('${client.id}'), 100);">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-300 font-bold">
+                    ${client.name.charAt(0)}
+                </div>
+                <div>
+                    <p class="font-medium text-white">${client.name}</p>
+                    <p class="text-xs text-slate-400">Last contact: ${formatDate(client.last_contacted)}</p>
+                </div>
+            </div>
+            <span class="text-xs text-amber-400">${getDaysStale(client.last_contacted)} days</span>
+        </div>
+    `).join('');
+}
+
+function renderDashboardActivity() {
+    const container = document.getElementById('dashboardActivityList');
+    const emptyState = document.getElementById('dashboardActivityEmpty');
+
+    const recentEmails = allEmails.slice(0, 3);
+
+    if (recentEmails.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+    }
+
+    emptyState.classList.add('hidden');
+
+    container.innerHTML = recentEmails.map(email => `
+        <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm text-white">Email sent to <span class="text-indigo-300">${email.clients?.name || 'Unknown'}</span></p>
+                <p class="text-xs text-slate-500">${formatDate(email.created_at)} • ${email.type}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function populateQuickEmailClients() {
+    const select = document.getElementById('dashboardQuickEmailClient');
+    if (!select) return;
+
+    select.innerHTML = '<option value="">-- Select a client --</option>' +
+        clients.map(client => `<option value="${client.id}">${client.name} (${client.business || 'No business'})</option>`).join('');
+}
+
+function openQuickEmailFromDashboard() {
+    switchPage('clients');
+    setTimeout(() => openAddModal(), 100);
+}
+
+async function generateQuickEmail() {
+    const clientId = document.getElementById('dashboardQuickEmailClient').value;
+    if (!clientId) {
+        showToast('Please select a client', 'error');
+        return;
+    }
+
+    const type = document.getElementById('dashboardQuickEmailType').value;
+    const tone = document.getElementById('dashboardQuickEmailTone').value;
+    const btn = document.getElementById('dashboardGenerateBtn');
+
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span><span>Generating...</span>';
+
+    try {
+        const response = await authFetch('/api/generate-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clientId, type, tone, freelancerName: userSettings.name })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to generate');
+
+        // Show in email modal
+        currentEmailClient = clients.find(c => c.id === clientId);
+        generatedSubject = data.subject || 'No subject';
+        generatedBody = data.body || data.fullText;
+
+        document.getElementById('emailClientName').textContent = currentEmailClient.name;
+        document.getElementById('generatedSubject').textContent = generatedSubject;
+        document.getElementById('generatedBody').textContent = generatedBody;
+        document.getElementById('emailConfig').classList.add('hidden');
+        document.getElementById('emailResult').classList.remove('hidden');
+        document.getElementById('emailModal').classList.remove('hidden');
+
+    } catch (error) {
+        showToast(error.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
 
 // ============================================
 // CLIENTS PAGE FUNCTIONS
@@ -446,6 +773,195 @@ async function handleAddClient(e) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }
+}
+
+// ============================================
+// TEMPLATES PAGE FUNCTIONS
+// ============================================
+async function loadTemplates() {
+    try {
+        const response = await authFetch('/api/templates');
+        const data = await response.json();
+        templates = data.templates || [];
+        renderTemplatesGrid();
+    } catch (error) {
+        console.error('Failed to load templates:', error);
+        showToast('Failed to load templates', 'error');
+    }
+}
+
+function renderTemplatesGrid() {
+    const container = document.getElementById('templatesGrid');
+    const emptyState = document.getElementById('templatesEmptyState');
+
+    if (templates.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+    }
+
+    emptyState.classList.add('hidden');
+
+    container.innerHTML = templates.map(template => `
+        <div class="glass-card rounded-2xl p-5 hover:border-indigo-500/30 transition-all cursor-pointer group" onclick="useTemplate('${template.id}')">
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-white">${template.name}</h3>
+                </div>
+                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onclick="event.stopPropagation(); editTemplate('${template.id}')" class="p-1.5 text-slate-400 hover:text-indigo-400 rounded-lg hover:bg-white/5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="event.stopPropagation(); deleteTemplate('${template.id}')" class="p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-white/5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <p class="text-xs text-slate-400 mb-2">${template.type} • ${template.tone}</p>
+            <p class="text-sm text-slate-300 line-clamp-2">${template.body?.substring(0, 100)}...</p>
+        </div>
+    `).join('');
+}
+
+function openAddTemplateModal() {
+    document.getElementById('addTemplateModal').classList.remove('hidden');
+    document.getElementById('addTemplateForm').reset();
+}
+
+function closeAddTemplateModal() {
+    document.getElementById('addTemplateModal').classList.add('hidden');
+}
+
+async function handleAddTemplate(e) {
+    e.preventDefault();
+
+    const templateData = {
+        name: document.getElementById('templateName').value,
+        type: document.getElementById('templateType').value,
+        tone: document.getElementById('templateTone').value,
+        subject: document.getElementById('templateSubject').value,
+        body: document.getElementById('templateBody').value
+    };
+
+    try {
+        const response = await authFetch('/api/templates', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(templateData)
+        });
+
+        if (!response.ok) throw new Error('Failed to save template');
+
+        showToast('Template saved', 'success');
+        closeAddTemplateModal();
+        loadTemplates();
+    } catch (error) {
+        showToast('Failed to save template', 'error');
+    }
+}
+
+function editTemplate(templateId) {
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+
+    currentTemplate = template;
+
+    document.getElementById('editTemplateId').value = template.id;
+    document.getElementById('editTemplateName').value = template.name;
+    document.getElementById('editTemplateType').value = template.type;
+    document.getElementById('editTemplateTone').value = template.tone;
+    document.getElementById('editTemplateSubject').value = template.subject || '';
+    document.getElementById('editTemplateBody').value = template.body;
+
+    document.getElementById('editTemplateModal').classList.remove('hidden');
+}
+
+function closeEditTemplateModal() {
+    document.getElementById('editTemplateModal').classList.add('hidden');
+    currentTemplate = null;
+}
+
+async function handleEditTemplate(e) {
+    e.preventDefault();
+
+    const templateId = document.getElementById('editTemplateId').value;
+    const templateData = {
+        name: document.getElementById('editTemplateName').value,
+        type: document.getElementById('editTemplateType').value,
+        tone: document.getElementById('editTemplateTone').value,
+        subject: document.getElementById('editTemplateSubject').value,
+        body: document.getElementById('editTemplateBody').value
+    };
+
+    try {
+        const response = await fetch(`/api/templates/${templateId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(templateData)
+        });
+
+        if (!response.ok) throw new Error('Failed to update template');
+
+        showToast('Template updated', 'success');
+        closeEditTemplateModal();
+        loadTemplates();
+    } catch (error) {
+        showToast('Failed to update template', 'error');
+    }
+}
+
+async function deleteTemplate(templateId) {
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+
+    templateToDelete = templateId;
+    document.getElementById('deleteTemplateName').textContent = `Are you sure you want to delete "${template.name}"?`;
+    document.getElementById('deleteTemplateModal').classList.remove('hidden');
+}
+
+function closeDeleteTemplateModal() {
+    document.getElementById('deleteTemplateModal').classList.add('hidden');
+    templateToDelete = null;
+}
+
+async function confirmDeleteTemplate() {
+    if (!templateToDelete) return;
+
+    try {
+        const response = await fetch(`/api/templates/${templateToDelete}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Failed to delete template');
+
+        showToast('Template deleted', 'success');
+        closeDeleteTemplateModal();
+        loadTemplates();
+    } catch (error) {
+        showToast('Failed to delete template', 'error');
+        closeDeleteTemplateModal();
+    }
+}
+
+function useTemplate(templateId) {
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+
+    // Switch to clients page to select a client
+    switchPage('clients');
+    showToast('Select a client to use this template', 'info');
+
+    // Store template for later use
+    localStorage.setItem('pendingTemplate', JSON.stringify(template));
 }
 
 // ============================================
@@ -811,7 +1327,7 @@ async function generateEmail() {
     btn.innerHTML = '<span class="loader"></span><span>Generating...</span>';
 
     try {
-        const response = await fetch('/api/generate-email', {
+        const response = await authFetch('/api/generate-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1106,7 +1622,7 @@ async function archiveCurrentClient() {
 
 async function restoreClient(clientId) {
     try {
-        const response = await fetch(`/api/clients/${clientId}/restore`, {
+        const response = await authFetch(`/api/clients/${clientId}/restore`, {
             method: 'PATCH'
         });
 
@@ -1155,7 +1671,7 @@ async function loadEmailHistory() {
 
         const startTime = Date.now();
 
-        const response = await fetch('/api/emails');
+        const response = await authFetch('/api/emails');
         const data = await response.json();
         allEmails = data.emails || [];
 

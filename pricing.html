@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pricing | CloseDraft</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6366f1',
+                        background: '#0b1326',
+                        surface: '#131b2e',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1326;
+            color: #dae2fd;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-background">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
+                        class="text-indigo-400">Draft</span></a>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/features.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
+                <a href="/pricing.html"
+                    class="text-indigo-400 font-semibold border-b-2 border-indigo-400 pb-1">Pricing</a>
+                <a href="#" class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
+                <a href="/signup.html"
+                    class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                    Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-28">
+        <!-- Hero -->
+        <section class="py-16 px-6 text-center">
+            <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Simple Pricing</span>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">Choose the plan that fits you</h1>
+            <p class="text-slate-400 max-w-2xl mx-auto text-lg">Start free, upgrade when you're ready. No contracts,
+                cancel anytime.</p>
+
+            <!-- Billing Toggle -->
+            <div class="flex items-center justify-center gap-4 mt-8">
+                <span class="text-sm font-medium" id="monthlyLabel">Monthly</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="billingToggle" class="sr-only peer" onchange="toggleBilling()">
+                    <div
+                        class="w-14 h-7 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-500">
+                    </div>
+                </label>
+                <span class="text-sm font-medium" id="yearlyLabel">Yearly <span
+                        class="text-indigo-400 text-xs ml-1 bg-indigo-500/20 px-1.5 py-0.5 rounded-full">Save
+                        17%</span></span>
+            </div>
+        </section>
+
+        <!-- Pricing Cards -->
+        <section class="py-8 px-6 max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <!-- Free Plan -->
+                <div class="glass rounded-3xl p-8 border border-white/5">
+                    <h3 class="text-2xl font-bold text-white mb-2">Free</h3>
+                    <p class="text-slate-400 mb-6">Perfect for trying out CloseDraft</p>
+                    <div class="mb-6">
+                        <span class="text-5xl font-bold text-white">$0</span>
+                        <span class="text-slate-400">/month</span>
+                    </div>
+                    <a href="/signup.html"
+                        class="block w-full py-3 rounded-xl border border-white/20 text-white font-medium text-center hover:bg-white/5 transition-all mb-8">
+                        Get Started
+                    </a>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">10 clients</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">20 AI emails/month</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Basic templates</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Email support</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Pro Plan (Highlighted) -->
+                <div
+                    class="glass rounded-3xl p-8 border-2 border-indigo-500/50 relative shadow-[0_0_30px_rgba(99,102,241,0.15)]">
+                    <div
+                        class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
+                        Most Popular
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Pro</h3>
+                    <p class="text-slate-400 mb-6">For serious freelancers</p>
+                    <div class="mb-6">
+                        <span class="text-5xl font-bold text-white" id="proPrice">$29</span>
+                        <span class="text-slate-400" id="proPeriod">/month</span>
+                    </div>
+                    <a href="/signup.html?plan=pro"
+                        class="block w-full py-3 rounded-xl gradient-primary text-white font-bold text-center hover:opacity-90 transition-all mb-8 shadow-lg shadow-indigo-500/25">
+                        Start Free Trial
+                    </a>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300"><strong class="text-white">Unlimited</strong> clients</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300"><strong class="text-white">Unlimited</strong> AI emails</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">All templates + custom tones</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Gmail Chrome Extension</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Priority support</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Beta Lifetime Deal Banner (Subtle) -->
+            <div class="mt-8 text-center">
+                <p class="text-slate-500 text-sm">
+                    🎉 Beta users: <span class="text-white">Lifetime Pro</span> available for <span
+                        class="text-indigo-400 font-bold">$149</span> —
+                    <a href="/signup.html" class="text-indigo-400 hover:text-indigo-300 underline">claim your spot</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="py-20 px-6 max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-white text-center mb-12">Frequently asked questions</h2>
+            <div class="space-y-4">
+                <div class="glass rounded-xl p-6">
+                    <h4 class="font-bold text-white mb-2">Can I cancel anytime?</h4>
+                    <p class="text-slate-400">Yes. No contracts, no commitments. Cancel your subscription anytime from
+                        your account settings.</p>
+                </div>
+                <div class="glass rounded-xl p-6">
+                    <h4 class="font-bold text-white mb-2">Is there a free trial?</h4>
+                    <p class="text-slate-400">Yes! You can start with the Free plan. Upgrade to Pro anytime when you
+                        need more clients and emails.</p>
+                </div>
+                <div class="glass rounded-xl p-6">
+                    <h4 class="font-bold text-white mb-2">Do you offer refunds?</h4>
+                    <p class="text-slate-400">Yes, we offer a 30-day money-back guarantee if you're not satisfied with
+                        CloseDraft.</p>
+                </div>
+                <div class="glass rounded-xl p-6">
+                    <h4 class="font-bold text-white mb-2">Can I upgrade or downgrade later?</h4>
+                    <p class="text-slate-400">Absolutely. You can upgrade to Pro or downgrade to Free anytime from your
+                        account settings.</p>
+                </div>
+                <div class="glass rounded-xl p-6">
+                    <h4 class="font-bold text-white mb-2">What happens when I hit the free limits?</h4>
+                    <p class="text-slate-400">You'll see a friendly upgrade prompt. Your data stays safe—you just can't
+                        add more clients or generate more emails until you upgrade.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-20 px-6">
+            <div class="max-w-4xl mx-auto rounded-3xl gradient-primary p-16 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Ready to stop chasing clients?</h2>
+                <p class="text-indigo-100 mb-8 text-lg">Start your free trial today. No credit card required.</p>
+                <a href="/signup.html"
+                    class="inline-block px-10 py-4 rounded-xl bg-white text-indigo-600 font-bold text-lg hover:scale-105 transition-transform shadow-xl">
+                    Get Started Free
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="pt-20 pb-10 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold text-white">Close<span
+                                class="text-indigo-400">Draft</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm">The client memory freelancers love.</p>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Product</div>
+                    <ul class="space-y-2">
+                        <li><a href="/features.html"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Features</a></li>
+                        <li><a href="/pricing.html" class="text-indigo-400 text-sm">Pricing</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Chrome
+                                Extension</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Resources</div>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Blog</a>
+                        </li>
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Help
+                                Center</a></li>
+                        <li><a href="#"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Legal</div>
+                    <ul class="space-y-2">
+                        <li><a href="#"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Privacy</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Terms</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+                <span>© 2026 CloseDraft. All rights reserved.</span>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-indigo-400 transition-colors">Twitter</a>
+                    <a href="#" class="hover:text-indigo-400 transition-colors">LinkedIn</a>
+                    <a href="#" class="hover:text-indigo-400 transition-colors">YouTube</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Billing toggle
+        let isYearly = false;
+
+        function toggleBilling() {
+            isYearly = !isYearly;
+            const proPrice = document.getElementById('proPrice');
+            const proPeriod = document.getElementById('proPeriod');
+            const monthlyLabel = document.getElementById('monthlyLabel');
+            const yearlyLabel = document.getElementById('yearlyLabel');
+
+            if (isYearly) {
+                proPrice.textContent = '$24';
+                proPeriod.textContent = '/month (billed $288/year)';
+                monthlyLabel.classList.remove('text-white');
+                monthlyLabel.classList.add('text-slate-400');
+                yearlyLabel.classList.remove('text-slate-400');
+                yearlyLabel.classList.add('text-white');
+            } else {
+                proPrice.textContent = '$29';
+                proPeriod.textContent = '/month';
+                monthlyLabel.classList.remove('text-slate-400');
+                monthlyLabel.classList.add('text-white');
+                yearlyLabel.classList.remove('text-white');
+                yearlyLabel.classList.add('text-slate-400');
+            }
+        }
+    </script>
+
+</body>
+
+</html>
