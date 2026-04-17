@@ -444,7 +444,7 @@ function switchPage(page) {
         } else if (page === 'settings' && settingsNav) {
             settingsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             settingsNav.classList.remove('text-slate-400');
-            // Settings is static for now
+            loadSettings();
         }
 
         currentPage = page;
@@ -632,7 +632,7 @@ async function generateQuickEmail() {
         showToast('Please select a client', 'error');
         return;
     }
-        // 🔥 CHECK EMAIL LIMIT
+    // 🔥 CHECK EMAIL LIMIT
     if (!checkEmailLimit()) {
         return false;
     }
@@ -1446,7 +1446,7 @@ function resetEmailModal() {
 
 async function generateEmail() {
     if (!currentEmailClient) return;
-        // 🔥 CHECK EMAIL LIMIT
+    // 🔥 CHECK EMAIL LIMIT
     if (!checkEmailLimit()) {
         return false;
     }
@@ -1862,24 +1862,24 @@ async function loadEmailHistory() {
 function updateEmailLimitDisplay() {
     const plan = getUserPlan();
     const statsContainer = document.getElementById('dashEmailsSent');
-    
+
     if (plan === 'free' && statsContainer) {
         const used = getEmailsThisMonth();
         const limit = 20;
         const remaining = limit - used;
-        
+
         // Add a small indicator
         const parent = statsContainer.parentElement;
         let indicator = parent.querySelector('.email-limit-indicator');
-        
+
         if (!indicator) {
             indicator = document.createElement('span');
             indicator.className = 'email-limit-indicator text-xs text-slate-500 ml-2';
             statsContainer.after(indicator);
         }
-        
+
         indicator.textContent = `${used}/${limit} this month`;
-        
+
         if (remaining <= 5) {
             indicator.classList.add('text-amber-400');
         }
@@ -2170,11 +2170,11 @@ function updateDetailPanelActions(client) {
 function toggleSelectAll(selectAllCheckbox) {
     const isChecked = selectAllCheckbox.checked;
     const checkboxes = document.querySelectorAll('.client-checkbox');
-    
+
     checkboxes.forEach(cb => {
         cb.checked = isChecked;
     });
-    
+
     updateBulkDeleteButton();
 }
 
@@ -2184,7 +2184,7 @@ function updateBulkDeleteButton() {
     const selectedCount = selectedCheckboxes.length;
     const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
     const selectedCountSpan = document.getElementById('selectedCount');
-    
+
     if (bulkDeleteBtn) {
         if (selectedCount > 0) {
             bulkDeleteBtn.classList.remove('hidden');
@@ -2193,7 +2193,7 @@ function updateBulkDeleteButton() {
             bulkDeleteBtn.classList.add('hidden');
         }
     }
-    
+
     // Update select all checkbox state
     const allCheckboxes = document.querySelectorAll('.client-checkbox');
     const selectAllCheckbox = document.getElementById('selectAllClients');
@@ -2205,7 +2205,7 @@ function updateBulkDeleteButton() {
 }
 
 // Listen for checkbox changes
-document.addEventListener('change', function(e) {
+document.addEventListener('change', function (e) {
     if (e.target.classList.contains('client-checkbox')) {
         updateBulkDeleteButton();
     }
@@ -2215,12 +2215,12 @@ document.addEventListener('change', function(e) {
 function openBulkDeleteModal() {
     const selectedCheckboxes = document.querySelectorAll('.client-checkbox:checked');
     const selectedCount = selectedCheckboxes.length;
-    
+
     if (selectedCount === 0) return;
-    
+
     // Store selected client IDs for deletion
     window.bulkDeleteClientIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.clientId);
-    
+
     // Update modal message
     document.getElementById('bulkDeleteCount').textContent = selectedCount;
     document.getElementById('bulkDeleteModal').classList.remove('hidden');
@@ -2236,15 +2236,15 @@ function closeBulkDeleteModal() {
 async function confirmBulkDelete() {
     const clientIds = window.bulkDeleteClientIds;
     if (!clientIds || clientIds.length === 0) return;
-    
+
     const btn = document.querySelector('#bulkDeleteModal .confirm-delete-btn');
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Deleting...';
-    
+
     let successCount = 0;
     let failCount = 0;
-    
+
     for (const clientId of clientIds) {
         try {
             await deleteClient(clientId);
@@ -2254,12 +2254,12 @@ async function confirmBulkDelete() {
             failCount++;
         }
     }
-    
+
     showToast(`Deleted ${successCount} clients${failCount > 0 ? ` (${failCount} failed)` : ''}`, 'success');
-    
+
     closeBulkDeleteModal();
     await loadClients();
-    
+
     btn.disabled = false;
     btn.textContent = originalText;
 }
@@ -2271,12 +2271,12 @@ async function confirmBulkDelete() {
 function showUpgradeModal(type) {
     const modal = document.getElementById('upgradeModal');
     const messageEl = document.getElementById('upgradeMessage');
-    
+
     if (!modal || !messageEl) {
         console.error('❌ Upgrade modal elements not found');
         return;
     }
-    
+
     // Set the message based on what limit was hit
     if (type === 'clients') {
         messageEl.textContent = "You've reached the free limit of 10 clients.";
@@ -2285,10 +2285,10 @@ function showUpgradeModal(type) {
     } else {
         messageEl.textContent = "You've reached the free limit.";
     }
-    
+
     // Store the upgrade type
     window.upgradeType = type;
-    
+
     // Show the modal
     modal.classList.remove('hidden');
 }
@@ -2308,27 +2308,169 @@ function getEmailsThisMonth() {
     const now = new Date();
     const thisMonth = allEmails.filter(email => {
         const emailDate = new Date(email.created_at);
-        return emailDate.getMonth() === now.getMonth() && 
-               emailDate.getFullYear() === now.getFullYear();
+        return emailDate.getMonth() === now.getMonth() &&
+            emailDate.getFullYear() === now.getFullYear();
     });
     return thisMonth.length;
 }
 
 function checkEmailLimit() {
     const plan = getUserPlan();
-    
+
     // Pro users have no limit
     if (plan !== 'free') {
         return true;
     }
-    
+
     const limit = 20;
     const currentCount = getEmailsThisMonth();
-    
+
     if (currentCount >= limit) {
         showUpgradeModal('emails');
         return false;
     }
-    
+
     return true;
+}
+
+// ============================================
+// SETTINGS PAGE
+// ============================================
+
+function loadSettings() {
+    // Load user profile into form
+    if (window.userSettings) {
+        document.getElementById('settingsName').value = window.userSettings.name || '';
+        document.getElementById('settingsEmail').value = window.userSettings.email || '';
+
+        // Update avatar in settings header
+        const avatar = document.getElementById('settingsAvatar');
+        if (avatar) {
+            avatar.textContent = (window.userSettings.name || 'U').charAt(0).toUpperCase();
+        }
+    }
+
+    // Load plan info
+    loadUserPlanAndCustomer();
+}
+
+async function loadUserPlanAndCustomer() {
+    const plan = getUserPlan();
+
+    const planDisplay = document.getElementById('currentPlanDisplay');
+    const planDescription = document.getElementById('planDescription');
+    const upgradeBtn = document.getElementById('upgradeSettingsBtn');
+    const manageBtn = document.getElementById('manageSubscriptionBtn');
+    const proFeatures = document.getElementById('proFeaturesList');
+
+    if (plan === 'free') {
+        planDisplay.textContent = 'Free Plan';
+        planDescription.textContent = '10 clients • 20 AI emails/month';
+        upgradeBtn.classList.remove('hidden');
+        manageBtn.classList.add('hidden');
+        if (proFeatures) proFeatures.classList.add('hidden');
+    } else {
+        const planName = plan === 'pro_monthly' ? 'Pro Monthly' :
+            plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
+        planDisplay.textContent = planName;
+        planDescription.textContent = 'Unlimited clients • Unlimited AI emails • Chrome Extension';
+        upgradeBtn.classList.add('hidden');
+        if (proFeatures) proFeatures.classList.remove('hidden');
+
+        // Fetch customer_id for portal link
+        const customerId = await getCustomerId();
+        if (customerId) {
+            manageBtn.href = `https://buy.polar.sh/polar_customer_portal?customerId=${customerId}`;
+            manageBtn.classList.remove('hidden');
+        }
+    }
+}
+
+async function getCustomerId() {
+    try {
+        const { data, error } = await window.supabase
+            .from('payments')
+            .select('customer_id')
+            .eq('user_id', window.userSettings.id)
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            console.error('Failed to fetch customer_id:', error);
+            return null;
+        }
+        
+        // Return the first non-null customer_id
+        for (const payment of data) {
+            if (payment.customer_id) {
+                return payment.customer_id;
+            }
+        }
+        
+        return null;
+    } catch (err) {
+        console.error('Failed to fetch customer_id:', err);
+        return null;
+    }
+}
+
+async function saveSettings() {
+    const name = document.getElementById('settingsName').value;
+
+    if (!name) {
+        showToast('Name cannot be empty', 'error');
+        return;
+    }
+
+    try {
+        const { error } = await window.supabase
+            .from('profiles')
+            .update({ full_name: name })
+            .eq('id', window.userSettings.id);
+
+        if (error) throw error;
+
+        // Update local settings
+        window.userSettings.name = name;
+
+        // Update all avatars
+        const initial = name.charAt(0).toUpperCase();
+        document.querySelectorAll('.w-8.h-8.rounded-full.gradient-primary').forEach(avatar => {
+            avatar.textContent = initial;
+        });
+
+        // Update greeting if on dashboard
+        const greetingEl = document.getElementById('dashboardUserName');
+        if (greetingEl) {
+            const parts = greetingEl.textContent.split(', ');
+            if (parts.length === 2) {
+                greetingEl.textContent = `${parts[0]}, ${name}`;
+            }
+        }
+
+        showToast('Settings saved', 'success');
+    } catch (error) {
+        console.error('Failed to save settings:', error);
+        showToast('Failed to save settings', 'error');
+    }
+}
+
+function confirmDeleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
+        deleteAccount();
+    }
+}
+
+async function deleteAccount() {
+    try {
+        // Call your backend endpoint to delete user
+        const { error } = await window.supabase.auth.admin.deleteUser(window.userSettings.id);
+
+        if (error) throw error;
+
+        await window.supabase.auth.signOut();
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Failed to delete account:', error);
+        showToast('Failed to delete account. Please contact support.', 'error');
+    }
 }
