@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Resources | CloseDraft</title>
-    
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,22 +29,25 @@
             }
         }
     </script>
-    
+
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0b1326;
             color: #dae2fd;
         }
+
         .glass {
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
+
         .gradient-primary {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
+
         .glass-card {
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(12px);
@@ -50,379 +55,496 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: all 0.2s ease;
         }
+
         .glass-card:hover {
             background: rgba(30, 41, 59, 0.6);
             border-color: rgba(99, 102, 241, 0.3);
         }
+
         details summary {
             list-style: none;
         }
+
         details summary::-webkit-details-marker {
             display: none;
         }
+
         details[open] summary svg {
             transform: rotate(180deg);
         }
     </style>
 </head>
+
 <body class="bg-background overflow-x-hidden">
 
-<!-- Navigation -->
-<nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                </svg>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
+                        class="text-indigo-400">Draft</span></a>
             </div>
-            <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span class="text-indigo-400">Draft</span></a>
-        </div>
-        
-        <!-- Desktop Nav Links -->
-        <div class="hidden md:flex items-center space-x-8">
-            <a href="/features.html" class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
-            <a href="/pricing.html" class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
-            <a href="/resources.html" class="text-indigo-400 font-semibold border-b-2 border-indigo-400 pb-1">Resources</a>
-        </div>
-        
-        <!-- Auth Buttons -->
-        <div class="flex items-center space-x-4">
-            <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
-            <a href="/signup.html" class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get Started</a>
-        </div>
-    </div>
-</nav>
 
-<main class="pt-32 px-6 pb-20">
-    <div class="max-w-5xl mx-auto">
-        
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Learn & Grow</span>
-            <h1 class="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">Resources for freelancers</h1>
-            <p class="text-slate-400 max-w-2xl mx-auto text-lg">Everything you need to master client communication and grow your business.</p>
-        </div>
-        
-        <!-- Blog Section -->
-        <section class="mb-16">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-white">Latest from the Blog</h2>
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/features.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
+                <a href="/pricing.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
+                <a href="/resources.html"
+                    class="text-indigo-400 font-semibold border-b-2 border-indigo-400 pb-1">Resources</a>
             </div>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Blog Card 1 -->
-                <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                    <div class="h-40 bg-gradient-to-br from-indigo-600/30 to-purple-600/30 flex items-center justify-center">
-                        <svg class="w-12 h-12 text-indigo-300/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">Email Tips</span>
-                            <span class="text-xs text-slate-500">5 min read</span>
-                        </div>
-                        <h3 class="font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">How to Write Follow-ups That Actually Get Replies</h3>
-                        <p class="text-slate-400 text-sm mb-4">5 proven templates that turn ghosts into clients.</p>
-                        <a href="#" class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Read article →</a>
-                    </div>
-                </div>
-                
-                <!-- Blog Card 2 -->
-                <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                    <div class="h-40 bg-gradient-to-br from-amber-600/30 to-orange-600/30 flex items-center justify-center">
-                        <svg class="w-12 h-12 text-amber-300/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Freelancing</span>
-                            <span class="text-xs text-slate-500">7 min read</span>
-                        </div>
-                        <h3 class="font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">The Freelancer's Guide to Getting Paid on Time</h3>
-                        <p class="text-slate-400 text-sm mb-4">Stop chasing invoices and start getting paid when you're supposed to.</p>
-                        <a href="#" class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Read article →</a>
-                    </div>
-                </div>
-                
-                <!-- Blog Card 3 -->
-                <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                    <div class="h-40 bg-gradient-to-br from-green-600/30 to-emerald-600/30 flex items-center justify-center">
-                        <svg class="w-12 h-12 text-green-300/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-300">Growth</span>
-                            <span class="text-xs text-slate-500">6 min read</span>
-                        </div>
-                        <h3 class="font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">How I 3x'd My Response Rate with One Simple Change</h3>
-                        <p class="text-slate-400 text-sm mb-4">The psychology behind why some emails get ignored (and how to fix it).</p>
-                        <a href="#" class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Read article →</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Free Templates Section -->
-        <section class="mb-16">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-white">Free Email Templates</h2>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-5">
-                <!-- Template Category 1 -->
-                <div class="glass-card rounded-2xl p-6">
-                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-white mb-2">Follow-up Templates</h3>
-                    <p class="text-slate-400 text-sm mb-4">Gentle reminders that don't sound desperate.</p>
-                    <ul class="space-y-2 mb-4">
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The "Just Checking In"
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Value Add Follow-up
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The "Breaking Up" Email
-                        </li>
-                    </ul>
-                    <a href="#" class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Download templates →</a>
-                </div>
-                
-                <!-- Template Category 2 -->
-                <div class="glass-card rounded-2xl p-6">
-                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-white mb-2">Payment Reminders</h3>
-                    <p class="text-slate-400 text-sm mb-4">Get paid without the awkward conversation.</p>
-                    <ul class="space-y-2 mb-4">
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Friendly Reminder
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Firm Follow-up
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Final Notice
-                        </li>
-                    </ul>
-                    <a href="#" class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Download templates →</a>
-                </div>
-                
-                <!-- Template Category 3 -->
-                <div class="glass-card rounded-2xl p-6">
-                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-white mb-2">Cold Outreach</h3>
-                    <p class="text-slate-400 text-sm mb-4">Land new clients with emails that get opened.</p>
-                    <ul class="space-y-2 mb-4">
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Compliment Opener
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Value-First Approach
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-slate-300">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            The Quick Question
-                        </li>
-                    </ul>
-                    <a href="#" class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Download templates →</a>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Help Center / FAQ -->
-        <section class="mb-16">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
-            </div>
-            
-            <div class="space-y-3">
-                <details class="glass-card rounded-xl p-5 group">
-                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
-                        How do I get started with CloseDraft?
-                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
-                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Sign up for a free account, add your first client, and generate your first AI-powered email. The whole process takes less than 2 minutes.</p>
-                </details>
-                
-                <details class="glass-card rounded-xl p-5 group">
-                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
-                        How does the AI email generation work?
-                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
-                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">CloseDraft uses Google's Gemini 2.5 Flash AI model, trained to write professional, human-like emails. We provide the AI with context about your client (name, business, project, last contact date) so every email feels personal and relevant.</p>
-                </details>
-                
-                <details class="glass-card rounded-xl p-5 group">
-                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
-                        Can I import my existing clients?
-                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
-                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes! Use the CSV import feature in the dashboard. Your CSV should have headers: Name, Business, Email, Project, Amount, Status. You can also add clients manually one by one.</p>
-                </details>
-                
-                <details class="glass-card rounded-xl p-5 group">
-                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
-                        Is my data secure?
-                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
-                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Absolutely. We use Supabase with Row Level Security (RLS) to ensure each user can only access their own data. All API routes are protected with authentication tokens. Your client data is private and secure.</p>
-                </details>
-                
-                <details class="glass-card rounded-xl p-5 group">
-                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
-                        What's the difference between Free and Pro?
-                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
-                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Free includes 10 clients and 20 AI emails per month. Pro gives you unlimited clients, unlimited AI emails, the Gmail Chrome Extension, and priority support. See our <a href="/pricing.html" class="text-indigo-400 hover:text-indigo-300">Pricing page</a> for full details.</p>
-                </details>
-                
-                <details class="glass-card rounded-xl p-5 group">
-                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
-                        Do you offer refunds?
-                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
-                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes! We offer a 30-day money-back guarantee. If you're not satisfied with CloseDraft, contact us within 30 days of your purchase for a full refund.</p>
-                </details>
-            </div>
-        </section>
-        
-        <!-- Newsletter Signup -->
-        <section>
-            <div class="glass-card rounded-3xl p-10 text-center bg-gradient-to-br from-indigo-600/10 to-purple-600/10">
-                <h2 class="text-2xl font-bold text-white mb-3">Get freelance tips straight to your inbox</h2>
-                <p class="text-slate-400 mb-6">Join 5,000+ freelancers getting weekly email tips, templates, and strategies.</p>
-                <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    <input type="email" placeholder="Enter your email" class="flex-1 px-5 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-                    <button type="submit" class="px-6 py-3 rounded-xl gradient-primary text-white font-bold hover:opacity-90 transition-opacity">Subscribe</button>
-                </form>
-                <p class="text-slate-500 text-xs mt-4">No spam. Unsubscribe anytime.</p>
-            </div>
-        </section>
-        
-    </div>
-</main>
 
-<!-- Footer -->
-<footer class="pt-20 pb-10 bg-slate-950/50">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            <div>
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
-                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+            <!-- Auth Buttons -->
+            <div class="flex items-center space-x-4">
+                <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
+                <a href="/signup.html"
+                    class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                    Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 px-6 pb-20">
+        <div class="max-w-5xl mx-auto">
+
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Learn & Grow</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">Resources for freelancers</h1>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg">Everything you need to master client communication
+                    and grow your business.</p>
+            </div>
+
+            <!-- Blog Section -->
+            <section class="mb-16">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
+                            </path>
                         </svg>
                     </div>
-                    <span class="text-lg font-bold text-white">Close<span class="text-indigo-400">Draft</span></span>
+                    <h2 class="text-2xl font-bold text-white">Latest from the Blog</h2>
                 </div>
-                <p class="text-slate-500 text-sm">The client memory freelancers love.</p>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Blog Card 1 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div
+                            class="h-40 bg-gradient-to-br from-indigo-600/30 to-purple-600/30 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-indigo-300/50" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">Email
+                                    Tips</span>
+                                <span class="text-xs text-slate-500">5 min read</span>
+                            </div>
+                            <h3 class="font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">How to
+                                Write Follow-ups That Actually Get Replies</h3>
+                            <p class="text-slate-400 text-sm mb-4">5 proven templates that turn ghosts into clients.</p>
+                            <a href="#"
+                                class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Read
+                                article →</a>
+                        </div>
+                    </div>
+
+                    <!-- Blog Card 2 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div
+                            class="h-40 bg-gradient-to-br from-amber-600/30 to-orange-600/30 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-amber-300/50" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Freelancing</span>
+                                <span class="text-xs text-slate-500">7 min read</span>
+                            </div>
+                            <h3 class="font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">The
+                                Freelancer's Guide to Getting Paid on Time</h3>
+                            <p class="text-slate-400 text-sm mb-4">Stop chasing invoices and start getting paid when
+                                you're supposed to.</p>
+                            <a href="#"
+                                class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Read
+                                article →</a>
+                        </div>
+                    </div>
+
+                    <!-- Blog Card 3 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div
+                            class="h-40 bg-gradient-to-br from-green-600/30 to-emerald-600/30 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-green-300/50" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-[10px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-300">Growth</span>
+                                <span class="text-xs text-slate-500">6 min read</span>
+                            </div>
+                            <h3 class="font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">How I
+                                3x'd My Response Rate with One Simple Change</h3>
+                            <p class="text-slate-400 text-sm mb-4">The psychology behind why some emails get ignored
+                                (and how to fix it).</p>
+                            <a href="#"
+                                class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Read
+                                article →</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Free Templates Section -->
+            <section class="mb-16">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Free Email Templates</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-5">
+                    <!-- Template Category 1 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white mb-2">Follow-up Templates</h3>
+                        <p class="text-slate-400 text-sm mb-4">Gentle reminders that don't sound desperate.</p>
+                        <ul class="space-y-2 mb-4">
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The "Just Checking In"
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Value Add Follow-up
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The "Breaking Up" Email
+                            </li>
+                        </ul>
+                        <a href="#"
+                            class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Download
+                            templates →</a>
+                    </div>
+
+                    <!-- Template Category 2 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white mb-2">Payment Reminders</h3>
+                        <p class="text-slate-400 text-sm mb-4">Get paid without the awkward conversation.</p>
+                        <ul class="space-y-2 mb-4">
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Friendly Reminder
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Firm Follow-up
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Final Notice
+                            </li>
+                        </ul>
+                        <a href="#"
+                            class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Download
+                            templates →</a>
+                    </div>
+
+                    <!-- Template Category 3 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-white mb-2">Cold Outreach</h3>
+                        <p class="text-slate-400 text-sm mb-4">Land new clients with emails that get opened.</p>
+                        <ul class="space-y-2 mb-4">
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Compliment Opener
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Value-First Approach
+                            </li>
+                            <li class="flex items-center gap-2 text-sm text-slate-300">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                The Quick Question
+                            </li>
+                        </ul>
+                        <a href="#"
+                            class="text-indigo-400 text-sm font-medium hover:text-indigo-300 transition-colors">Download
+                            templates →</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Help Center / FAQ -->
+            <section class="mb-16">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+                </div>
+
+                <div class="space-y-3">
+                    <details class="glass-card rounded-xl p-5 group">
+                        <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                            How do I get started with CloseDraft?
+                            <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Sign up for a free account,
+                            add your first client, and generate your first AI-powered email. The whole process takes
+                            less than 2 minutes.</p>
+                    </details>
+
+                    <details class="glass-card rounded-xl p-5 group">
+                        <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                            How does the AI email generation work?
+                            <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">CloseDraft uses Google's
+                            Gemini 2.5 Flash AI model, trained to write professional, human-like emails. We provide the
+                            AI with context about your client (name, business, project, last contact date) so every
+                            email feels personal and relevant.</p>
+                    </details>
+
+                    <details class="glass-card rounded-xl p-5 group">
+                        <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                            Can I import my existing clients?
+                            <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes! Use the CSV import
+                            feature in the dashboard. Your CSV should have headers: Name, Business, Email, Project,
+                            Amount, Status. You can also add clients manually one by one.</p>
+                    </details>
+
+                    <details class="glass-card rounded-xl p-5 group">
+                        <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                            Is my data secure?
+                            <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Absolutely. We use Supabase
+                            with Row Level Security (RLS) to ensure each user can only access their own data. All API
+                            routes are protected with authentication tokens. Your client data is private and secure.</p>
+                    </details>
+
+                    <details class="glass-card rounded-xl p-5 group">
+                        <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                            What's the difference between Free and Pro?
+                            <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Free includes 10 clients and
+                            20 AI emails per month. Pro gives you unlimited clients, unlimited AI emails, the Gmail
+                            Chrome Extension, and priority support. See our <a href="/pricing.html"
+                                class="text-indigo-400 hover:text-indigo-300">Pricing page</a> for full details.</p>
+                    </details>
+
+                    <details class="glass-card rounded-xl p-5 group">
+                        <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                            Do you offer refunds?
+                            <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes! We offer a 30-day
+                            money-back guarantee. If you're not satisfied with CloseDraft, contact us within 30 days of
+                            your purchase for a full refund.</p>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Newsletter Signup -->
+            <section>
+                <div
+                    class="glass-card rounded-3xl p-10 text-center bg-gradient-to-br from-indigo-600/10 to-purple-600/10">
+                    <h2 class="text-2xl font-bold text-white mb-3">Get freelance tips straight to your inbox</h2>
+                    <p class="text-slate-400 mb-6">Join 5,000+ freelancers getting weekly email tips, templates, and
+                        strategies.</p>
+                    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                        <input type="email" placeholder="Enter your email"
+                            class="flex-1 px-5 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                        <button type="submit"
+                            class="px-6 py-3 rounded-xl gradient-primary text-white font-bold hover:opacity-90 transition-opacity">Subscribe</button>
+                    </form>
+                    <p class="text-slate-500 text-xs mt-4">No spam. Unsubscribe anytime.</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="pt-20 pb-10 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold text-white">Close<span
+                                class="text-indigo-400">Draft</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm">The client memory freelancers love.</p>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Product</div>
+                    <ul class="space-y-2">
+                        <li><a href="/features.html"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Features</a></li>
+                        <li><a href="/pricing.html"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Pricing</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Chrome
+                                Extension</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Resources</div>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Blog</a>
+                        </li>
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Help
+                                Center</a></li>
+                        <li><a href="#"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Legal</div>
+                    <ul class="space-y-2">
+                        <li><a href="/privacy.html" class="text-slate-500 hover:text-slate-300 text-sm">Privacy</a></li>
+                        <li><a href="/terms.html" class="text-slate-500 hover:text-slate-300 text-sm">Terms</a></li>
+                        <li><a href="/security.html" class="text-slate-500 hover:text-slate-300 text-sm">Security</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div>
-                <div class="text-white font-bold mb-4">Product</div>
-                <ul class="space-y-2">
-                    <li><a href="/features.html" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Features</a></li>
-                    <li><a href="/pricing.html" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Pricing</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Chrome Extension</a></li>
-                </ul>
-            </div>
-            <div>
-                <div class="text-white font-bold mb-4">Resources</div>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Blog</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Help Center</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Templates</a></li>
-                </ul>
-            </div>
-            <div>
-                <div class="text-white font-bold mb-4">Legal</div>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Privacy</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Terms</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Security</a></li>
-                </ul>
+            <div
+                class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+                <span>© 2026 CloseDraft. All rights reserved.</span>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-indigo-400 transition-colors">Twitter</a>
+                    <a href="#" class="hover:text-indigo-400 transition-colors">LinkedIn</a>
+                    <a href="#" class="hover:text-indigo-400 transition-colors">YouTube</a>
+                </div>
             </div>
         </div>
-        <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
-            <span>© 2026 CloseDraft. All rights reserved.</span>
-            <div class="flex gap-6">
-                <a href="#" class="hover:text-indigo-400 transition-colors">Twitter</a>
-                <a href="#" class="hover:text-indigo-400 transition-colors">LinkedIn</a>
-                <a href="#" class="hover:text-indigo-400 transition-colors">YouTube</a>
-            </div>
-        </div>
-    </div>
-</footer>
+    </footer>
 
 </body>
+
 </html>

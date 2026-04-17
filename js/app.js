@@ -2351,65 +2351,32 @@ function loadSettings() {
     }
 
     // Load plan info
-    loadUserPlanAndCustomer();
+    loadUserPlanInfo();
 }
 
-async function loadUserPlanAndCustomer() {
+function loadUserPlanInfo() {
     const plan = getUserPlan();
 
     const planDisplay = document.getElementById('currentPlanDisplay');
     const planDescription = document.getElementById('planDescription');
     const upgradeBtn = document.getElementById('upgradeSettingsBtn');
-    const manageBtn = document.getElementById('manageSubscriptionBtn');
     const proFeatures = document.getElementById('proFeaturesList');
+    const subscriptionNote = document.getElementById('subscriptionNote');
 
     if (plan === 'free') {
         planDisplay.textContent = 'Free Plan';
         planDescription.textContent = '10 clients • 20 AI emails/month';
-        upgradeBtn.classList.remove('hidden');
-        manageBtn.classList.add('hidden');
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
         if (proFeatures) proFeatures.classList.add('hidden');
+        if (subscriptionNote) subscriptionNote.classList.add('hidden');
     } else {
-        const planName = plan === 'pro_monthly' ? 'Pro Monthly' :
-            plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
+        const planName = plan === 'pro_monthly' ? 'Pro Monthly' : 
+                         plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
         planDisplay.textContent = planName;
         planDescription.textContent = 'Unlimited clients • Unlimited AI emails • Chrome Extension';
-        upgradeBtn.classList.add('hidden');
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
         if (proFeatures) proFeatures.classList.remove('hidden');
-
-        // Fetch customer_id for portal link
-        const customerId = await getCustomerId();
-        if (customerId) {
-            manageBtn.href = `https://buy.polar.sh/polar_customer_portal?customerId=${customerId}`;
-            manageBtn.classList.remove('hidden');
-        }
-    }
-}
-
-async function getCustomerId() {
-    try {
-        const { data, error } = await window.supabase
-            .from('payments')
-            .select('customer_id')
-            .eq('user_id', window.userSettings.id)
-            .order('created_at', { ascending: false });
-        
-        if (error) {
-            console.error('Failed to fetch customer_id:', error);
-            return null;
-        }
-        
-        // Return the first non-null customer_id
-        for (const payment of data) {
-            if (payment.customer_id) {
-                return payment.customer_id;
-            }
-        }
-        
-        return null;
-    } catch (err) {
-        console.error('Failed to fetch customer_id:', err);
-        return null;
+        if (subscriptionNote) subscriptionNote.classList.remove('hidden');
     }
 }
 
@@ -2456,21 +2423,6 @@ async function saveSettings() {
 
 function confirmDeleteAccount() {
     if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-        deleteAccount();
-    }
-}
-
-async function deleteAccount() {
-    try {
-        // Call your backend endpoint to delete user
-        const { error } = await window.supabase.auth.admin.deleteUser(window.userSettings.id);
-
-        if (error) throw error;
-
-        await window.supabase.auth.signOut();
-        window.location.href = '/';
-    } catch (error) {
-        console.error('Failed to delete account:', error);
-        showToast('Failed to delete account. Please contact support.', 'error');
+        showToast('Please contact support to delete your account', 'info');
     }
 }

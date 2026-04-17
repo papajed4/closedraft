@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Security | CloseDraft</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { primary: '#6366f1', background: '#0b1326', surface: '#131b2e' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1326;
+            color: #dae2fd;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .security-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .security-card:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-background">
+
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
+                        class="text-indigo-400">Draft</span></a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/features.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
+                <a href="/pricing.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
+                <a href="/resources.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
+                <a href="/signup.html"
+                    class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                    Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 px-6 pb-20">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Trust & Safety</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">Security at CloseDraft</h1>
+                <p class="text-slate-400 max-w-2xl mx-auto">We take the security of your data seriously. Here's how we
+                    protect your information.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="security-card">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Encryption</h3>
+                    <p class="text-slate-400 text-sm">All data is encrypted in transit using TLS 1.3 and at rest using
+                        AES-256 encryption.</p>
+                </div>
+                <div class="security-card">
+                    <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Row Level Security</h3>
+                    <p class="text-slate-400 text-sm">Supabase RLS ensures you can only access your own data. Every
+                        query is scoped to your user ID.</p>
+                </div>
+                <div class="security-card">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Secure Authentication</h3>
+                    <p class="text-slate-400 text-sm">Google OAuth and Supabase Auth provide industry-standard
+                        authentication with optional 2FA.</p>
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold text-white mb-6">Infrastructure Security</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="font-bold text-white mb-2">Hosting & Network</h3>
+                        <ul class="text-slate-400 space-y-2 text-sm">
+                            <li>✓ Hosted on Render with DDoS protection</li>
+                            <li>✓ Cloudflare for DNS and CDN</li>
+                            <li>✓ All traffic encrypted via HTTPS</li>
+                            <li>✓ Regular security patches and updates</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white mb-2">Database Security</h3>
+                        <ul class="text-slate-400 space-y-2 text-sm">
+                            <li>✓ Supabase PostgreSQL with RLS</li>
+                            <li>✓ Automated daily encrypted backups</li>
+                            <li>✓ Point-in-time recovery enabled</li>
+                            <li>✓ Connection pooling and SSL required</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white mb-2">API Security</h3>
+                        <ul class="text-slate-400 space-y-2 text-sm">
+                            <li>✓ Bearer token authentication on all endpoints</li>
+                            <li>✓ Rate limiting on authentication endpoints</li>
+                            <li>✓ Input validation and sanitization</li>
+                            <li>✓ CORS restricted to our domains</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white mb-2">Payment Security</h3>
+                        <ul class="text-slate-400 space-y-2 text-sm">
+                            <li>✓ PCI-compliant via Polar.sh</li>
+                            <li>✓ We never store full credit card numbers</li>
+                            <li>✓ 3D Secure authentication supported</li>
+                            <li>✓ Fraud detection and prevention</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold text-white mb-6">AI & Data Privacy</h2>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white mb-1">Google Gemini AI</h3>
+                            <p class="text-slate-400 text-sm">We send only the necessary context (client name, business,
+                                project) to generate emails. Google does not use your data to train their models. <a
+                                    href="https://ai.google.dev/gemini-api/terms" target="_blank"
+                                    class="text-indigo-400 hover:text-indigo-300">Learn more →</a></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white mb-1">Your Data is Yours</h3>
+                            <p class="text-slate-400 text-sm">We never sell or share your client data. You can export or
+                                delete your data at any time from Settings.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl p-8 md:p-10">
+                <h2 class="text-2xl font-bold text-white mb-6">Report a Security Issue</h2>
+                <p class="text-slate-400 mb-4">We take security reports seriously. If you believe you've found a
+                    security vulnerability in CloseDraft, please email us at:</p>
+                <a href="mailto:security@closedraft.com"
+                    class="text-indigo-400 text-lg font-medium hover:text-indigo-300">security@closedraft.com</a>
+                <p class="text-slate-500 text-sm mt-4">We'll respond within 48 hours. Please do not disclose
+                    vulnerabilities publicly until we've had a chance to address them.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="pt-20 pb-10 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold text-white">Close<span
+                                class="text-indigo-400">Draft</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm">The client memory freelancers love.</p>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Product</div>
+                    <ul class="space-y-2">
+                        <li><a href="/features.html" class="text-slate-500 hover:text-slate-300 text-sm">Features</a>
+                        </li>
+                        <li><a href="/pricing.html" class="text-slate-500 hover:text-slate-300 text-sm">Pricing</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm">Chrome Extension</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Resources</div>
+                    <ul class="space-y-2">
+                        <li><a href="/resources.html" class="text-slate-500 hover:text-slate-300 text-sm">Blog</a></li>
+                        <li><a href="/resources.html" class="text-slate-500 hover:text-slate-300 text-sm">Help
+                                Center</a></li>
+                        <li><a href="/resources.html" class="text-slate-500 hover:text-slate-300 text-sm">Templates</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-bold mb-4">Legal</div>
+                    <ul class="space-y-2">
+                        <li><a href="/privacy.html" class="text-slate-500 hover:text-slate-300 text-sm">Privacy</a></li>
+                        <li><a href="/terms.html" class="text-slate-500 hover:text-slate-300 text-sm">Terms</a></li>
+                        <li><a href="/security.html" class="text-indigo-400 text-sm">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+                <span>© 2026 CloseDraft. All rights reserved.</span>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-indigo-400">Twitter</a>
+                    <a href="#" class="hover:text-indigo-400">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
