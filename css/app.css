@@ -288,23 +288,6 @@ body {
     }
 
     /* Header */
-    header {
-        padding: 16px !important;
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 12px !important;
-    }
-
-    header>div {
-        flex-direction: column !important;
-        gap: 12px !important;
-        width: 100% !important;
-    }
-
-    header h2 {
-        font-size: 24px !important;
-        text-align: center !important;
-    }
 
     header .flex.items-center.gap-4 {
         flex-direction: row !important;

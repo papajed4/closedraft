@@ -240,7 +240,7 @@ window.addEventListener('pageshow', function (event) {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+(async function () {
     // Get all page elements
     const dashboardPage = document.getElementById('dashboardPage');
     const clientsPage = document.getElementById('clientsPage');
@@ -306,11 +306,23 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardNav.classList.remove('text-slate-400');
     }
 
-    // Load initial data
-    loadClients();        // Need clients for dashboard stats and templates dropdown
-    loadEmailHistory();   // Need emails for activity feed
-    loadDashboard();      // Load dashboard with data
-    loadTemplates();      // Preload templates for faster switching
+    // Load initial data — wait for auth token to be ready
+    async function initializeDashboard() {
+        // Ensure auth token is available before making API calls
+        const token = await getAuthToken();
+        if (!token) {
+            console.log('⏳ Auth token not ready, retrying...');
+            setTimeout(initializeDashboard, 500);
+            return;
+        }
+
+        await loadClients();
+        await loadEmailHistory();
+        await loadDashboard();
+        loadTemplates();
+    }
+
+    initializeDashboard();
 
     const editClientForm = document.getElementById('editClientForm');
     if (editClientForm) editClientForm.addEventListener('submit', handleEditClient);
@@ -327,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const clientSearch = document.getElementById('clientSearch');
     if (clientSearch) clientSearch.addEventListener('input', handleClientSearch);
-});
+})();
 
 // ============================================
 // PAGE NAVIGATION (Sidebar) with Smooth Transitions
@@ -490,23 +502,12 @@ document.addEventListener('click', function (event) {
 // ============================================
 
 async function loadDashboard() {
-    // Set greeting and date
     updateDashboardGreeting();
-
-    // Load clients for stats
-    await loadClients();
-
-    // Update dashboard stats
     updateDashboardStats();
-
-    // Load attention list
     renderDashboardAttentionList();
-
-    // Load recent activity
     renderDashboardActivity();
-
-    // Populate quick email dropdown
     populateQuickEmailClients();
+    initOnboardingChecklist();
 }
 
 function updateDashboardGreeting() {
@@ -666,6 +667,10 @@ async function generateQuickEmail() {
         document.getElementById('emailConfig').classList.add('hidden');
         document.getElementById('emailResult').classList.remove('hidden');
         document.getElementById('emailModal').classList.remove('hidden');
+
+        // Refresh email list so checklist can detect the new email
+        await loadEmailHistory();
+        checkOnboardingProgress();
 
     } catch (error) {
         showToast(error.message, 'error');
@@ -1126,6 +1131,9 @@ async function markAsContacted() {
         }
 
         showToast('✓ Marked as contacted', 'success');
+
+        checkOnboardingProgress();
+
     } catch (error) {
         console.error('Error:', error);
         showToast('Failed to update', 'error');
@@ -1481,6 +1489,11 @@ async function generateEmail() {
         document.getElementById('generatedBody').textContent = generatedBody;
         document.getElementById('emailConfig').classList.add('hidden');
         document.getElementById('emailResult').classList.remove('hidden');
+
+        // Refresh email list so checklist can detect the new email
+        await loadEmailHistory();
+        checkOnboardingProgress();
+
     } catch (error) {
         showToast(error.message, 'error');
     } finally {
@@ -2337,25 +2350,37 @@ function checkEmailLimit() {
 // SETTINGS PAGE
 // ============================================
 
-function loadSettings() {
+async function loadSettings() {
     // Load user profile into form
     if (window.userSettings) {
         document.getElementById('settingsName').value = window.userSettings.name || '';
         document.getElementById('settingsEmail').value = window.userSettings.email || '';
 
-        // Update avatar in settings header
         const avatar = document.getElementById('settingsAvatar');
         if (avatar) {
             avatar.textContent = (window.userSettings.name || 'U').charAt(0).toUpperCase();
         }
     }
 
-    // Load plan info
-    loadUserPlanInfo();
+    // Load plan info — add await
+    await loadUserPlanInfo();
 }
 
-function loadUserPlanInfo() {
-    const plan = getUserPlan();
+async function loadUserPlanInfo() {
+    // Force refresh plan from database
+    if (window.userSettings?.id) {
+        const { data } = await window.supabase
+            .from('profiles')
+            .select('plan')
+            .eq('id', window.userSettings.id)
+            .single();
+
+        if (data?.plan) {
+            window.userPlan = data.plan;
+        }
+    }
+
+    const plan = window.userPlan || 'free';
 
     const planDisplay = document.getElementById('currentPlanDisplay');
     const planDescription = document.getElementById('planDescription');
@@ -2370,8 +2395,8 @@ function loadUserPlanInfo() {
         if (proFeatures) proFeatures.classList.add('hidden');
         if (subscriptionNote) subscriptionNote.classList.add('hidden');
     } else {
-        const planName = plan === 'pro_monthly' ? 'Pro Monthly' : 
-                         plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
+        const planName = plan === 'pro_monthly' ? 'Pro Monthly' :
+            plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
         planDisplay.textContent = planName;
         planDescription.textContent = 'Unlimited clients • Unlimited AI emails • Chrome Extension';
         if (upgradeBtn) upgradeBtn.classList.add('hidden');
@@ -2425,4 +2450,108 @@ function confirmDeleteAccount() {
     if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
         showToast('Please contact support to delete your account', 'info');
     }
+}
+
+// ============================================
+// ONBOARDING CHECKLIST & DEMO DATA
+// ============================================
+
+function initOnboardingChecklist() {
+    // Show checklist and banner for new users (those with demo data)
+    const hasClients = clients.length > 0;
+    const allAreDemo = clients.every(c => c.name && ['Sarah Chen', 'Marcus Lee', 'Elena Rodriguez', 'James Ward', 'Ava Mitchell', 'Daniel Brooks', 'Emma Collins', 'Isabella Hughes'].includes(c.name));
+
+    const checklist = document.getElementById('onboardingChecklist');
+    const banner = document.getElementById('demoBanner');
+
+    // If all clients are demo clients, show checklist and banner
+    if (hasClients && allAreDemo && clients.length <= 8) {
+        if (checklist) checklist.classList.remove('hidden');
+        if (banner) banner.classList.remove('hidden');
+    }
+
+    // Check which items are completed
+    checkOnboardingProgress();
+}
+
+function checkOnboardingProgress() {
+    // Check item 1: Has generated at least 1 email
+    if (allEmails.length > 0) {
+        markCheckComplete('checkItem1');
+    }
+
+    // Check item 2: Has at least 1 non-demo client (client with unique name not in demo list)
+    const demoNames = ['Sarah Chen', 'Marcus Lee', 'Elena Rodriguez', 'James Ward', 'Ava Mitchell', 'Daniel Brooks', 'Emma Collins', 'Isabella Hughes'];
+    const hasRealClient = clients.some(c => !demoNames.includes(c.name));
+    if (hasRealClient) {
+        markCheckComplete('checkItem2');
+    }
+
+    // Check item 3: Has marked a client as contacted (any client with last_contacted = today)
+    const today = new Date().toDateString();
+    const hasContactedToday = clients.some(c => {
+        const contactDate = c.last_contacted ? new Date(c.last_contacted).toDateString() : null;
+        return contactDate === today;
+    });
+    if (hasContactedToday) {
+        markCheckComplete('checkItem3');
+    }
+
+    // If all items complete, hide the checklist after a delay
+    const allComplete = allEmails.length > 0 && hasRealClient && hasContactedToday;
+    if (allComplete) {
+        setTimeout(() => {
+            const checklist = document.getElementById('onboardingChecklist');
+            const banner = document.getElementById('demoBanner');
+            if (checklist) checklist.classList.add('hidden');
+            if (banner) banner.classList.add('hidden');
+        }, 3000);
+    }
+}
+
+function markCheckComplete(itemId) {
+    const item = document.getElementById(itemId);
+    if (!item) return;
+    const circle = item.querySelector('.w-5.h-5');
+    const icon = item.querySelector('svg');
+    const text = item.querySelector('span');
+
+    if (circle) {
+        circle.classList.remove('bg-slate-700');
+        circle.classList.add('bg-green-500/20');
+    }
+    if (icon) {
+        icon.classList.remove('text-slate-500');
+        icon.classList.add('text-green-400');
+    }
+    if (text) {
+        text.classList.remove('text-slate-400');
+        text.classList.add('text-green-400');
+    }
+}
+
+async function clearDemoData() {
+    if (!confirm('Remove all demo clients? This cannot be undone.')) return;
+
+    const demoNames = ['Sarah Chen', 'Marcus Lee', 'Elena Rodriguez', 'James Ward', 'Ava Mitchell', 'Daniel Brooks', 'Emma Collins', 'Isabella Hughes'];
+    const demoClients = clients.filter(c => demoNames.includes(c.name));
+
+    let deleted = 0;
+    for (const client of demoClients) {
+        try {
+            await deleteClient(client.id);
+            deleted++;
+        } catch (e) {
+            console.error('Failed to delete:', client.name, e);
+        }
+    }
+
+    showToast(`Cleared ${deleted} demo clients`, 'success');
+    await loadClients();
+    updateDashboardStats();
+    renderDashboardAttentionList();
+
+    // Hide banner
+    const banner = document.getElementById('demoBanner');
+    if (banner) banner.classList.add('hidden');
 }

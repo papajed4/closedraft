@@ -78,38 +78,68 @@
 
 <body class="bg-background">
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div
-                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
-                        </path>
-                    </svg>
-                </div>
-                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
-                        class="text-indigo-400">Draft</span></a>
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+            <div
+                class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                    </path>
+                </svg>
             </div>
+            <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
+                    class="text-indigo-400">Draft</span></a>
+        </div>
 
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="/features.html"
-                    class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
-                <a href="/pricing.html"
-                    class="text-indigo-400 font-semibold border-b-2 border-indigo-400 pb-1">Pricing</a>
-                <a href="/resources.html"
-                    class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
-            </div>
+        <!-- Desktop Nav Links -->
+        <div class="hidden md:flex items-center space-x-8">
+            <a href="/features.html"
+                class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
+            <a href="/pricing.html"
+                class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
+            <a href="/resources.html"
+                class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+        </div>
 
-            <div class="flex items-center space-x-4" id="navAuth">
+        <!-- Mobile Hamburger + Auth Buttons -->
+        <div class="flex items-center space-x-3">
+            <!-- Auth Buttons (Desktop) -->
+            <div class="hidden md:flex items-center space-x-4" id="navAuth">
                 <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
                 <a href="/signup.html"
                     class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
                     Started</a>
             </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
+                <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
-    </nav>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
+        <div class="px-6 py-4 space-y-3">
+            <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
+            <a href="/pricing.html" class="block text-slate-400 hover:text-white font-medium py-2">Pricing</a>
+            <a href="/resources.html" class="block text-slate-400 hover:text-white font-medium py-2">Resources</a>
+            <div class="pt-3 border-t border-white/10 space-y-3" id="mobileNavAuth">
+                <a href="/login.html" class="block text-slate-400 hover:text-white font-medium py-2">Sign In</a>
+                <a href="/signup.html"
+                    class="block text-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold">Get Started</a>
+            </div>
+        </div>
+    </div>
+</nav>
 
     <main class="pt-28">
         <!-- Hero -->
@@ -244,14 +274,14 @@
             </div>
 
             <!-- Beta Lifetime Deal Banner -->
-            <div class="mt-8 text-center">
+            <!-- <div class="mt-8 text-center">
                 <p class="text-slate-500 text-sm">
                     🎉 Beta users: <span class="text-white">Lifetime Pro</span> available for <span
                         class="text-indigo-400 font-bold">$149</span> —
                     <button onclick="handleUpgrade('lifetime')"
                         class="text-indigo-400 hover:text-indigo-300 underline">claim your spot</button>
                 </p>
-            </div>
+            </div> -->
         </section>
 
         <!-- FAQ -->
@@ -362,9 +392,9 @@
     <script>
         // Product IDs from Polar.sh (Test Mode)
         const PRODUCT_IDS = {
-            monthly: '779abdfc-3dc4-4d22-9c71-edf61888d4fb',     // Replace with actual ID
-            yearly: '63a563d9-736c-4f2f-b68e-c9b24916f5be',       // Replace with actual ID
-            lifetime: 'a64e6dfd-ddbb-4c47-b409-bfceb3efebac'   // Replace with actual ID
+            monthly: '779abdfc-3dc4-4d22-9c71-edf61888d4fb',  
+            yearly: '63a563d9-736c-4f2f-b68e-c9b24916f5be',     
+            lifetime: 'a64e6dfd-ddbb-4c47-b409-bfceb3efebac'   
         };
 
         let isYearly = false;

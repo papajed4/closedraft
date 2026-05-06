@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | CloseDraft</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { primary: '#6366f1', background: '#0b1326', surface: '#131b2e' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1326;
+            color: #dae2fd;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .option-card {
+            background: rgba(23, 31, 51, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px 24px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .option-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .option-card.selected {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .option-card .check-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .option-card.selected .check-indicator {
+            border-color: #6366f1;
+            background: #6366f1;
+        }
+
+        .option-card.selected .check-indicator svg {
+            opacity: 1;
+        }
+
+        .insight-box {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes expandDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+
+            to {
+                opacity: 1;
+                max-height: 600px;
+            }
+        }
+
+        .step-line {
+            height: 4px;
+            border-radius: 2px;
+            background: #1e293b;
+            transition: all 0.4s ease;
+            flex: 1;
+        }
+
+        .step-line.done {
+            background: #6366f1;
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .import-area {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .import-area:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(99, 102, 241, 0.1);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .tag.error-tag {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-5 relative">
+
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-indigo-600/15 rounded-full blur-[150px]"></div>
+        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-600/10 rounded-full blur-[150px]">
+        </div>
+    </div>
+
+    <div class="w-full max-w-xl">
+
+        <!-- Logo -->
+        <div class="flex items-center justify-center gap-2 mb-10">
+            <div
+                class="w-9 h-9 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <span class="text-xl font-bold text-white tracking-tight">Close<span
+                    class="text-indigo-400">Draft</span></span>
+        </div>
+
+        <!-- Progress -->
+        <div class="flex items-center gap-2 mb-10 px-4">
+            <span class="step-label text-indigo-400" id="stepLabel1">Pain Point</span>
+            <div class="step-line done" id="stepLine1"></div>
+            <span class="step-label text-slate-600" id="stepLabel2">Scale</span>
+            <div class="step-line" id="stepLine2"></div>
+            <span class="step-label text-slate-600" id="stepLabel3">Import</span>
+            <div class="step-line" id="stepLine3"></div>
+            <span class="step-label text-slate-600" id="stepLabel4">Result</span>
+        </div>
+
+        <!-- ============ STEP 1: Pain Point ============ -->
+        <div id="step1">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-white mb-2">What slows you down most with clients?</h1>
+                <p class="text-slate-400 text-sm">We'll tailor CloseDraft to solve exactly this.</p>
+            </div>
+
+            <div class="space-y-3" id="step1Options">
+                <div class="option-card flex items-center gap-4"
+                    onclick="selectPainPoint(this, 'forgetting-followups', 'You lose deals because follow-ups slip your mind. CloseDraft flags every client who needs attention — before they go cold.')">
+                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <p class="font-semibold text-white">I forget to follow up</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Days pass, then weeks, and the conversation dies</p>
+                    </div>
+                </div>
+                <div class="option-card flex items-center gap-4"
+                    onclick="selectPainPoint(this, 'chasing-invoices', 'You do the work but payments drag on. CloseDraft drafts polite but firm payment reminders using your actual project details.')">
+                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <p class="font-semibold text-white">I'm always chasing payments</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Invoicing is fine, collecting is the nightmare</p>
+                    </div>
+                </div>
+                <div class="option-card flex items-center gap-4"
+                    onclick="selectPainPoint(this, 'getting-ghosted', 'You send proposals and hear nothing back. CloseDraft writes follow-ups that feel personal, not pushy — doubling your reply rate.')">
+                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <p class="font-semibold text-white">Clients ghost me after proposals</p>
+                        <p class="text-xs text-slate-500 mt-0.5">I pitch, they vanish, I never know why</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step1Insight" class="hidden mt-4"></div>
+
+            <button onclick="goToStep2()" id="step1Btn" disabled
+                class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl mt-6 opacity-40 cursor-not-allowed transition-all text-sm">Continue</button>
+        </div>
+
+        <!-- ============ STEP 2: Scale ============ -->
+        <div id="step2" class="hidden">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-white mb-2">How many active clients do you manage?</h1>
+                <p class="text-slate-400 text-sm">This determines your starting setup.</p>
+            </div>
+
+            <div class="space-y-3" id="step2Options">
+                <div class="option-card flex items-center gap-4"
+                    onclick="selectScale(this, '1-5', 'Perfect. We\'ll start you with a clean slate and 2 sample clients so you can see how tracking works immediately.')">
+                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <p class="font-semibold text-white">1 to 5 clients</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Selective and intentional</p>
+                    </div>
+                </div>
+                <div class="option-card flex items-center gap-4"
+                    onclick="selectScale(this, '6-15', 'You\'re busy. We\'ll pre-load 5 sample clients across different statuses so the dashboard feels real from day one.')">
+                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <p class="font-semibold text-white">6 to 15 clients</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Growing steadily, staying busy</p>
+                    </div>
+                </div>
+                <div class="option-card flex items-center gap-4"
+                    onclick="selectScale(this, '15-plus', 'You need scale. We\'ll load 8 sample clients and show you the batch workflow — bulk emails, bulk status updates, the works.')">
+                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <p class="font-semibold text-white">15 or more clients</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Running a full operation</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step2Insight" class="hidden mt-4"></div>
+
+            <button onclick="goToImportStep()" id="step2Btn" disabled
+                class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl mt-6 opacity-40 cursor-not-allowed transition-all text-sm">Continue</button>
+        </div>
+
+        <!-- ============ STEP 3: Import Clients (Optional) ============ -->
+        <div id="importStep" class="hidden">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-white mb-2">Bring your clients with you</h1>
+                <p class="text-slate-400 text-sm">Upload a CSV, paste from a spreadsheet, or skip — we'll handle the
+                    formatting.</p>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="import-area mb-4" onclick="document.getElementById('csvFileInput').click()">
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
+                <svg class="w-10 h-10 text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                    </path>
+                </svg>
+                <p class="text-white font-medium text-sm">Click to upload a CSV file</p>
+                <p class="text-slate-500 text-xs mt-1">We expect columns: Name, Business, Email, Project, Amount</p>
+            </div>
+
+            <!-- Or paste text -->
+            <div class="relative mb-4">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-white/5"></div>
+                </div>
+                <div class="relative flex justify-center text-xs"><span class="px-3 bg-background text-slate-600">or
+                        paste raw data</span></div>
+            </div>
+
+            <textarea id="pasteInput" rows="4"
+                placeholder="Sarah Chen, Bright Analytics, sarah@bright.com, Dashboard Redesign, 3500&#10;Marcus Lee, DesignCo, marcus@designco.io, Brand Identity, 2200&#10;..."
+                class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 text-sm resize-none focus:border-indigo-500 focus:outline-none transition-all"></textarea>
+            <button onclick="parsePastedData()"
+                class="w-full bg-slate-800/50 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-sm font-medium border border-white/10 transition-all mb-4">
+                Parse pasted data
+            </button>
+
+            <!-- Preview -->
+            <div id="importPreview" class="hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Preview</p>
+                    <span id="importCount" class="tag">0 clients detected</span>
+                </div>
+                <div class="bg-slate-800/30 rounded-xl p-4 max-h-48 overflow-y-auto mb-4">
+                    <table class="w-full text-xs text-slate-300">
+                        <thead>
+                            <tr class="text-slate-500 uppercase">
+                                <th class="text-left py-1 pr-2">Name</th>
+                                <th class="text-left py-1 pr-2">Business</th>
+                                <th class="text-left py-1 pr-2">Email</th>
+                                <th class="text-left py-1">Project</th>
+                            </tr>
+                        </thead>
+                        <tbody id="importPreviewBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button onclick="finishOnboarding()" id="importContinueBtn"
+                class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl transition-all text-sm">
+                Continue to dashboard
+            </button>
+            <p class="text-center mt-3">
+                <a href="#" onclick="finishOnboarding()"
+                    class="text-slate-500 text-xs hover:text-slate-400 transition-colors">Skip — I'll add clients
+                    later</a>
+            </p>
+        </div>
+
+        <!-- ============ STEP 4: Processing ============ -->
+        <div id="processingStep" class="hidden text-center py-10">
+            <div
+                class="w-12 h-12 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/20">
+                <svg class="w-6 h-6 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-white mb-2" id="processingTitle">Building your workspace...</h2>
+            <p class="text-slate-400 text-sm" id="processingSubtitle">Creating clients and setting things up</p>
+            <div class="flex items-center justify-center gap-2 mt-6">
+                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+
+        <p class="text-center mt-8">
+            <a href="/app.html" class="text-slate-600 text-xs hover:text-slate-500 transition-colors">Skip everything —
+                go to dashboard</a>
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseClient = window.supabase.createClient(
+            'https://txibbsaodcpaturobeok.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24'
+        );
+
+        let selectedPainPoint = null;
+        let selectedScale = null;
+        let parsedClients = [];
+        let currentUser = null;
+
+        async function checkAuth() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) { window.location.href = '/login.html'; return null; }
+            const { data: profile } = await supabaseClient.from('profiles').select('onboarding_completed').eq('id', user.id).single();
+            if (profile?.onboarding_completed) { window.location.href = '/app.html'; return null; }
+            currentUser = user;
+            return user;
+        }
+
+        function selectPainPoint(element, value, insight) {
+            document.querySelectorAll('#step1Options .option-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedPainPoint = value;
+            document.getElementById('step1Insight').className = 'insight-box mt-4';
+            document.getElementById('step1Insight').innerHTML = `
+                <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
+                <p class="text-slate-300 text-sm leading-relaxed">${insight}</p>
+                <p class="text-slate-500 text-xs mt-3">Your dashboard will be pre-configured to prioritize this.</p>`;
+            document.getElementById('step1Insight').classList.remove('hidden');
+            const btn = document.getElementById('step1Btn'); btn.disabled = false; btn.classList.remove('opacity-40', 'cursor-not-allowed'); btn.classList.add('opacity-100');
+        }
+
+        function selectScale(element, value, insight) {
+            document.querySelectorAll('#step2Options .option-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedScale = value;
+            document.getElementById('step2Insight').className = 'insight-box mt-4';
+            document.getElementById('step2Insight').innerHTML = `
+                <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Your setup</p>
+                <p class="text-slate-300 text-sm leading-relaxed">${insight}</p>`;
+            document.getElementById('step2Insight').classList.remove('hidden');
+            const btn = document.getElementById('step2Btn'); btn.disabled = false; btn.classList.remove('opacity-40', 'cursor-not-allowed'); btn.classList.add('opacity-100');
+        }
+
+        function goToStep2() {
+            if (!selectedPainPoint) return;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            updateProgress(2);
+        }
+
+        function goToImportStep() {
+            if (!selectedScale) return;
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('importStep').classList.remove('hidden');
+            updateProgress(3);
+        }
+
+        function updateProgress(step) {
+            const labels = ['stepLabel1', 'stepLabel2', 'stepLabel3', 'stepLabel4'];
+            const lines = ['stepLine1', 'stepLine2', 'stepLine3'];
+            labels.forEach((id, i) => {
+                const el = document.getElementById(id);
+                if (i + 1 < step) { el.className = 'step-label text-slate-500'; }
+                else if (i + 1 === step) { el.className = 'step-label text-indigo-400'; }
+                else { el.className = 'step-label text-slate-600'; }
+            });
+            lines.forEach((id, i) => {
+                const el = document.getElementById(id);
+                if (i + 1 < step) { el.classList.add('done'); }
+                else { el.classList.remove('done'); }
+            });
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                parseCSV(e.target.result);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(content) {
+            const lines = content.split('\n').filter(l => l.trim());
+            if (lines.length < 2) return;
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+            parsedClients = [];
+            for (let i = 1; i < lines.length; i++) {
+                const vals = lines[i].split(',').map(v => v.trim());
+                if (!vals[0]) continue;
+                parsedClients.push({
+                    name: vals[0] || '',
+                    business: vals[1] || '',
+                    email: vals[2] || '',
+                    project: vals[3] || '',
+                    amount: vals[4] ? parseFloat(vals[4]) : null,
+                    status: 'active'
+                });
+            }
+            renderPreview();
+        }
+
+        function parsePastedData() {
+            const text = document.getElementById('pasteInput').value.trim();
+            if (!text) return;
+            const lines = text.split('\n').filter(l => l.trim());
+            parsedClients = [];
+            for (const line of lines) {
+                const vals = line.split(',').map(v => v.trim());
+                if (!vals[0]) continue;
+                parsedClients.push({
+                    name: vals[0] || '',
+                    business: vals[1] || '',
+                    email: vals[2] || '',
+                    project: vals[3] || '',
+                    amount: vals[4] ? parseFloat(vals[4]) : null,
+                    status: 'active'
+                });
+            }
+            renderPreview();
+        }
+
+        function renderPreview() {
+            const preview = document.getElementById('importPreview');
+            const body = document.getElementById('importPreviewBody');
+            const count = document.getElementById('importCount');
+            preview.classList.remove('hidden');
+            count.textContent = `${parsedClients.length} clients detected`;
+            body.innerHTML = parsedClients.slice(0, 5).map(c =>
+                `<tr><td class="py-1 pr-2 text-white">${c.name}</td><td class="py-1 pr-2 text-slate-400">${c.business || '—'}</td><td class="py-1 pr-2 text-slate-400">${c.email || '—'}</td><td class="py-1 text-slate-400">${c.project || '—'}</td></tr>`
+            ).join('');
+            if (parsedClients.length > 5) {
+                body.innerHTML += `<tr><td colspan="4" class="py-2 text-slate-500 text-xs">+${parsedClients.length - 5} more</td></tr>`;
+            }
+        }
+
+        async function finishOnboarding() {
+            if (!currentUser) return;
+
+            document.getElementById('importStep').classList.add('hidden');
+            document.getElementById('processingStep').classList.remove('hidden');
+            updateProgress(4);
+
+            const token = (await supabaseClient.auth.getSession()).data.session?.access_token;
+
+            // Update profile
+            await supabaseClient.from('profiles').update({
+                headache: selectedPainPoint,
+                client_count: selectedScale,
+                onboarding_completed: true,
+                updated_at: new Date().toISOString()
+            }).eq('id', currentUser.id);
+
+            const clientsToCreate = parsedClients.length > 0 ? parsedClients : generateDemoClients(selectedPainPoint, selectedScale);
+
+            document.getElementById('processingTitle').textContent = parsedClients.length > 0 ? 'Importing your clients...' : 'Creating your demo workspace...';
+            document.getElementById('processingSubtitle').textContent = `Setting up ${clientsToCreate.length} client${clientsToCreate.length !== 1 ? 's' : ''}`;
+
+            for (const client of clientsToCreate) {
+                await fetch('/api/clients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(client)
+                });
+            }
+
+            document.getElementById('processingTitle').textContent = 'Everything is ready.';
+            document.getElementById('processingSubtitle').textContent = 'Taking you to your dashboard...';
+            setTimeout(() => { window.location.href = '/app.html'; }, 800);
+        }
+
+        function generateDemoClients(painPoint, scale) {
+            const count = scale === '1-5' ? 2 : scale === '6-15' ? 5 : 8;
+            const all = [
+                { name: 'Sarah Chen', business: 'Bright Analytics', email: 'sarah@brightanalytics.com', project: 'Dashboard Redesign', amount: 3500, status: 'waiting', last_contacted: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString() },
+                { name: 'Marcus Lee', business: 'DesignCo', email: 'marcus@designco.io', project: 'Brand Identity', amount: 2200, status: 'payment_due', last_contacted: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() },
+                { name: 'Elena Rodriguez', business: 'Verve Studio', email: 'elena@verve.co', project: 'Website Copy', amount: 1800, status: 'active', last_contacted: new Date().toISOString() },
+                { name: 'James Ward', business: 'Ward Consulting', email: 'james@wardconsulting.com', project: 'SEO Audit', amount: 4500, status: 'waiting', last_contacted: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString() },
+                { name: 'Ava Mitchell', business: 'Mitchell & Co', email: 'ava@mitchell.co', project: 'Social Media Strategy', amount: 1200, status: 'active', last_contacted: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
+                { name: 'Daniel Brooks', business: 'Brooks Digital', email: 'daniel@brooksdigital.com', project: 'Website Redesign', amount: 6000, status: 'payment_due', last_contacted: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString() },
+                { name: 'Emma Collins', business: 'Collins Creative', email: 'emma@collinscreative.com', project: 'Email Campaign', amount: 2800, status: 'waiting', last_contacted: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString() },
+                { name: 'Isabella Hughes', business: 'Hughes Law', email: 'isabella@hugheslaw.com', project: 'Content Marketing', amount: 3800, status: 'active', last_contacted: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+            ];
+            let clients = [...all];
+            if (painPoint === 'chasing-invoices') clients.sort((a, b) => a.status === 'payment_due' ? -1 : 1);
+            else if (painPoint === 'forgetting-followups') clients.sort((a, b) => a.status === 'waiting' ? -1 : 1);
+            return clients.slice(0, count);
+        }
+
+        checkAuth();
+    </script>
+</body>
+
+</html>

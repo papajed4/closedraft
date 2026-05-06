@@ -88,8 +88,8 @@
                         </path>
                     </svg>
                 </div>
-                <span class="text-xl font-bold text-white tracking-tight">Close<span
-                        class="text-indigo-400">Draft</span></span>
+                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
+                        class="text-indigo-400">Draft</span></a>
             </div>
 
             <!-- Desktop Nav Links -->
@@ -98,15 +98,48 @@
                     class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
                 <a href="/pricing.html"
                     class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
-                <a href="/resources.html" class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+                <a href="/resources.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
             </div>
 
-            <!-- Auth Buttons -->
-            <div class="flex items-center space-x-4">
-                <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
-                <a href="/signup.html"
-                    class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
-                    Started</a>
+            <!-- Mobile Hamburger + Auth Buttons -->
+            <div class="flex items-center space-x-3">
+                <!-- Auth Buttons (Desktop) -->
+                <div class="hidden md:flex items-center space-x-4" id="navAuth">
+                    <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign
+                        In</a>
+                    <a href="/signup.html"
+                        class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                        Started</a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
+                    <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
+            <div class="px-6 py-4 space-y-3">
+                <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
+                <a href="/pricing.html" class="block text-slate-400 hover:text-white font-medium py-2">Pricing</a>
+                <a href="/resources.html" class="block text-slate-400 hover:text-white font-medium py-2">Resources</a>
+                <div class="pt-3 border-t border-white/10 space-y-3" id="mobileNavAuth">
+                    <a href="/login.html" class="block text-slate-400 hover:text-white font-medium py-2">Sign In</a>
+                    <a href="/signup.html"
+                        class="block text-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold">Get
+                        Started</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -235,38 +268,96 @@
             </div>
         </section>
 
+        <!-- ==================== LIVE DEMO SECTION ==================== -->
+        <section class="py-20 px-6 bg-slate-900/30">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-10">
+                    <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Try It Now</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-4 mb-4">See CloseDraft in action</h2>
+                    <p class="text-slate-400">Paste a client message or rough draft below and watch it transform — no
+                        signup required.</p>
+                </div>
+
+                <!-- Input -->
+                <div class="glass rounded-2xl p-6 md:p-8 mb-6">
+                    <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Your rough
+                        message</label>
+                    <textarea id="demoInput" rows="4"
+                        placeholder="e.g. Hey John, just checking in about the website project. Wanted to see where we are with that..."
+                        class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 resize-none focus:border-indigo-500 focus:outline-none transition-all"></textarea>
+                    <button onclick="runDemo()" id="demoBtn"
+                        class="mt-4 w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                            </path>
+                        </svg>
+                        Improve Reply
+                    </button>
+                </div>
+
+                <!-- Result -->
+                <div id="demoResult" class="hidden">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Before -->
+                        <div class="glass rounded-2xl p-6 border border-white/5">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Before</p>
+                            <p id="demoBefore" class="text-slate-400 text-sm leading-relaxed"></p>
+                        </div>
+                        <!-- After -->
+                        <div class="glass rounded-2xl p-6 border border-indigo-500/30 relative">
+                            <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3">Improved</p>
+                            <p id="demoAfter" class="text-white text-sm leading-relaxed"></p>
+                            <div id="demoBlur"
+                                class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#131b2e] via-[#131b2e] to-transparent rounded-b-2xl flex items-end justify-center pb-4">
+                                <a href="/signup.html"
+                                    class="gradient-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg">
+                                    Create free account to unlock →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center text-slate-500 text-xs mt-4">Want to save replies, track clients, and never
+                        forget a follow-up?</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="demoLoading" class="hidden text-center py-8">
+                    <div class="inline-flex items-center gap-3 glass rounded-full px-6 py-3">
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0s">
+                            </div>
+                            <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                                style="animation-delay: 0.2s"></div>
+                            <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                                style="animation-delay: 0.4s"></div>
+                        </div>
+                        <span class="text-slate-400 text-sm">Improving your reply...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Email Compatibility Banner -->
         <section class="py-12 bg-slate-900/30 border-y border-white/5">
             <div class="max-w-7xl mx-auto px-6">
                 <p class="text-center text-slate-500 text-sm uppercase tracking-wider mb-6">Works seamlessly with</p>
                 <div class="flex flex-wrap justify-center items-center gap-12">
+                    <!-- Gmail -->
                     <div class="flex items-center gap-3">
-                        <svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.818l8.073-6.325c1.618-1.214 3.927-.059 3.927 1.964z" />
-                        </svg>
+                        <img src="https://thesvg.org/icons/gmail/default.svg" alt="Gmail" class="w-8 h-8">
                         <span class="text-white font-medium text-lg">Gmail</span>
                     </div>
+
+                    <!-- Outlook -->
                     <div class="flex items-center gap-3">
-                        <svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 3c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3zm7 15H5v-1c0-2.333 4.667-3.5 7-3.5s7 1.167 7 3.5v1z" />
-                        </svg>
-                        <span class="text-white font-medium text-lg">Yahoo Mail</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M21 4H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2v.5L12 11 3 6.5V6h18zM3 18V9l9 4.5L21 9v9H3z" />
-                        </svg>
+                        <img src="https://thesvg.org/icons/microsoft-outlook/default.svg" alt="Outlook" class="w-8 h-8">
                         <span class="text-white font-medium text-lg">Outlook</span>
                     </div>
+                    <!-- Proton Mail -->
                     <div class="flex items-center gap-3">
-                        <svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                        </svg>
-                        <span class="text-white font-medium text-lg">Any Email</span>
+                        <img src="https://thesvg.org/icons/proton-mail/default.svg" alt="Proton Mail" class="w-8 h-8">
+                        <span class="text-white font-medium text-lg">Proton Mail</span>
                     </div>
                 </div>
             </div>
@@ -552,7 +643,8 @@
                     <ul class="space-y-2">
                         <li><a href="/privacy.html"
                                 class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Privacy</a></li>
-                        <li><a href="/terms.html" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Terms</a>
+                        <li><a href="/terms.html"
+                                class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Terms</a>
                         </li>
                         <li><a href="/security.html"
                                 class="text-slate-500 hover:text-slate-300 text-sm transition-colors">Security</a></li>
@@ -570,6 +662,61 @@
             </div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/nav.js"></script>
+
+    <!-- Live Demo Script -->
+    <script>
+        async function runDemo() {
+            const input = document.getElementById('demoInput').value.trim();
+            if (!input) return;
+
+            const btn = document.getElementById('demoBtn');
+            const result = document.getElementById('demoResult');
+            const loading = document.getElementById('demoLoading');
+            const before = document.getElementById('demoBefore');
+            const after = document.getElementById('demoAfter');
+
+            // Show loading
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader"></span> Improving...';
+            result.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/demo-improve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: input })
+                });
+
+                const data = await response.json();
+
+                // Show result
+                loading.classList.add('hidden');
+                before.textContent = input;
+                after.textContent = data.improved || data.error || 'Something went wrong.';
+                result.classList.remove('hidden');
+            } catch (error) {
+                loading.classList.add('hidden');
+                before.textContent = input;
+                after.textContent = 'Something went wrong. Please try again.';
+                result.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg> Improve Reply';
+            }
+        }
+
+        // Allow Enter key to submit (Shift+Enter for new line)
+        document.getElementById('demoInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                runDemo();
+            }
+        });
+    </script>
 
 </body>
 

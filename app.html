@@ -143,15 +143,65 @@
                 </svg>
                 <span class="text-xs font-bold uppercase tracking-wider">Settings</span>
             </a>
+
+            <!-- Onboarding Checklist (hidden by default, shown for new users) -->
+            <div id="onboardingChecklist" class="hidden mt-6 px-6 border-t border-white/5 pt-6">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-3">Getting Started</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-xs" id="checkItem1">
+                        <div class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-slate-400">Generate your first email</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs" id="checkItem2">
+                        <div class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-slate-400">Add your first real client</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs" id="checkItem3">
+                        <div class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-slate-400">Mark a client as contacted</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sign Out Nav Item (visible only on mobile) -->
+            <a href="#" onclick="logout(); return false;"
+                class="hidden max-md:flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-red-400 hover:bg-white/5 transition-all"
+                id="logoutNav">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Sign Out</span>
+            </a>
         </nav>
 
         <div class="px-6 mt-auto pt-8">
-            <button onclick="logout()"
-                class="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-bold uppercase tracking-wider border border-red-500/20 transition-all">
-                Sign Out
+            <button onclick="logout()" title="Sign Out"
+                class="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg flex items-center justify-center border border-red-500/20 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
             </button>
 
-            <button
+            <button id="sidebarUpgradeBtn"
                 class="w-full py-2.5 gradient-primary rounded-lg text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/20 hover:opacity-90 transition-opacity mt-3">
                 Upgrade to Pro
             </button>
@@ -165,22 +215,23 @@
         <div id="dashboardPage">
 
             <!-- Top Bar -->
-            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                        <h2
+                            class="text-lg md:text-2xl font-bold text-white tracking-tight flex items-center gap-2 truncate">
                             <span id="dashboardUserName">Freelancer</span>
-                            <span id="dashboardGreetingIcon" class="text-indigo-400">☀️</span>
+                            <span id="dashboardGreetingIcon" class="text-indigo-400 flex-shrink-0">☀️</span>
                         </h2>
-                        <p class="text-slate-400 text-sm mt-0.5" id="dashboardDate"></p>
+                        <p class="text-slate-400 text-xs md:text-sm mt-0.5" id="dashboardDate"></p>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
                         <button onclick="switchPage('clients')"
-                            class="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-sm font-medium transition-all">
+                            class="px-3 md:px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap">
                             + New Client
                         </button>
                         <div
-                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             JD
                         </div>
                     </div>
@@ -240,6 +291,29 @@
                         </div>
                         <p class="text-3xl font-bold text-white mt-2" id="dashEmailsSent">0</p>
                     </div>
+                </div>
+
+                <!-- Demo Data Banner (hidden by default) -->
+                <div id="demoBanner"
+                    class="hidden mb-6 glass-card rounded-2xl p-4 flex items-center justify-between border border-indigo-500/20">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white font-medium">These are demo clients — add your real ones
+                                anytime.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Clear them when you're ready to start fresh.</p>
+                        </div>
+                    </div>
+                    <button onclick="clearDemoData()"
+                        class="bg-slate-700/50 hover:bg-red-500/20 text-slate-300 hover:text-red-400 px-4 py-2 rounded-lg text-xs font-bold transition-all flex-shrink-0">
+                        Clear demo data
+                    </button>
                 </div>
 
                 <!-- Main Dashboard Grid -->
@@ -372,123 +446,122 @@
 
         <!-- ==================== CLIENTS PAGE ==================== -->
         <div id="clientsPage" class="hidden">
+
             <!-- Clients Page Header -->
-            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-4">
-                            <h2 class="text-2xl font-bold text-white tracking-tight">Clients</h2>
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
+                <!-- Top Row: Title + Actions -->
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-2 md:gap-4 flex-wrap">
+                        <h2 class="text-lg md:text-2xl font-bold text-white tracking-tight">Clients</h2>
 
-                            <!-- ADD SELECT ALL CHECKBOX -->
-                            <div class="flex items-center gap-2">
-                                <input type="checkbox" id="selectAllClients"
-                                    class="w-4 h-4 rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0"
-                                    onchange="toggleSelectAll(this)">
-                                <label for="selectAllClients" class="text-xs text-slate-400 cursor-pointer">Select
-                                    All</label>
-                            </div>
-
-                            <!-- BULK DELETE BUTTON (hidden by default) -->
+                        <!-- Select All + Bulk Delete -->
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="selectAllClients"
+                                class="w-4 h-4 rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0"
+                                onchange="toggleSelectAll(this)">
+                            <label for="selectAllClients"
+                                class="text-xs text-slate-400 cursor-pointer hidden sm:inline">Select All</label>
                             <button id="bulkDeleteBtn"
-                                class="hidden bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 border border-red-500/30 transition-all"
+                                class="hidden bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 border border-red-500/30 transition-all"
                                 onclick="openBulkDeleteModal()">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                                     </path>
                                 </svg>
-                                Delete Selected (<span id="selectedCount">0</span>)
+                                <span class="hidden sm:inline">Delete</span> (<span id="selectedCount">0</span>)
                             </button>
-                        </div>
-
-
-                        <!-- Search Bar -->
-                        <div class="relative">
-                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            <input type="text" id="clientSearch" placeholder="Search clients..."
-                                class="w-48 md:w-64 pl-10 pr-4 py-2 rounded-xl input-glass text-white placeholder-slate-500 text-sm">
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <!-- Sort Dropdown (Compact) -->
-                        <select id="sortClients" onchange="sortClientsList()"
-                            class="px-3 py-2 rounded-xl input-glass text-white text-sm bg-slate-800/50">
-                            <option value="name-asc">A-Z</option>
-                            <option value="name-desc">Z-A</option>
-                            <option value="date-newest">Newest</option>
-                            <option value="date-oldest">Oldest</option>
-                            <option value="value-highest">Highest $</option>
-                            <option value="value-lowest">Lowest $</option>
-                        </select>
-
-                        <!-- Filter Dropdown (Compact) -->
-                        <select id="statusFilter" onchange="filterClients()"
-                            class="px-3 py-2 rounded-xl input-glass text-white text-sm bg-slate-800/50">
-                            <option value="all">All</option>
-                            <option value="attention">⚠️ Attention</option>
-                            <option value="active">Active</option>
-                            <option value="waiting">Waiting</option>
-                            <option value="payment_due">Payment Due</option>
-                        </select>
-
-                        <!-- Archived Toggle (Compact) -->
-                        <div
-                            class="flex items-center gap-1 bg-slate-800/50 rounded-xl px-3 py-1.5 border border-white/10">
-                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
-                                </path>
-                            </svg>
-                            <span id="archivedCount" class="text-slate-300 text-xs font-bold">0</span>
-                            <label class="relative inline-flex items-center cursor-pointer ml-1">
-                                <input type="checkbox" id="archivedToggle" class="sr-only peer"
-                                    onchange="toggleShowArchived()">
-                                <div
-                                    class="w-8 h-4 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-500">
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Import Button (Icon Only) -->
-                        <button onclick="openImportModal()"
-                            class="bg-slate-800/50 hover:bg-slate-700 text-white p-2 rounded-xl transition-all border border-white/10"
-                            title="Import CSV">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                            </svg>
-                        </button>
-
-                        <!-- Export Button (Icon Only) -->
-                        <button onclick="exportToCSV()"
-                            class="bg-slate-800/50 hover:bg-slate-700 text-white p-2 rounded-xl transition-all border border-white/10"
-                            title="Export CSV">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                            </svg>
-                        </button>
-
+                    <div class="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                         <button onclick="openAddModal()"
-                            class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1 shadow-lg shadow-indigo-500/20">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="gradient-primary text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1 shadow-lg shadow-indigo-500/20">
+                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4"></path>
                             </svg>
                             <span class="hidden sm:inline">Add</span>
                         </button>
-
                         <div
-                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             JD
                         </div>
                     </div>
+                </div>
+
+                <!-- Bottom Row: Search + Filters -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Search Bar -->
+                    <div class="relative flex-1 min-w-[140px] max-w-[200px]">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="clientSearch" placeholder="Search..."
+                            class="w-full pl-9 pr-3 py-2 rounded-xl input-glass text-white placeholder-slate-500 text-sm">
+                    </div>
+
+                    <!-- Sort -->
+                    <select id="sortClients" onchange="sortClientsList()"
+                        class="px-2.5 py-2 rounded-xl input-glass text-white text-xs md:text-sm bg-slate-800/50">
+                        <option value="name-asc">A-Z</option>
+                        <option value="name-desc">Z-A</option>
+                        <option value="date-newest">Newest</option>
+                        <option value="date-oldest">Oldest</option>
+                        <option value="value-highest">Highest $</option>
+                        <option value="value-lowest">Lowest $</option>
+                    </select>
+
+                    <!-- Filter -->
+                    <select id="statusFilter" onchange="filterClients()"
+                        class="px-2.5 py-2 rounded-xl input-glass text-white text-xs md:text-sm bg-slate-800/50">
+                        <option value="all">All</option>
+                        <option value="attention">⚠️ Attention</option>
+                        <option value="active">Active</option>
+                        <option value="waiting">Waiting</option>
+                        <option value="payment_due">Payment Due</option>
+                    </select>
+
+                    <!-- Archived Toggle -->
+                    <div
+                        class="flex items-center gap-1 bg-slate-800/50 rounded-xl px-2.5 py-1.5 border border-white/10">
+                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                            </path>
+                        </svg>
+                        <span id="archivedCount" class="text-slate-300 text-xs font-bold">0</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="archivedToggle" class="sr-only peer"
+                                onchange="toggleShowArchived()">
+                            <div
+                                class="w-7 h-4 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-500">
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Import -->
+                    <button onclick="openImportModal()"
+                        class="bg-slate-800/50 hover:bg-slate-700 text-white p-2 rounded-xl transition-all border border-white/10 flex-shrink-0"
+                        title="Import CSV">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Export -->
+                    <button onclick="exportToCSV()"
+                        class="bg-slate-800/50 hover:bg-slate-700 text-white p-2 rounded-xl transition-all border border-white/10 flex-shrink-0"
+                        title="Export CSV">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                    </button>
                 </div>
             </header>
 
@@ -648,59 +721,75 @@
 
         <!-- ==================== EMAILS PAGE ==================== -->
         <div id="emailsPage" class="hidden">
+
             <!-- Emails Page Header -->
-            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white tracking-tight">Email History</h2>
-                        <p class="text-slate-400 text-sm mt-0.5">Review your AI-generated emails and communication logs
-                        </p>
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
+                <!-- Top Row: Title + Actions -->
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <div class="min-w-0">
+                        <h2 class="text-lg md:text-2xl font-bold text-white tracking-tight">Email History</h2>
+                        <p class="text-slate-400 text-xs md:text-sm mt-0.5 hidden sm:block">Review your AI-generated
+                            emails and communication logs</p>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="relative">
+                    <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+                        <div class="relative hidden sm:block">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                             <input type="text" id="emailSearch" placeholder="Search emails..."
-                                class="w-64 pl-10 pr-4 py-2.5 rounded-xl input-glass text-white placeholder-slate-500 text-sm">
+                                class="w-48 md:w-64 pl-10 pr-4 py-2 rounded-xl input-glass text-white placeholder-slate-500 text-sm">
                         </div>
                         <button onclick="switchPage('clients')"
-                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="gradient-primary text-white px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4"></path>
                             </svg>
                             New Email
                         </button>
                         <div
-                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             JD
                         </div>
                     </div>
                 </div>
 
+                <!-- Mobile Search (visible only on small screens) -->
+                <div class="relative sm:hidden mb-3">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="emailSearchMobile" placeholder="Search emails..."
+                        class="w-full pl-10 pr-4 py-2 rounded-xl input-glass text-white placeholder-slate-500 text-sm"
+                        oninput="document.getElementById('emailSearch').value = this.value; handleEmailSearch({target: this})">
+                </div>
+
                 <!-- Tab Navigation -->
-                <div class="flex items-center gap-6 mt-4 border-b border-white/5">
+                <div
+                    class="flex items-center gap-4 md:gap-6 overflow-x-auto border-b border-white/5 -mx-4 md:-mx-8 px-4 md:px-8">
                     <button onclick="filterEmails('all')" id="emailTabAll"
-                        class="pb-3 text-sm font-bold text-indigo-300 border-b-2 border-indigo-500 flex items-center gap-2">
+                        class="pb-3 text-sm font-bold text-indigo-300 border-b-2 border-indigo-500 flex items-center gap-2 flex-shrink-0">
                         All <span id="emailCountAll"
                             class="bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full text-[10px]">0</span>
                     </button>
                     <button onclick="filterEmails('Follow-up')" id="emailTabFollowup"
-                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2">
+                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2 flex-shrink-0">
                         Follow-ups <span id="emailCountFollowup"
                             class="bg-white/5 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">0</span>
                     </button>
                     <button onclick="filterEmails('Payment Reminder')" id="emailTabPayment"
-                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2">
-                        Payment Reminders <span id="emailCountPayment"
+                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2 flex-shrink-0">
+                        Payments <span id="emailCountPayment"
                             class="bg-white/5 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">0</span>
                     </button>
                     <button onclick="filterEmails('Cold Outreach')" id="emailTabCold"
-                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2">
-                        Cold Outreach <span id="emailCountCold"
+                        class="pb-3 text-sm font-medium text-slate-400 hover:text-indigo-200 transition-colors flex items-center gap-2 flex-shrink-0">
+                        Cold <span id="emailCountCold"
                             class="bg-white/5 text-slate-500 px-2 py-0.5 rounded-full text-[10px]">0</span>
                     </button>
                 </div>
@@ -844,23 +933,26 @@
         <div id="templatesPage" class="hidden">
 
             <!-- Top Bar -->
-            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white tracking-tight">Email Templates</h2>
-                        <p class="text-slate-400 text-sm mt-0.5">Save and reuse your best emails</p>
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <h2 class="text-lg md:text-2xl font-bold text-white tracking-tight">Email Templates</h2>
+                        <p class="text-slate-400 text-xs md:text-sm mt-0.5 hidden sm:block">Save and reuse your best
+                            emails</p>
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
                         <button onclick="openAddTemplateModal()"
-                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="gradient-primary text-white px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4"></path>
                             </svg>
-                            New Template
+                            <span class="hidden sm:inline">New Template</span>
+                            <span class="sm:hidden">+</span>
                         </button>
                         <div
-                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             JD
                         </div>
                     </div>
@@ -868,7 +960,7 @@
             </header>
 
             <!-- Templates Grid -->
-            <div class="px-8 py-6">
+            <div class="px-4 md:px-8 py-6">
                 <div id="templatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Templates loaded here -->
                 </div>
@@ -1904,6 +1996,18 @@
                 return null;
             }
 
+            // Check if onboarding is completed
+            const { data: profile } = await window.supabase
+                .from('profiles')
+                .select('onboarding_completed')
+                .eq('id', user.id)
+                .single();
+
+            if (!profile?.onboarding_completed) {
+                window.location.href = '/onboarding.html';
+                return null;
+            }
+
             updateUserUI(user);
             return user;
         }
@@ -1962,6 +2066,12 @@
                             planBadge.classList.add('text-amber-400');
                         }
                     }
+
+                    // Hide sidebar upgrade button for Pro users
+                    const sidebarUpgradeBtn = document.getElementById('sidebarUpgradeBtn');
+                    if (sidebarUpgradeBtn && data.plan !== 'free') {
+                        sidebarUpgradeBtn.classList.add('hidden');
+                    }
                 } else {
                     window.userPlan = 'free';
                     console.log('✅ User plan: free (default)');
@@ -1975,7 +2085,7 @@
         // Logout function
         async function logout() {
             await window.supabase.auth.signOut();
-            window.location.href = '/login.html';
+            window.location.href = '/';
         }
 
         // Wait for auth, THEN load the dashboard scripts

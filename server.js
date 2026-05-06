@@ -732,6 +732,42 @@ app.post('/api/polar-webhook', async (req, res) => {
     }
 });
 
+// ==================== PUBLIC DEMO ENDPOINT ====================
+app.post('/api/demo-improve', async (req, res) => {
+    const { message } = req.body;
+
+    if (!message || message.length < 10) {
+        return res.status(400).json({ error: 'Message too short. Please write at least 10 characters.' });
+    }
+
+    try {
+        const prompt = `You are an expert freelance copywriter. Take the following rough draft or client message and rewrite it to be clearer, more professional, and more effective. Keep the same intent and tone but improve the wording, structure, and impact. Only return the improved version — no explanations, no notes. Keep it concise.
+
+Original: "${message}"
+
+Improved version:`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+            })
+        });
+
+        const data = await response.json();
+        const improved = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate a reply. Please try again.';
+
+        res.status(200).json({ improved: improved.trim() });
+    } catch (error) {
+        console.error('Demo API error:', error);
+        res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    }
+});
+
 // ==================== SERVE PAGES ====================
 
 // Serve landing page
@@ -752,6 +788,11 @@ app.get('/signup.html', (req, res) => {
 // Serve dashboard (protected by frontend auth check)
 app.get('/app.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'app.html'));
+});
+
+// Serve onboarding page
+app.get('/onboarding.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'onboarding.html'));
 });
 
 app.listen(port, () => {

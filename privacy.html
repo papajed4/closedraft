@@ -84,8 +84,10 @@
 
 <body class="bg-background">
 
+    <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
             <div class="flex items-center gap-2">
                 <div
                     class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -97,6 +99,8 @@
                 <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
                         class="text-indigo-400">Draft</span></a>
             </div>
+
+            <!-- Desktop Nav Links -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="/features.html"
                     class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
@@ -105,11 +109,45 @@
                 <a href="/resources.html"
                     class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
-                <a href="/signup.html"
-                    class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
-                    Started</a>
+
+            <!-- Mobile Hamburger + Auth Buttons -->
+            <div class="flex items-center space-x-3">
+                <!-- Auth Buttons (Desktop) -->
+                <div class="hidden md:flex items-center space-x-4" id="navAuth">
+                    <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign
+                        In</a>
+                    <a href="/signup.html"
+                        class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                        Started</a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
+                    <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
+            <div class="px-6 py-4 space-y-3">
+                <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
+                <a href="/pricing.html" class="block text-slate-400 hover:text-white font-medium py-2">Pricing</a>
+                <a href="/resources.html" class="block text-slate-400 hover:text-white font-medium py-2">Resources</a>
+                <div class="pt-3 border-t border-white/10 space-y-3" id="mobileNavAuth">
+                    <a href="/login.html" class="block text-slate-400 hover:text-white font-medium py-2">Sign In</a>
+                    <a href="/signup.html"
+                        class="block text-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold">Get
+                        Started</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -206,7 +244,7 @@
                     <li>Lodge a complaint with your local data protection authority.</li>
                 </ul>
                 <p>To exercise these rights, contact us at <a
-                        href="mailto:privacy@closedraft.com">privacy@closedraft.com</a>.</p>
+                        href="mailto:closedraft@gmail.com">closedraft@gmail.com</a>.</p>
 
                 <h2>7. Children's Privacy</h2>
                 <p>CloseDraft is not intended for users under 18 years of age. We do not knowingly collect information
@@ -222,8 +260,7 @@
 
                 <h2>10. Contact Us</h2>
                 <p>If you have questions about this Privacy Policy, contact us at:</p>
-                <p><strong>Email:</strong> <a href="mailto:privacy@closedraft.com">privacy@closedraft.com</a></p>
-                <p><strong>Address:</strong> CloseDraft, [Your Business Address]</p>
+                <p><strong>Email:</strong> <a href="mailto:closedraft@gmail.com">closedraft@gmail.com</a></p>
 
                 <p class="mt-8 text-sm text-slate-500">CloseDraft is committed to protecting your privacy and the
                     confidentiality of your client relationships.</p>
@@ -286,6 +323,8 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/nav.js"></script>
 </body>
 
 </html>
