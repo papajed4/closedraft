@@ -1086,32 +1086,72 @@ function selectClient(clientId) {
     if (!client) return;
     selectedClientId = clientId;
 
-    document.getElementById('detailAvatar').textContent = client.name.charAt(0);
-    document.getElementById('detailName').textContent = client.name;
-    document.getElementById('detailBusiness').textContent = client.business || 'No business';
-    document.getElementById('detailEmail').textContent = client.email || 'No email';
-    document.getElementById('detailProject').textContent = client.project || 'No project';
-    document.getElementById('detailAmount').textContent = client.amount ? `$${client.amount.toLocaleString()}` : '-';
-    document.getElementById('detailStatus').innerHTML = getStatusBadge(client.status);
-    document.getElementById('detailLastContact').textContent = formatDate(client.last_contacted);
-    document.getElementById('detailCreated').textContent = formatDate(client.created_at);
-    document.getElementById('detailNotes').value = client.notes || '';
-    document.getElementById('detailDeadline').textContent = client.deadline ? formatDate(client.deadline) : '-';
+    // Helper to safely set textContent
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+        else console.warn(`⚠️ Missing element: #${id}`);
+    };
+    // Helper to safely set innerHTML
+    const setHtml = (id, html) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+        else console.warn(`⚠️ Missing element: #${id}`);
+    };
+    // Helper to safely set value
+    const setValue = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+        else console.warn(`⚠️ Missing element: #${id}`);
+    };
 
-    document.getElementById('editClientId').value = client.id;
-    document.getElementById('editClientName').value = client.name;
-    document.getElementById('editClientBusiness').value = client.business || '';
-    document.getElementById('editClientEmail').value = client.email || '';
-    document.getElementById('editClientProject').value = client.project || '';
-    document.getElementById('editClientAmount').value = client.amount || '';
-    document.getElementById('editClientStatus').value = client.status;
-    document.getElementById('editClientDeadline').value = client.deadline ? client.deadline.split('T')[0] : '';
+    // Basic client info
+    setText('detailAvatar', client.name.charAt(0));
+    setText('detailName', client.name);
+    setText('detailBusiness', client.business || 'No business');
+    setText('detailEmail', client.email || 'No email');
+    setText('detailProject', client.project || 'No project');
+    setText('detailAmount', client.amount ? `$${client.amount.toLocaleString()}` : '-');
+    setHtml('detailStatus', getStatusBadge(client.status));
+    setText('detailLastContact', formatDate(client.last_contacted));
+    setText('detailCreated', formatDate(client.created_at));
+    setText('detailDeadline', client.deadline ? formatDate(client.deadline) : '-');
 
+    // Notes (textarea uses .value)
+    const notesEl = document.getElementById('detailNotes');
+    if (notesEl) notesEl.value = client.notes || '';
+    else console.warn('⚠️ Missing element: #detailNotes');
 
+    // Edit form fields (hidden inputs & editable fields)
+    setValue('editClientId', client.id);
+    setValue('editClientName', client.name);
+    setValue('editClientBusiness', client.business || '');
+    setValue('editClientEmail', client.email || '');
+    setValue('editClientProject', client.project || '');
+    setValue('editClientAmount', client.amount || '');
+    
+    const statusSelect = document.getElementById('editClientStatus');
+    if (statusSelect) statusSelect.value = client.status;
+    else console.warn('⚠️ Missing element: #editClientStatus');
+    
+    const deadlineInput = document.getElementById('editClientDeadline');
+    if (deadlineInput) deadlineInput.value = client.deadline ? client.deadline.split('T')[0] : '';
+    else console.warn('⚠️ Missing element: #editClientDeadline');
+
+    // Update action buttons (archive/restore/delete)
     updateDetailPanelActions(client);
 
+    // Render tags
     renderClientTags(client.tags || []);
 
+    // Load activity timeline
+    if (typeof loadClientTimeline === 'function') {
+        loadClientTimeline(clientId);
+    } else {
+        console.warn('⚠️ loadClientTimeline() not defined – timeline may be missing');
+    }
+
+    // Open the panel
     openDetailPanel();
 }
 
@@ -1148,10 +1188,25 @@ async function markAsContacted() {
             document.getElementById('detailStatus').innerHTML = getStatusBadge(updatedClient.status);
         }
 
+        // Record activity
+        await authFetch('/api/client-activities', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                client_id: selectedClientId,
+                activity_type: 'contacted',
+                metadata: { date: new Date().toISOString() }
+            })
+        });
+
         showToast('✓ Marked as contacted', 'success');
 
-        checkOnboardingProgress();
+        // 🔁 Refresh the timeline
+        if (typeof loadClientTimeline === 'function') {
+            await loadClientTimeline(selectedClientId);
+        }
 
+        checkOnboardingProgress();
     } catch (error) {
         console.error('Error:', error);
         showToast('Failed to update', 'error');
@@ -2418,6 +2473,8 @@ async function loadSettings() {
         }
     }
 
+    if (typeof loadDiscordManualStatus === 'function') await loadDiscordManualStatus();
+
     // Load plan info — add await
     await loadUserPlanInfo();
 }
@@ -3079,6 +3136,68 @@ async function deleteSequence(seqId) {
     }
 }
 
+// ============================================
+// CLIENT ACTIVITY TIMELINE
+// ============================================
+
+async function loadClientTimeline(clientId) {
+    try {
+        const response = await authFetch(`/api/client-activities/${clientId}`);
+        const data = await response.json();
+        console.log('📜 Timeline activities fetched:', data.activities);
+        renderTimeline(data.activities || []);
+    } catch (error) {
+        console.error('Failed to load timeline', error);
+        const container = document.getElementById('clientTimelineList');
+        if (container) container.innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Failed to load activity.</p>';
+    }
+}
+
+function renderTimeline(activities) {
+    const container = document.getElementById('clientTimelineList');
+    if (!container) return;
+
+    if (!activities || activities.length === 0) {
+        container.innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No activity yet.</p>';
+        return;
+    }
+
+    console.log('🎨 Rendering activities:', activities);
+
+    container.innerHTML = activities.map(act => {
+        const date = new Date(act.created_at).toLocaleString();
+        let icon = '', text = '';
+
+        switch (act.activity_type) {
+            case 'email_sent':
+                icon = '📧';
+                text = `Email sent: "${act.metadata?.subject || 'No subject'}" (${act.metadata?.type || 'email'})`;
+                break;
+            case 'contacted':
+                icon = '✓';
+                text = `Marked as contacted`;
+                break;
+            case 'status_change':
+                icon = '🔄';
+                text = `Status changed: ${act.metadata?.old_status} → ${act.metadata?.new_status}`;
+                break;
+            default:
+                icon = '📝';
+                text = act.activity_type;
+        }
+
+        return `
+            <div class="flex gap-3 py-3 border-b border-white/5">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">${icon}</div>
+                <div class="flex-1">
+                    <p class="text-sm text-white">${text}</p>
+                    <p class="text-xs text-slate-500">${date}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 function generateInvoice() {
     if (!selectedClientId) {
         showToast('No client selected', 'error');
@@ -3287,3 +3406,90 @@ function escapeHtml(str) {
         return c;
     });
 }
+
+async function startDiscordOAuth() {
+    try {
+        const res = await authFetch('/api/discord/auth-url');
+        const data = await res.json();
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            showToast('Failed to start Discord auth', 'error');
+        }
+    } catch (e) {
+        showToast('Error connecting Discord', 'error');
+    }
+}
+
+async function saveDiscordWebhookManual() {
+    const url = document.getElementById('discordWebhookManual').value;
+    if (!url) return showToast('Enter a webhook URL', 'error');
+    const res = await authFetch('/api/user/discord-webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webhookUrl: url })
+    });
+    if (res.ok) {
+        showToast('Discord webhook saved', 'success');
+        loadDiscordManualStatus();
+    } else showToast('Failed to save', 'error');
+}
+
+async function testDiscordWebhookManual() {
+    const url = document.getElementById('discordWebhookManual').value;
+    if (!url) return showToast('Enter a webhook URL first', 'error');
+    const res = await authFetch('/api/discord/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webhookUrl: url })
+    });
+    if (res.ok) showToast('Test message sent to Discord!', 'success');
+    else showToast('Failed to send test', 'error');
+}
+
+async function loadDiscordManualStatus() {
+    const res = await authFetch('/api/user/discord-webhook');
+    const data = await res.json();
+    const statusDiv = document.getElementById('discordManualStatus');
+    const input = document.getElementById('discordWebhookManual');
+    if (data.webhookUrl) {
+        statusDiv.innerHTML = '✅ Connected – you will receive notifications.';
+        input.value = data.webhookUrl;
+    } else {
+        statusDiv.innerHTML = 'Not connected. Paste a webhook URL above.';
+    }
+}
+
+
+async function loadDiscordGuilds() {
+    const res = await authFetch('/api/discord/guilds');
+    const guilds = await res.json();
+    const select = document.getElementById('discordGuildSelect');
+    select.innerHTML = '<option value="">Select a server...</option>';
+    guilds.forEach(g => {
+        select.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+    });
+    select.onchange = loadDiscordChannels;
+}
+
+async function loadDiscordChannels() {
+    const guildId = document.getElementById('discordGuildSelect').value;
+    if (!guildId) return;
+    const res = await authFetch(`/api/discord/guilds/${guildId}/channels`);
+    const channels = await res.json();
+    const select = document.getElementById('discordChannelSelect');
+    select.innerHTML = '<option value="">Select a channel...</option>';
+    channels.forEach(c => {
+        select.innerHTML += `<option value="${c.id}">#${c.name}</option>`;
+    });
+}
+
+
+
+async function disconnectDiscord() {
+    if (!confirm('Disconnect Discord? You will no longer receive notifications.')) return;
+    await authFetch('/api/discord/disconnect', { method: 'POST' });
+    showToast('Discord disconnected', 'success');
+    location.reload();
+}
+

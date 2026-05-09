@@ -1470,6 +1470,23 @@
                     </div>
                 </div>
 
+                <!-- Discord Notifications (Manual Webhook) -->
+                <div class="glass-card rounded-2xl p-6 mt-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Discord Notifications</h3>
+                    <p class="text-slate-400 text-sm mb-4">Get a message in Discord whenever you send an email.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5">Webhook URL</label>
+                        <input type="url" id="discordWebhookManual" placeholder="https://discord.com/api/webhooks/..."
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        <div class="flex gap-3 mt-3">
+                            <button onclick="saveDiscordWebhookManual()"
+                                class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold">Save</button>
+                            <button onclick="testDiscordWebhookManual()"
+                                class="bg-slate-700/50 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold">Test</button>
+                        </div>
+                        <div id="discordManualStatus" class="mt-3 text-xs text-slate-500"></div>
+                    </div>
+                </div>
                 <!-- Danger Zone -->
                 <div class="glass-card rounded-2xl p-6 border border-red-500/20">
                     <h3 class="text-lg font-bold text-red-400 mb-4">Danger Zone</h3>
@@ -1541,6 +1558,7 @@
             <!-- Panel Content -->
             <div class="p-6 space-y-6 overflow-y-auto flex-1"
                 style="max-height: calc(100vh - 320px); padding-bottom: 100px;">
+
                 <!-- Contact Info -->
                 <div>
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Contact Information</h4>
@@ -1602,39 +1620,24 @@
                     </div>
                 </div>
 
-                <!-- Timeline -->
+                <!-- Last Contact & Client Since (NEW) -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider">Last Contacted</p>
+                        <p id="detailLastContact" class="text-white font-medium mt-1">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider">Client Since</p>
+                        <p id="detailCreated" class="text-white font-medium mt-1">-</p>
+                    </div>
+                </div>
+
+                <!-- Activity Timeline -->
                 <div>
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Activity</h4>
-                    <div class="space-y-3">
-                        <div class="flex gap-3">
-                            <div
-                                class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-sm text-white">Last Contacted</p>
-                                <p id="detailLastContact" class="text-xs text-slate-500">-</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-3">
-                            <div
-                                class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-sm text-white">Client Since</p>
-                                <p id="detailCreated" class="text-xs text-slate-500">-</p>
-                            </div>
-                        </div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Recent Activity</h4>
+                    <div id="clientTimelineList" class="max-h-64 overflow-y-auto divide-y divide-white/5">
+                        <!-- Timeline will be loaded here -->
+                        <p class="text-slate-500 text-sm text-center py-4">Loading activity...</p>
                     </div>
                 </div>
 
@@ -1662,7 +1665,6 @@
                     </svg>
                     Generate Email
                 </button>
-                <!-- 👇 ADD THIS NEW BUTTON -->
                 <button onclick="generateInvoice()"
                     class="w-full mt-3 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all border border-emerald-500/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

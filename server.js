@@ -7,35 +7,29 @@ const { generateEmail, buildPrompt } = require('./lib/gemini');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
+// ==================== MIDDLEWARE ====================
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
 
-// Add body parsing debug
 app.use((req, res, next) => {
     console.log('📨 Request:', req.method, req.path);
     next();
 });
 
 // ==================== AUTH MIDDLEWARE ====================
-
 async function getUserFromToken(req) {
     const authHeader = req.headers.authorization;
     if (!authHeader) return null;
-
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-
     if (error) return null;
     return user;
 }
 
 // ==================== PUBLIC ENDPOINTS ====================
-
-// Supabase config endpoint (safe to expose anon key)
 app.get('/api/supabase-config', (req, res) => {
     res.json({
         url: process.env.SUPABASE_URL,
@@ -43,12 +37,8 @@ app.get('/api/supabase-config', (req, res) => {
     });
 });
 
-// Health check - simple
-app.get('/ping', (req, res) => {
-    res.status(200).send('pong');
-});
+app.get('/ping', (req, res) => res.status(200).send('pong'));
 
-// Health check - detailed
 app.get('/api/health', (req, res) => {
     res.status(200).json({
         status: 'healthy',
@@ -57,34 +47,24 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// ==================== PROTECTED API ENDPOINTS ====================
-
-// Get all clients (exclude archived by default)
+// ==================== CLIENTS API ====================
 app.get('/api/clients', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     try {
         const showArchived = req.query.showArchived === 'true';
-
         let query = supabase
             .from('clients')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-
-        if (!showArchived) {
-            query = query.eq('archived', false);
-        }
+        if (!showArchived) query = query.eq('archived', false);
 
         const { data: clients, error } = await query;
-
         if (error) throw error;
 
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-
         res.status(200).json({ clients });
     } catch (error) {
         console.error('Error fetching clients:', error);
@@ -92,16 +72,12 @@ app.get('/api/clients', async (req, res) => {
     }
 });
 
-// Add new client
 app.post('/api/clients', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { name, business, email, project, amount, status } = req.body;
-
-    if (!name) {
-        return res.status(400).json({ error: 'Client name is required' });
-    }
+    if (!name) return res.status(400).json({ error: 'Client name is required' });
 
     try {
         const { data, error } = await supabase
@@ -127,7 +103,6 @@ app.post('/api/clients', async (req, res) => {
     }
 });
 
-// Update client
 app.patch('/api/clients/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
@@ -135,11 +110,7 @@ app.patch('/api/clients/:id', async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    console.log('📝 PATCH /api/clients/' + id);
-    console.log('📝 Updates received:', updates);
-
     try {
-        // Verify client belongs to user
         const { data: existing, error: fetchError } = await supabase
             .from('clients')
             .select('*')
@@ -148,7 +119,6 @@ app.patch('/api/clients/:id', async (req, res) => {
             .single();
 
         if (fetchError || !existing) {
-            console.error('❌ Client not found or unauthorized:', id);
             return res.status(404).json({ error: 'Client not found' });
         }
 
@@ -160,34 +130,39 @@ app.patch('/api/clients/:id', async (req, res) => {
             .select()
             .single();
 
-        if (error) {
-            console.error('❌ Supabase update error:', error);
-            return res.status(500).json({ error: error.message });
+        if (error) throw error;
+
+        // Record status change in activity timeline
+        if (updates.status && existing.status !== updates.status) {
+            await supabase
+                .from('client_activities')
+                .insert({
+                    client_id: id,
+                    user_id: user.id,
+                    activity_type: 'status_change',
+                    metadata: { old_status: existing.status, new_status: updates.status },
+                    created_at: new Date().toISOString()
+                });
         }
 
-        console.log('✅ Client updated successfully:');
         res.status(200).json({ client: data });
-
     } catch (error) {
-        console.error('❌ Server error:', error);
+        console.error('Error updating client:', error);
         res.status(500).json({ error: 'Failed to update client' });
     }
 });
 
-// Delete client
 app.delete('/api/clients/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
-
     try {
         const { error } = await supabase
             .from('clients')
             .delete()
             .eq('id', id)
             .eq('user_id', user.id);
-
         if (error) throw error;
         res.status(200).json({ success: true });
     } catch (error) {
@@ -196,13 +171,11 @@ app.delete('/api/clients/:id', async (req, res) => {
     }
 });
 
-// Archive client
 app.patch('/api/clients/:id/archive', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
-
     try {
         const { data, error } = await supabase
             .from('clients')
@@ -211,7 +184,6 @@ app.patch('/api/clients/:id/archive', async (req, res) => {
             .eq('user_id', user.id)
             .select()
             .single();
-
         if (error) throw error;
         res.status(200).json({ client: data });
     } catch (error) {
@@ -220,13 +192,11 @@ app.patch('/api/clients/:id/archive', async (req, res) => {
     }
 });
 
-// Restore client (unarchive)
 app.patch('/api/clients/:id/restore', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
-
     try {
         const { data, error } = await supabase
             .from('clients')
@@ -235,7 +205,6 @@ app.patch('/api/clients/:id/restore', async (req, res) => {
             .eq('user_id', user.id)
             .select()
             .single();
-
         if (error) throw error;
         res.status(200).json({ client: data });
     } catch (error) {
@@ -244,27 +213,14 @@ app.patch('/api/clients/:id/restore', async (req, res) => {
     }
 });
 
-// Generate email endpoint
+// ==================== EMAIL GENERATION ====================
 app.post('/api/generate-email', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-    console.log('📧 Generate email endpoint hit');
-
-    if (!req.body) {
-        return res.status(400).json({ error: 'No request body' });
-    }
-
     const { clientId, type, tone, freelancerName, recipient } = req.body;
+    if (!type || !tone) return res.status(400).json({ error: 'Missing required fields' });
 
-    if (!type || !tone) {
-        return res.status(400).json({
-            error: 'Missing required fields',
-            received: { type, tone }
-        });
-    }
-
-    // If clientId provided, fetch and generate
     if (clientId) {
         const { data: client, error } = await supabase
             .from('clients')
@@ -272,15 +228,10 @@ app.post('/api/generate-email', async (req, res) => {
             .eq('id', clientId)
             .eq('user_id', user.id)
             .single();
-
-        if (error || !client) {
-            return res.status(404).json({ error: 'Client not found' });
-        }
-
+        if (error || !client) return res.status(404).json({ error: 'Client not found' });
         return generateEmailForClient(client, type, tone, freelancerName, res, user);
     }
 
-    // If no clientId but we have recipient, try to find client
     if (recipient) {
         const { data: existingClient } = await supabase
             .from('clients')
@@ -288,88 +239,51 @@ app.post('/api/generate-email', async (req, res) => {
             .eq('user_id', user.id)
             .ilike('email', `%${recipient}%`)
             .single();
-
         if (existingClient) {
             return generateEmailForClient(existingClient, type, tone, freelancerName, res, user);
         }
     }
 
-    // Fallback - no client found, generate mock email and save
+    // Fallback mock email
     const mockSubject = `${type}: Quick follow-up`;
     const mockBody = `Hi there,\n\nJust following up. Let me know if you have any questions!\n\nBest,\n${freelancerName || 'Freelancer'}`;
-
     const { data: savedEmail, error: saveError } = await supabase
         .from('emails')
-        .insert([{
-            user_id: user.id,
-            client_id: null,
-            subject: mockSubject,
-            body: mockBody,
-            type,
-            tone
-        }])
+        .insert([{ user_id: user.id, client_id: null, subject: mockSubject, body: mockBody, type, tone }])
         .select()
         .single();
-
-    if (saveError) {
-        console.error('❌ Failed to save mock email:', saveError);
-    } else {
-        console.log('✅ Mock email saved:', savedEmail.id);
-    }
-
-    return res.status(200).json({
-        subjectA: mockSubject,
-        subjectB: mockSubject,
-        body: mockBody,
-        emailId: savedEmail?.id
-    });
+    if (saveError) console.error('Failed to save mock email:', saveError);
+    return res.status(200).json({ subjectA: mockSubject, subjectB: mockSubject, body: mockBody, emailId: savedEmail?.id });
 });
-
-
-
-// Helper function
 
 async function generateEmailForClient(client, type, tone, freelancerName, res, user) {
     try {
-        console.log('✅ Client found:', client.name);
-
         const prompt = buildPrompt(client, type, tone, freelancerName || '');
-        console.log('📝 Calling Gemini...');
-
         const generatedText = await generateEmail(prompt);
-        console.log('✅ Gemini responded');
 
-        let subjectA = '';
-        let subjectB = '';
-        let body = generatedText;
-
-        // Try to match "Subject A:" and "Subject B:"
+        let subjectA = '', subjectB = '', body = generatedText;
         const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
         const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
-
         if (subjectAMatch && subjectBMatch) {
             subjectA = subjectAMatch[1].trim();
             subjectB = subjectBMatch[1].trim();
-            // Remove both subject lines from body
             body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
         } else {
-            // Fallback to old format
             const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
             if (subjectMatch) {
                 subjectA = subjectMatch[1].trim();
-                subjectB = subjectA; // Same subject for both
+                subjectB = subjectA;
                 body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
             }
         }
 
-        // SAVE TO EMAILS TABLE
         const { data: savedEmail, error: saveError } = await supabase
             .from('emails')
             .insert([{
                 user_id: user.id,
                 client_id: client.id,
-                subject: subjectA,  // Save first subject as primary
-                subject_b: subjectB, // Save second subject
+                subject: subjectA,
+                subject_b: subjectB,
                 body,
                 type,
                 tone
@@ -377,32 +291,34 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
             .select()
             .single();
 
-        if (saveError) {
-            console.error('❌ Failed to save email:', saveError);
-        } else {
-            console.log('✅ Email saved to history:', savedEmail.id);
+        if (!saveError && savedEmail) {
+            await supabase
+                .from('client_activities')
+                .insert({
+                    client_id: client.id,
+                    user_id: user.id,
+                    activity_type: 'email_sent',
+                    metadata: { subject: subjectA, type, tone },
+                    created_at: new Date().toISOString()
+                });
         }
 
-        res.status(200).json({
-            subjectA,
-            subjectB,
-            body,
-            fullText: generatedText,
-            emailId: savedEmail?.id
-        });
+        // Send Discord notification (if webhook is set)
+        await sendDiscordNotification(user.id, `📧 Email sent to ${client.name} (${type}) – Hope they answer!`);
+
+        res.status(200).json({ subjectA, subjectB, body, fullText: generatedText, emailId: savedEmail?.id });
     } catch (error) {
-        console.error('❌ Email generation error:', error);
+        console.error('Email generation error:', error);
         res.status(500).json({ error: error.message || 'Failed to generate email' });
     }
 }
 
-// Get email history for a client
+// ==================== EMAIL HISTORY ====================
 app.get('/api/emails/:clientId', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { clientId } = req.params;
-
     try {
         const { data: emails, error } = await supabase
             .from('emails')
@@ -410,7 +326,6 @@ app.get('/api/emails/:clientId', async (req, res) => {
             .eq('client_id', clientId)
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-
         if (error) throw error;
         res.status(200).json({ emails });
     } catch (error) {
@@ -419,7 +334,6 @@ app.get('/api/emails/:clientId', async (req, res) => {
     }
 });
 
-// Get all email history
 app.get('/api/emails', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
@@ -427,13 +341,9 @@ app.get('/api/emails', async (req, res) => {
     try {
         const { data: emails, error } = await supabase
             .from('emails')
-            .select(`
-                *,
-                clients:client_id (name, business, email)
-            `)
+            .select(`*, clients:client_id (name, business, email)`)
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-
         if (error) throw error;
         res.status(200).json({ emails });
     } catch (error) {
@@ -442,9 +352,7 @@ app.get('/api/emails', async (req, res) => {
     }
 });
 
-// ==================== TEMPLATES API (PROTECTED) ====================
-
-// Get all templates
+// ==================== TEMPLATES API ====================
 app.get('/api/templates', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
@@ -455,7 +363,6 @@ app.get('/api/templates', async (req, res) => {
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-
         if (error) throw error;
         res.status(200).json({ templates });
     } catch (error) {
@@ -464,31 +371,19 @@ app.get('/api/templates', async (req, res) => {
     }
 });
 
-// Add new template
 app.post('/api/templates', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { name, type, tone, subject, body } = req.body;
-
-    if (!name || !body) {
-        return res.status(400).json({ error: 'Name and body are required' });
-    }
+    if (!name || !body) return res.status(400).json({ error: 'Name and body are required' });
 
     try {
         const { data, error } = await supabase
             .from('templates')
-            .insert([{
-                user_id: user.id,
-                name,
-                type,
-                tone,
-                subject,
-                body
-            }])
+            .insert([{ user_id: user.id, name, type, tone, subject, body }])
             .select()
             .single();
-
         if (error) throw error;
         res.status(201).json({ template: data });
     } catch (error) {
@@ -497,14 +392,12 @@ app.post('/api/templates', async (req, res) => {
     }
 });
 
-// Update template
 app.patch('/api/templates/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
     const updates = req.body;
-
     try {
         const { data, error } = await supabase
             .from('templates')
@@ -513,7 +406,6 @@ app.patch('/api/templates/:id', async (req, res) => {
             .eq('user_id', user.id)
             .select()
             .single();
-
         if (error) throw error;
         res.status(200).json({ template: data });
     } catch (error) {
@@ -522,20 +414,17 @@ app.patch('/api/templates/:id', async (req, res) => {
     }
 });
 
-// Delete template
 app.delete('/api/templates/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
-
     try {
         const { error } = await supabase
             .from('templates')
             .delete()
             .eq('id', id)
             .eq('user_id', user.id);
-
         if (error) throw error;
         res.status(200).json({ success: true });
     } catch (error) {
@@ -547,16 +436,12 @@ app.delete('/api/templates/:id', async (req, res) => {
 // ==================== POLAR PAYMENTS ====================
 const { polarApi } = require('./lib/polar');
 
-// Create checkout session
 app.post('/api/create-checkout', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { productId } = req.body;
-
-    if (!productId) {
-        return res.status(400).json({ error: 'Product ID is required' });
-    }
+    if (!productId) return res.status(400).json({ error: 'Product ID is required' });
 
     try {
         const checkout = await polarApi.checkouts.create({
@@ -564,187 +449,63 @@ app.post('/api/create-checkout', async (req, res) => {
             customerEmail: user.email,
             successUrl: `${req.headers.origin}/app.html?checkout=success`,
             cancelUrl: `${req.headers.origin}/pricing.html?checkout=cancelled`,
-            metadata: {
-                userId: user.id
-            }
+            metadata: { userId: user.id }
         });
-
         console.log('✅ Checkout created:', checkout.id);
-
-        // 🔥 CRITICAL: Store payment record
-        const { error: insertError } = await supabase
-            .from('payments')
-            .insert([{
-                user_id: user.id,
-                checkout_id: checkout.id,
-                product_id: productId,
-                status: 'pending',
-                created_at: new Date().toISOString()
-            }]);
-
-        if (insertError) {
-            console.error('❌ Failed to store payment:', insertError);
-        } else {
-            console.log('✅ Payment record stored for checkout:', checkout.id);
-        }
-
+        await supabase.from('payments').insert([{
+            user_id: user.id,
+            checkout_id: checkout.id,
+            product_id: productId,
+            status: 'pending',
+            created_at: new Date().toISOString()
+        }]);
         res.json({ url: checkout.url });
     } catch (error) {
-        console.error('❌ Checkout error:', error);
-        res.status(500).json({
-            error: error.message || 'Failed to create checkout session'
-        });
+        console.error('Checkout error:', error);
+        res.status(500).json({ error: error.message || 'Failed to create checkout session' });
     }
 });
 
-// Polar webhook endpoint
 app.post('/api/polar-webhook', async (req, res) => {
     const event = req.body;
-
     console.log('📦 Polar webhook received:', event.type);
 
     try {
-        // ========== CHECKOUT.UPDATED ==========
         if (event.type === 'checkout.updated') {
             const checkout = event.data;
-
-            // Update payment status AND customer_id
-            const updateData = {
+            await supabase.from('payments').update({
                 status: checkout.status,
                 updated_at: new Date().toISOString()
-            };
+            }).eq('checkout_id', checkout.id);
 
-            // If checkout has customer_id, store it
-            if (checkout.customer_id) {
-                updateData.customer_id = checkout.customer_id;
-            }
-
-            console.log(`📦 Checkout ${checkout.id} status: ${checkout.status}`);
-
-            // Update payment status
-            const { error: updateError } = await supabase
-                .from('payments')
-                .update({
-                    status: checkout.status,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('checkout_id', checkout.id);
-
-            if (updateError) {
-                console.error('❌ Failed to update payment:', updateError);
-            } else {
-                console.log(`✅ Payment ${checkout.id} updated to ${checkout.status}`);
-            }
-
-            // If checkout succeeded, upgrade the user
             if (checkout.status === 'succeeded') {
-                console.log('🔍 Looking up payment for checkout:', checkout.id);
-
-                // Get the payment record
-                const { data: payment, error: fetchError } = await supabase
+                const { data: payment } = await supabase
                     .from('payments')
                     .select('user_id, product_id')
                     .eq('checkout_id', checkout.id)
                     .single();
-
-                if (fetchError) {
-                    console.error('❌ Failed to fetch payment:', fetchError);
-                } else if (!payment) {
-                    console.error('❌ No payment found for checkout:', checkout.id);
-                } else {
-                    console.log('✅ Found payment for user:', payment.user_id);
-                    console.log('📦 Product ID:', payment.product_id);
-
-                    // Determine plan type based on product ID
+                if (payment) {
                     let plan = 'pro_monthly';
-                    if (payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9') {
-                        plan = 'pro_yearly';
-                        console.log('📦 Detected yearly plan');
-                    } else if (payment.product_id === 'YOUR_LIFETIME_ID') {
-                        plan = 'pro_lifetime';
-                        console.log('📦 Detected lifetime plan');
-                    } else if (payment.product_id === '5d5c4dd0-6a3b-4b76-bcec-fbd7bd22cd1b') {
-                        plan = 'pro_monthly';
-                        console.log('📦 Detected monthly plan');
-                    }
-
-                    // Update the user's profile using ADMIN client
-                    const { error: profileError } = await supabaseAdmin
-                        .from('profiles')
-                        .update({
-                            plan: plan,
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('id', payment.user_id);
-
-                    if (profileError) {
-                        console.error('❌ Failed to upgrade user:', profileError);
-                    } else {
-                        console.log(`✅ User ${payment.user_id} upgraded to ${plan}`);
-                    }
+                    if (payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9') plan = 'pro_yearly';
+                    else if (payment.product_id === '5d5c4dd0-6a3b-4b76-bcec-fbd7bd22cd1b') plan = 'pro_monthly';
+                    await supabaseAdmin.from('profiles').update({ plan, updated_at: new Date().toISOString() }).eq('id', payment.user_id);
                 }
             }
         }
-
-        // ========== SUBSCRIPTION.CREATED ==========
         if (event.type === 'subscription.created') {
             const subscription = event.data;
-            const checkoutId = subscription.checkoutId;
-
-            console.log('📦 Subscription created:', subscription.id);
-            console.log('📦 Linked to checkout:', checkoutId);
-
-            if (checkoutId) {
-                const { error } = await supabase
-                    .from('payments')
-                    .update({
-                        subscription_id: subscription.id,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('checkout_id', checkoutId);
-
-                if (error) {
-                    console.error('❌ Failed to link subscription:', error);
-                } else {
-                    console.log('✅ Subscription linked to payment');
-                }
-            }
+            await supabase.from('payments').update({ subscription_id: subscription.id }).eq('checkout_id', subscription.checkoutId);
         }
-
-        // ========== SUBSCRIPTION.CANCELED (Optional) ==========
         if (event.type === 'subscription.canceled') {
             const subscription = event.data;
-
-            console.log('📦 Subscription canceled:', subscription.id);
-
-            // Find the user with this subscription and downgrade to free
-            const { data: payment, error: fetchError } = await supabase
-                .from('payments')
-                .select('user_id')
-                .eq('subscription_id', subscription.id)
-                .single();
-
-            if (!fetchError && payment) {
-                const { error: downgradeError } = await supabaseAdmin
-                    .from('profiles')
-                    .update({
-                        plan: 'free',
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', payment.user_id);
-
-                if (downgradeError) {
-                    console.error('❌ Failed to downgrade user:', downgradeError);
-                } else {
-                    console.log(`✅ User ${payment.user_id} downgraded to free`);
-                }
+            const { data: payment } = await supabase.from('payments').select('user_id').eq('subscription_id', subscription.id).single();
+            if (payment) {
+                await supabaseAdmin.from('profiles').update({ plan: 'free', updated_at: new Date().toISOString() }).eq('id', payment.user_id);
             }
         }
-
         res.status(200).json({ received: true });
-
     } catch (error) {
-        console.error('❌ Webhook error:', error);
+        console.error('Webhook error:', error);
         res.status(500).json({ error: 'Webhook processing failed' });
     }
 });
@@ -752,20 +513,16 @@ app.post('/api/polar-webhook', async (req, res) => {
 // ==================== PUBLIC DEMO ENDPOINT ====================
 app.post('/api/demo-improve', async (req, res) => {
     const { message } = req.body;
-
     if (!message || message.length < 10) {
         return res.status(400).json({ error: 'Message too short. Please write at least 10 characters.' });
     }
-
     try {
-        const prompt = `You are an expert freelance copywriter. Take the following rough draft or client message and rewrite it to be clearer, more professional, and more effective. Keep the same intent and tone but improve the wording, structure, and impact. Only return the improved version — no explanations, no notes. Keep it concise.
+        const prompt = `You are an expert freelance copywriter. Rewrite the following to be clearer, more professional, and more effective. Only return the improved version.
 
 Original: "${message}"
 
 Improved version:`;
-
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
-
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -774,37 +531,27 @@ Improved version:`;
                 generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
             })
         });
-
         const data = await response.json();
-        const improved = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate a reply. Please try again.';
-
+        const improved = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate a reply.';
         res.status(200).json({ improved: improved.trim() });
     } catch (error) {
         console.error('Demo API error:', error);
-        res.status(500).json({ error: 'Something went wrong. Please try again.' });
+        res.status(500).json({ error: 'Something went wrong.' });
     }
 });
 
 // ==================== SEQUENCES API ====================
-
-// Get all sequences for user
 app.get('/api/sequences', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     try {
-        const { data: sequences, error } = await supabaseAdmin  // ← Use admin
+        const { data: sequences, error } = await supabaseAdmin
             .from('sequences')
-            .select(`
-                *,
-                clients:client_id (name, business, email),
-                steps:sequence_steps(*)
-            `)
+            .select(`*, clients:client_id (name, business, email), steps:sequence_steps(*)`)
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-
         if (error) throw error;
-        console.log('✅ Fetched sequences:', sequences?.length || 0);
         res.status(200).json({ sequences });
     } catch (error) {
         console.error('Error fetching sequences:', error);
@@ -812,19 +559,14 @@ app.get('/api/sequences', async (req, res) => {
     }
 });
 
-// Create new sequence
 app.post('/api/sequences', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { clientId, name, type, tone, steps } = req.body;
-
-    if (!clientId || !name) {
-        return res.status(400).json({ error: 'Client and name are required' });
-    }
+    if (!clientId || !name) return res.status(400).json({ error: 'Client and name are required' });
 
     try {
-        // Create sequence
         const { data: sequence, error: seqError } = await supabaseAdmin
             .from('sequences')
             .insert([{
@@ -837,10 +579,8 @@ app.post('/api/sequences', async (req, res) => {
             }])
             .select()
             .single();
-
         if (seqError) throw seqError;
 
-        // Create steps
         const stepData = steps.map((step, index) => ({
             sequence_id: sequence.id,
             step_number: index + 1,
@@ -848,14 +588,9 @@ app.post('/api/sequences', async (req, res) => {
             subject: step.subject,
             body: step.body
         }));
-
-        const { error: stepsError } = await supabaseAdmin
-            .from('sequence_steps')
-            .insert(stepData);
-
+        const { error: stepsError } = await supabaseAdmin.from('sequence_steps').insert(stepData);
         if (stepsError) throw stepsError;
 
-        console.log('✅ Sequence created:', sequence.id);
         res.status(201).json({ sequence });
     } catch (error) {
         console.error('Error creating sequence:', error);
@@ -863,149 +598,83 @@ app.post('/api/sequences', async (req, res) => {
     }
 });
 
-// Generate sequence email (creates the actual email record and advances step)
 app.post('/api/sequences/:id/send-next', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
-
-    console.log('🔥 send-next called for sequence:', id);
-
     try {
-        // Get sequence with steps - USE ADMIN
         const { data: sequence, error: seqError } = await supabaseAdmin
             .from('sequences')
             .select('*, steps:sequence_steps(*)')
             .eq('id', id)
             .eq('user_id', user.id)
             .single();
+        if (seqError || !sequence) return res.status(404).json({ error: 'Sequence not found' });
 
-        if (seqError || !sequence) {
-            console.error('❌ Sequence not found:', id);
-            return res.status(404).json({ error: 'Sequence not found' });
-        }
+        const nextStep = sequence.steps.sort((a, b) => a.step_number - b.step_number).find(s => !s.sent_at);
+        if (!nextStep) return res.status(400).json({ error: 'All steps completed' });
 
-        console.log('✅ Found sequence:', sequence.name);
-        console.log('📊 Current step before:', sequence.current_step);
-
-        // Find the next unsent step
-        const nextStep = sequence.steps
-            .sort((a, b) => a.step_number - b.step_number)
-            .find(s => !s.sent_at);
-
-        if (!nextStep) {
-            return res.status(400).json({ error: 'All steps completed' });
-        }
-
-        console.log('📝 Next step:', nextStep.step_number, 'day', nextStep.day_delay);
-
-        // If step already has content, use it; otherwise generate
         let body = nextStep.body;
-        let subjectA = '';
-        let subjectB = '';
-
+        let subjectA = '', subjectB = '';
         if (!body) {
-            // Build prompt using sequence's client info
             const clientInfo = {
                 name: sequence.clients?.name || 'Client',
                 business: sequence.clients?.business || '',
                 project: '',
                 last_contacted: new Date().toISOString()
             };
-            const prompt = buildPrompt(
-                clientInfo,
-                sequence.type,
-                sequence.tone,
-                req.body.freelancerName || 'Freelancer'
-            );
-
+            const prompt = buildPrompt(clientInfo, sequence.type, sequence.tone, req.body.freelancerName || 'Freelancer');
             const generatedText = await generateEmail(prompt);
-            console.log(`📝 Generated email length: ${generatedText.length} chars`);
-
-            // Extract Subject A and Subject B
             const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
             const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
-
             if (subjectAMatch && subjectBMatch) {
                 subjectA = subjectAMatch[1].trim();
                 subjectB = subjectBMatch[1].trim();
-                // Remove subject lines from body
                 body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
-                console.log(`✅ Extracted subjects: A="${subjectA}", B="${subjectB}"`);
             } else {
-                // Fallback to single subject format
                 const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
-                if (subjectMatch) {
-                    subjectA = subjectMatch[1].trim();
-                    subjectB = subjectA;
-                    body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
-                } else {
-                    subjectA = 'Follow-up';
-                    subjectB = 'Checking in';
-                    body = generatedText;
-                }
-                console.warn('⚠️ Could not find Subject A/B, using fallback');
+                if (subjectMatch) subjectA = subjectMatch[1].trim();
+                else subjectA = 'Follow-up';
+                subjectB = subjectA;
+                body = generatedText;
             }
         } else {
-            // Step already had content (e.g., from a template) – use stored subjects
             subjectA = nextStep.subject || 'Follow-up';
             subjectB = nextStep.subject_b || subjectA;
         }
 
-        // Save to emails table (use subjectA as primary)
-        const { data: savedEmail, error: saveEmailError } = await supabase
+        const { data: savedEmail } = await supabase
             .from('emails')
             .insert([{
                 user_id: user.id,
                 client_id: sequence.client_id,
                 subject: subjectA,
                 subject_b: subjectB,
-                body: body,
+                body,
                 type: sequence.type,
                 tone: sequence.tone
             }])
             .select()
             .single();
 
-        if (saveEmailError) {
-            console.error('❌ Failed to save email:', saveEmailError);
-        } else {
-            console.log('✅ Email saved with ID:', savedEmail.id);
-        }
+        await supabaseAdmin.from('sequence_steps').update({
+            sent_at: new Date().toISOString(),
+            subject: subjectA,
+            subject_b: subjectB,
+            body
+        }).eq('id', nextStep.id);
 
-        // Mark step as sent – store both subjects
-        await supabaseAdmin
-            .from('sequence_steps')
-            .update({
-                sent_at: new Date().toISOString(),
-                subject: subjectA,
-                subject_b: subjectB,
-                body: body
-            })
-            .eq('id', nextStep.id);
+        const sentStepsCount = sequence.steps.filter(s => s.sent_at).length + 1;
+        await supabaseAdmin.from('sequences').update({ current_step: sentStepsCount, updated_at: new Date().toISOString() }).eq('id', id);
 
-        // Calculate current step count AFTER marking as sent
-        const sentStepsCount = (sequence.steps.filter(s => s.sent_at).length + 1);
-        console.log('📊 Updating current_step to:', sentStepsCount);
+        // Send Discord notification for sequence email
+        await sendDiscordNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`);
 
-        const { error: updateError } = await supabaseAdmin
-            .from('sequences')
-            .update({ current_step: sentStepsCount, updated_at: new Date().toISOString() })
-            .eq('id', id);
-
-        if (updateError) {
-            console.error('❌ Failed to update current_step:', updateError);
-        } else {
-            console.log('✅ current_step updated to:', sentStepsCount);
-        }
-
-        // Return both subjects to the frontend
         res.status(200).json({
-            subjectA: subjectA,
-            subjectB: subjectB,
-            subject: subjectA,   // backward compatibility
-            body: body,
+            subjectA, subjectB,
+            subject: subjectA,
+            body,
             emailId: savedEmail?.id,
             step: sentStepsCount,
             total: sequence.total_steps
@@ -1016,29 +685,14 @@ app.post('/api/sequences/:id/send-next', async (req, res) => {
     }
 });
 
-// Delete sequence
 app.delete('/api/sequences/:id', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     const { id } = req.params;
-
     try {
-        console.log('🗑️ Deleting sequence:', id, 'for user:', user.id);
-
-        // Use supabaseAdmin to bypass RLS
-        const { error } = await supabaseAdmin
-            .from('sequences')
-            .delete()
-            .eq('id', id)
-            .eq('user_id', user.id);
-
-        if (error) {
-            console.error('❌ Delete error:', error);
-            throw error;
-        }
-
-        console.log('✅ Sequence deleted:', id);
+        const { error } = await supabaseAdmin.from('sequences').delete().eq('id', id).eq('user_id', user.id);
+        if (error) throw error;
         res.status(200).json({ success: true });
     } catch (error) {
         console.error('Error deleting sequence:', error);
@@ -1046,32 +700,110 @@ app.delete('/api/sequences/:id', async (req, res) => {
     }
 });
 
+// ==================== CLIENT ACTIVITIES TIMELINE ====================
+app.get('/api/client-activities/:clientId', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { clientId } = req.params;
+    const { data, error } = await supabaseAdmin
+        .from('client_activities')
+        .select('*')
+        .eq('client_id', clientId)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(30);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ activities: data });
+});
+
+app.post('/api/client-activities', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { client_id, activity_type, metadata } = req.body;
+    if (!client_id || !activity_type) return res.status(400).json({ error: 'Missing required fields' });
+
+    const { error } = await supabaseAdmin
+        .from('client_activities')
+        .insert({
+            client_id,
+            user_id: user.id,
+            activity_type,
+            metadata: metadata || {},
+            created_at: new Date().toISOString()
+        });
+    if (error) return res.status(500).json({ error: error.message });
+    res.status(201).json({ success: true });
+});
+
+// ==================== DISCORD NOTIFICATIONS (MANUAL WEBHOOK) ====================
+// Save/get webhook URL
+app.get('/api/user/discord-webhook', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { data } = await supabaseAdmin
+        .from('profiles')
+        .select('discord_webhook_url')
+        .eq('id', user.id)
+        .single();
+    res.json({ webhookUrl: data?.discord_webhook_url || null });
+});
+
+app.post('/api/user/discord-webhook', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { webhookUrl } = req.body;
+    await supabaseAdmin
+        .from('profiles')
+        .update({ discord_webhook_url: webhookUrl })
+        .eq('id', user.id);
+    res.json({ success: true });
+});
+
+// Test webhook
+app.post('/api/discord/test', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { webhookUrl } = req.body;
+    if (!webhookUrl) return res.status(400).json({ error: 'No webhook URL provided' });
+    try {
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: `✅ CloseDraft test from ${user.email}` })
+        });
+        if (response.ok) res.json({ success: true });
+        else res.status(500).json({ error: 'Discord webhook failed' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Helper to send notification to user's Discord webhook
+async function sendDiscordNotification(userId, message) {
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('discord_webhook_url')
+        .eq('id', userId)
+        .single();
+    if (profile?.discord_webhook_url) {
+        try {
+            await fetch(profile.discord_webhook_url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: message })
+            });
+        } catch (e) { console.error('Discord notification failed:', e); }
+    }
+}
+
 // ==================== SERVE PAGES ====================
-
-// Serve landing page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Serve login page
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-// Serve signup page
-app.get('/signup.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'signup.html'));
-});
-
-// Serve dashboard (protected by frontend auth check)
-app.get('/app.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'app.html'));
-});
-
-// Serve onboarding page
-app.get('/onboarding.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'onboarding.html'));
-});
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/signup.html', (req, res) => res.sendFile(path.join(__dirname, 'signup.html')));
+app.get('/app.html', (req, res) => res.sendFile(path.join(__dirname, 'app.html')));
+app.get('/onboarding.html', (req, res) => res.sendFile(path.join(__dirname, 'onboarding.html')));
 
 app.listen(port, () => {
     console.log(`✅ CloseDraft running at http://localhost:${port}`);
