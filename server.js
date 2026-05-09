@@ -318,7 +318,8 @@ app.post('/api/generate-email', async (req, res) => {
     }
 
     return res.status(200).json({
-        subject: mockSubject,
+        subjectA: mockSubject,
+        subjectB: mockSubject,
         body: mockBody,
         emailId: savedEmail?.id
     });
@@ -338,13 +339,27 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
         const generatedText = await generateEmail(prompt);
         console.log('✅ Gemini responded');
 
-        let subject = '';
+        let subjectA = '';
+        let subjectB = '';
         let body = generatedText;
 
-        const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
-        if (subjectMatch) {
-            subject = subjectMatch[1].trim();
-            body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
+        // Try to match "Subject A:" and "Subject B:"
+        const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
+        const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
+
+        if (subjectAMatch && subjectBMatch) {
+            subjectA = subjectAMatch[1].trim();
+            subjectB = subjectBMatch[1].trim();
+            // Remove both subject lines from body
+            body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
+        } else {
+            // Fallback to old format
+            const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
+            if (subjectMatch) {
+                subjectA = subjectMatch[1].trim();
+                subjectB = subjectA; // Same subject for both
+                body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
+            }
         }
 
         // SAVE TO EMAILS TABLE
@@ -353,7 +368,8 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
             .insert([{
                 user_id: user.id,
                 client_id: client.id,
-                subject,
+                subject: subjectA,  // Save first subject as primary
+                subject_b: subjectB, // Save second subject
                 body,
                 type,
                 tone
@@ -368,7 +384,8 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
         }
 
         res.status(200).json({
-            subject,
+            subjectA,
+            subjectB,
             body,
             fullText: generatedText,
             emailId: savedEmail?.id
@@ -765,6 +782,267 @@ Improved version:`;
     } catch (error) {
         console.error('Demo API error:', error);
         res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    }
+});
+
+// ==================== SEQUENCES API ====================
+
+// Get all sequences for user
+app.get('/api/sequences', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    try {
+        const { data: sequences, error } = await supabaseAdmin  // ← Use admin
+            .from('sequences')
+            .select(`
+                *,
+                clients:client_id (name, business, email),
+                steps:sequence_steps(*)
+            `)
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        console.log('✅ Fetched sequences:', sequences?.length || 0);
+        res.status(200).json({ sequences });
+    } catch (error) {
+        console.error('Error fetching sequences:', error);
+        res.status(500).json({ error: 'Failed to fetch sequences' });
+    }
+});
+
+// Create new sequence
+app.post('/api/sequences', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { clientId, name, type, tone, steps } = req.body;
+
+    if (!clientId || !name) {
+        return res.status(400).json({ error: 'Client and name are required' });
+    }
+
+    try {
+        // Create sequence
+        const { data: sequence, error: seqError } = await supabaseAdmin
+            .from('sequences')
+            .insert([{
+                user_id: user.id,
+                client_id: clientId,
+                name,
+                type: type || 'follow-up',
+                tone: tone || 'friendly',
+                total_steps: steps.length
+            }])
+            .select()
+            .single();
+
+        if (seqError) throw seqError;
+
+        // Create steps
+        const stepData = steps.map((step, index) => ({
+            sequence_id: sequence.id,
+            step_number: index + 1,
+            day_delay: step.dayDelay,
+            subject: step.subject,
+            body: step.body
+        }));
+
+        const { error: stepsError } = await supabaseAdmin
+            .from('sequence_steps')
+            .insert(stepData);
+
+        if (stepsError) throw stepsError;
+
+        console.log('✅ Sequence created:', sequence.id);
+        res.status(201).json({ sequence });
+    } catch (error) {
+        console.error('Error creating sequence:', error);
+        res.status(500).json({ error: 'Failed to create sequence' });
+    }
+});
+
+// Generate sequence email (creates the actual email record and advances step)
+app.post('/api/sequences/:id/send-next', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { id } = req.params;
+
+    console.log('🔥 send-next called for sequence:', id);
+
+    try {
+        // Get sequence with steps - USE ADMIN
+        const { data: sequence, error: seqError } = await supabaseAdmin
+            .from('sequences')
+            .select('*, steps:sequence_steps(*)')
+            .eq('id', id)
+            .eq('user_id', user.id)
+            .single();
+
+        if (seqError || !sequence) {
+            console.error('❌ Sequence not found:', id);
+            return res.status(404).json({ error: 'Sequence not found' });
+        }
+
+        console.log('✅ Found sequence:', sequence.name);
+        console.log('📊 Current step before:', sequence.current_step);
+
+        // Find the next unsent step
+        const nextStep = sequence.steps
+            .sort((a, b) => a.step_number - b.step_number)
+            .find(s => !s.sent_at);
+
+        if (!nextStep) {
+            return res.status(400).json({ error: 'All steps completed' });
+        }
+
+        console.log('📝 Next step:', nextStep.step_number, 'day', nextStep.day_delay);
+
+        // If step already has content, use it; otherwise generate
+        let body = nextStep.body;
+        let subjectA = '';
+        let subjectB = '';
+
+        if (!body) {
+            // Build prompt using sequence's client info
+            const clientInfo = {
+                name: sequence.clients?.name || 'Client',
+                business: sequence.clients?.business || '',
+                project: '',
+                last_contacted: new Date().toISOString()
+            };
+            const prompt = buildPrompt(
+                clientInfo,
+                sequence.type,
+                sequence.tone,
+                req.body.freelancerName || 'Freelancer'
+            );
+
+            const generatedText = await generateEmail(prompt);
+            console.log(`📝 Generated email length: ${generatedText.length} chars`);
+
+            // Extract Subject A and Subject B
+            const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
+            const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
+
+            if (subjectAMatch && subjectBMatch) {
+                subjectA = subjectAMatch[1].trim();
+                subjectB = subjectBMatch[1].trim();
+                // Remove subject lines from body
+                body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
+                console.log(`✅ Extracted subjects: A="${subjectA}", B="${subjectB}"`);
+            } else {
+                // Fallback to single subject format
+                const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
+                if (subjectMatch) {
+                    subjectA = subjectMatch[1].trim();
+                    subjectB = subjectA;
+                    body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
+                } else {
+                    subjectA = 'Follow-up';
+                    subjectB = 'Checking in';
+                    body = generatedText;
+                }
+                console.warn('⚠️ Could not find Subject A/B, using fallback');
+            }
+        } else {
+            // Step already had content (e.g., from a template) – use stored subjects
+            subjectA = nextStep.subject || 'Follow-up';
+            subjectB = nextStep.subject_b || subjectA;
+        }
+
+        // Save to emails table (use subjectA as primary)
+        const { data: savedEmail, error: saveEmailError } = await supabase
+            .from('emails')
+            .insert([{
+                user_id: user.id,
+                client_id: sequence.client_id,
+                subject: subjectA,
+                subject_b: subjectB,
+                body: body,
+                type: sequence.type,
+                tone: sequence.tone
+            }])
+            .select()
+            .single();
+
+        if (saveEmailError) {
+            console.error('❌ Failed to save email:', saveEmailError);
+        } else {
+            console.log('✅ Email saved with ID:', savedEmail.id);
+        }
+
+        // Mark step as sent – store both subjects
+        await supabaseAdmin
+            .from('sequence_steps')
+            .update({
+                sent_at: new Date().toISOString(),
+                subject: subjectA,
+                subject_b: subjectB,
+                body: body
+            })
+            .eq('id', nextStep.id);
+
+        // Calculate current step count AFTER marking as sent
+        const sentStepsCount = (sequence.steps.filter(s => s.sent_at).length + 1);
+        console.log('📊 Updating current_step to:', sentStepsCount);
+
+        const { error: updateError } = await supabaseAdmin
+            .from('sequences')
+            .update({ current_step: sentStepsCount, updated_at: new Date().toISOString() })
+            .eq('id', id);
+
+        if (updateError) {
+            console.error('❌ Failed to update current_step:', updateError);
+        } else {
+            console.log('✅ current_step updated to:', sentStepsCount);
+        }
+
+        // Return both subjects to the frontend
+        res.status(200).json({
+            subjectA: subjectA,
+            subjectB: subjectB,
+            subject: subjectA,   // backward compatibility
+            body: body,
+            emailId: savedEmail?.id,
+            step: sentStepsCount,
+            total: sequence.total_steps
+        });
+    } catch (error) {
+        console.error('Error sending next:', error);
+        res.status(500).json({ error: 'Failed to send next email' });
+    }
+});
+
+// Delete sequence
+app.delete('/api/sequences/:id', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { id } = req.params;
+
+    try {
+        console.log('🗑️ Deleting sequence:', id, 'for user:', user.id);
+
+        // Use supabaseAdmin to bypass RLS
+        const { error } = await supabaseAdmin
+            .from('sequences')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (error) {
+            console.error('❌ Delete error:', error);
+            throw error;
+        }
+
+        console.log('✅ Sequence deleted:', id);
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error deleting sequence:', error);
+        res.status(500).json({ error: 'Failed to delete sequence' });
     }
 });
 

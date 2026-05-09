@@ -289,6 +289,14 @@ body {
 
     /* Header */
 
+    header {
+        padding: 12px 16px !important;
+    }
+
+    header h2 {
+        font-size: 18px !important;
+    }
+
     header .flex.items-center.gap-4 {
         flex-direction: row !important;
         justify-content: space-between !important;
@@ -516,19 +524,18 @@ body {
 }
 
 .loader {
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-left-color: white;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 0.6s linear infinite;
     display: inline-block;
+    margin-right: 6px;
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
 
 /* Ensure scrolling works on all devices */
@@ -658,4 +665,14 @@ main {
 .client-checkbox:checked {
     background-color: #6366f1;
     border-color: #6366f1;
+}
+
+/* Dashboard Top Row - Quick Stats + 2x2 Grid */
+@media (max-width: 768px) {
+
+    /* Stack the top row on mobile */
+    #dashboardPage .grid.grid-cols-12.gap-4.mb-6>.md\:col-span-4,
+    #dashboardPage .grid.grid-cols-12.gap-4.mb-6>.md\:col-span-8 {
+        grid-column: span 12 / span 12;
+    }
 }

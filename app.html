@@ -130,6 +130,18 @@
                 <span class="text-xs font-bold uppercase tracking-wider">Analytics</span>
             </a>
 
+            <!-- Sequences Nav Item -->
+            <a href="#" onclick="switchPage('sequences'); return false;"
+                class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
+                id="sequencesNav">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                    </path>
+                </svg>
+                <span class="text-xs font-bold uppercase tracking-wider">Sequences</span>
+            </a>
+
             <!-- Settings Nav Item -->
             <a href="#" onclick="switchPage('settings'); return false;"
                 class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-indigo-200 hover:bg-white/5 transition-all"
@@ -211,6 +223,7 @@
     <!-- Main Content -->
     <main class="flex-1 ml-[260px] h-screen overflow-y-auto pb-8">
 
+
         <!-- ==================== DASHBOARD PAGE ==================== -->
         <div id="dashboardPage">
 
@@ -230,70 +243,24 @@
                             class="px-3 md:px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap">
                             + New Client
                         </button>
+                        <button onclick="openActivityModal()"
+                            class="p-2 text-slate-400 hover:text-indigo-400 transition-colors" title="Recent Activity">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </button>
                         <div
                             class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                            JD
-                        </div>
+                            JD</div>
                     </div>
                 </div>
             </header>
 
             <!-- Dashboard Content -->
-            <div class="px-8 py-6">
+            <div class="px-4 md:px-8 py-6">
 
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <div class="glass-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Total Clients</span>
-                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <p class="text-3xl font-bold text-white mt-2" id="dashTotalClients">0</p>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Needs
-                                Attention</span>
-                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-3xl font-bold text-white mt-2" id="dashNeedsAttention">0</p>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Pending
-                                Payments</span>
-                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <p class="text-3xl font-bold text-white mt-2" id="dashPendingPayments">$0</p>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Emails Sent</span>
-                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <p class="text-3xl font-bold text-white mt-2" id="dashEmailsSent">0</p>
-                    </div>
-                </div>
-
-                <!-- Demo Data Banner (hidden by default) -->
+                <!-- Demo Banner -->
                 <div id="demoBanner"
                     class="hidden mb-6 glass-card rounded-2xl p-4 flex items-center justify-between border border-indigo-500/20">
                     <div class="flex items-center gap-3">
@@ -311,18 +278,121 @@
                         </div>
                     </div>
                     <button onclick="clearDemoData()"
-                        class="bg-slate-700/50 hover:bg-red-500/20 text-slate-300 hover:text-red-400 px-4 py-2 rounded-lg text-xs font-bold transition-all flex-shrink-0">
-                        Clear demo data
-                    </button>
+                        class="bg-slate-700/50 hover:bg-red-500/20 text-slate-300 hover:text-red-400 px-4 py-2 rounded-lg text-xs font-bold transition-all flex-shrink-0">Clear
+                        demo data</button>
                 </div>
 
-                <!-- Main Dashboard Grid -->
+                <!-- ============ TOP ROW: Quick Stats + 2x2 Stat Cards ============ -->
+                <div class="grid grid-cols-12 gap-4 mb-6">
+
+                    <!-- Quick Stats (4 cols wide) -->
+                    <div class="col-span-12 md:col-span-4">
+                        <div class="glass-card rounded-2xl p-5 h-full">
+                            <h3 class="font-semibold text-white text-xs uppercase tracking-wider mb-4">Quick Stats</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1.5">
+                                        <span class="text-slate-400">Active</span>
+                                        <span class="text-white font-medium" id="dashActiveClients">0</span>
+                                    </div>
+                                    <div class="h-2.5 bg-slate-700/50 rounded-full overflow-hidden">
+                                        <div class="h-full gradient-primary rounded-full transition-all duration-500"
+                                            id="dashActiveBar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1.5">
+                                        <span class="text-slate-400">Waiting</span>
+                                        <span class="text-white font-medium" id="dashWaitingClients">0</span>
+                                    </div>
+                                    <div class="h-2.5 bg-slate-700/50 rounded-full overflow-hidden">
+                                        <div class="h-full bg-amber-400 rounded-full transition-all duration-500"
+                                            id="dashWaitingBar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1.5">
+                                        <span class="text-slate-400">Payment Due</span>
+                                        <span class="text-white font-medium" id="dashPaymentDueCount">0</span>
+                                    </div>
+                                    <div class="h-2.5 bg-slate-700/50 rounded-full overflow-hidden">
+                                        <div class="h-full bg-red-400 rounded-full transition-all duration-500"
+                                            id="dashPaymentBar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2x2 Stat Cards (8 cols wide) -->
+                    <div class="col-span-12 md:col-span-8">
+                        <div class="grid grid-cols-2 gap-4 h-full">
+                            <!-- Total Clients -->
+                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Total
+                                        Clients</span>
+                                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <p class="text-2xl font-bold text-white" id="dashTotalClients">0</p>
+                            </div>
+                            <!-- Needs Attention -->
+                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Needs
+                                        Attention</span>
+                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-2xl font-bold text-white" id="dashNeedsAttention">0</p>
+                            </div>
+                            <!-- Emails Sent -->
+                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Emails
+                                        Sent</span>
+                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <p class="text-2xl font-bold text-white" id="dashEmailsSent">0</p>
+                            </div>
+                            <!-- Pending Payments -->
+                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Pending
+                                        Payments</span>
+                                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <p class="text-2xl font-bold text-white" id="dashPendingPayments">$0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ BOTTOM ROW: Needs Attention + Quick Notes | Quick Email ============ -->
                 <div class="grid grid-cols-12 gap-6">
 
                     <!-- Left Column -->
                     <div class="col-span-12 lg:col-span-7 space-y-6">
 
-                        <!-- Needs Attention Section -->
+                        <!-- Needs Attention -->
                         <div class="glass-card rounded-2xl overflow-hidden">
                             <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
                                 <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Needs Attention
@@ -330,31 +400,36 @@
                                 <a href="#" onclick="switchPage('clients'); filterAttentionClients(); return false;"
                                     class="text-xs text-indigo-400 hover:text-indigo-300">View All →</a>
                             </div>
-                            <div id="dashboardAttentionList" class="divide-y divide-white/5">
-                                <!-- Attention clients loaded here -->
-                            </div>
-                            <div id="dashboardAttentionEmpty" class="p-8 text-center hidden">
-                                <p class="text-slate-400 text-sm">No clients need attention right now 🎉</p>
+                            <div id="dashboardAttentionList"
+                                class="divide-y divide-white/5 max-h-[220px] overflow-y-auto"></div>
+                            <div id="dashboardAttentionEmpty" class="p-6 text-center hidden">
+                                <p class="text-slate-400 text-sm">No clients need attention right now</p>
                             </div>
                         </div>
 
-                        <!-- Recent Activity -->
+                        <!-- Quick Notes -->
                         <div class="glass-card rounded-2xl p-6">
-                            <h3 class="font-semibold text-white text-sm uppercase tracking-wider mb-4">Recent Activity
-                            </h3>
-                            <div id="dashboardActivityList" class="space-y-4">
-                                <!-- Activity loaded here -->
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Quick Notes</h3>
+                                <span id="notesCount" class="text-xs text-slate-500"></span>
                             </div>
-                            <div id="dashboardActivityEmpty" class="text-center py-4 hidden">
-                                <p class="text-slate-400 text-sm">No recent activity</p>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="newNoteInput" placeholder="Add a note..."
+                                    class="flex-1 px-4 py-2.5 rounded-xl input-glass text-white placeholder-slate-500 text-sm"
+                                    onkeydown="if(event.key==='Enter')addNote()">
+                                <button onclick="addNote()"
+                                    class="gradient-primary text-white px-4 py-2.5 rounded-xl text-sm font-bold flex-shrink-0">Add</button>
+                            </div>
+                            <div id="notesList" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                            <div id="notesEmpty" class="text-center py-4">
+                                <p class="text-slate-500 text-xs">No notes yet. Add one above.</p>
                             </div>
                         </div>
+
                     </div>
 
-                    <!-- Right Column -->
-                    <div class="col-span-12 lg:col-span-5 space-y-6">
-
-                        <!-- Quick Email Card -->
+                    <!-- Right Column: Quick Email -->
+                    <div class="col-span-12 lg:col-span-5">
                         <div class="glass-card rounded-2xl p-6">
                             <div class="flex items-center gap-2 mb-4">
                                 <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
@@ -365,42 +440,26 @@
                                 </svg>
                                 <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Quick Email</h3>
                             </div>
-
                             <div class="space-y-4">
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Select
-                                        Client</label>
-                                    <select id="dashboardQuickEmailClient"
-                                        class="w-full px-4 py-3 rounded-xl input-glass text-white text-sm">
-                                        <option value="">-- Select a client --</option>
+                                <select id="dashboardQuickEmailClient"
+                                    class="w-full px-4 py-3 rounded-xl input-glass text-white text-sm">
+                                    <option value="">-- Select a client --</option>
+                                </select>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <select id="dashboardQuickEmailType"
+                                        class="w-full px-3 py-2 rounded-xl input-glass text-white text-sm">
+                                        <option value="Follow-up">Follow-up</option>
+                                        <option value="Payment Reminder">Payment</option>
+                                        <option value="Cold Outreach">Cold</option>
+                                    </select>
+                                    <select id="dashboardQuickEmailTone"
+                                        class="w-full px-3 py-2 rounded-xl input-glass text-white text-sm">
+                                        <option value="Friendly">Friendly</option>
+                                        <option value="Professional">Professional</option>
+                                        <option value="Firm">Firm</option>
+                                        <option value="Casual">Casual</option>
                                     </select>
                                 </div>
-
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label
-                                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Type</label>
-                                        <select id="dashboardQuickEmailType"
-                                            class="w-full px-3 py-2 rounded-xl input-glass text-white text-sm">
-                                            <option value="Follow-up">Follow-up</option>
-                                            <option value="Payment Reminder">Payment</option>
-                                            <option value="Cold Outreach">Cold</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label
-                                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Tone</label>
-                                        <select id="dashboardQuickEmailTone"
-                                            class="w-full px-3 py-2 rounded-xl input-glass text-white text-sm">
-                                            <option value="Friendly">Friendly</option>
-                                            <option value="Professional">Professional</option>
-                                            <option value="Firm">Firm</option>
-                                            <option value="Casual">Casual</option>
-                                        </select>
-                                    </div>
-                                </div>
-
                                 <button onclick="generateQuickEmail()" id="dashboardGenerateBtn"
                                     class="w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -410,33 +469,6 @@
                                     </svg>
                                     Generate Draft
                                 </button>
-                            </div>
-                        </div>
-
-                        <!-- Quick Stats -->
-                        <div class="glass-card rounded-2xl p-6">
-                            <h3 class="font-semibold text-white text-sm uppercase tracking-wider mb-4">Quick Stats</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <div class="flex justify-between text-xs mb-1">
-                                        <span class="text-slate-400">Active Clients</span>
-                                        <span class="text-white font-medium" id="dashActiveClients">0</span>
-                                    </div>
-                                    <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full gradient-primary rounded-full" id="dashActiveBar"
-                                            style="width: 0%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-xs mb-1">
-                                        <span class="text-slate-400">Payment Due</span>
-                                        <span class="text-white font-medium" id="dashPaymentDueCount">0</span>
-                                    </div>
-                                    <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-red-400 rounded-full" id="dashPaymentBar"
-                                            style="width: 0%"></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1164,6 +1196,147 @@
             </div>
         </div>
 
+        <!-- ==================== SEQUENCES PAGE ==================== -->
+        <div id="sequencesPage" class="hidden">
+            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <h2 class="text-lg md:text-2xl font-bold text-white tracking-tight">Email Sequences</h2>
+                        <p class="text-slate-400 text-xs md:text-sm mt-0.5 hidden sm:block">Automate follow-ups that
+                            send over time</p>
+                    </div>
+                    <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+                        <button onclick="openAddSequenceModal()"
+                            class="gradient-primary text-white px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            New Sequence
+                        </button>
+                        <div
+                            class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                            JD</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="px-4 md:px-8 py-6">
+                <!-- Sequences List -->
+                <div id="sequencesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Sequences loaded here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="sequencesEmpty" class="p-12 text-center hidden">
+                    <div class="max-w-xs mx-auto">
+                        <div
+                            class="w-24 h-24 mx-auto mb-4 bg-indigo-500/10 rounded-full flex items-center justify-center">
+                            <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">No sequences yet</h3>
+                        <p class="text-slate-400 text-sm mb-6">Create automated email follow-ups that send over days or
+                            weeks.</p>
+                        <button onclick="openAddSequenceModal()"
+                            class="gradient-primary text-white px-6 py-3 rounded-xl text-sm font-bold">
+                            Create Your First Sequence
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Sequence Modal -->
+        <div id="addSequenceModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeAddSequenceModal()"></div>
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg px-4 max-h-[90vh] overflow-y-auto">
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Create Email Sequence</h2>
+                    <form id="addSequenceForm" class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Sequence
+                                Name</label>
+                            <input type="text" id="seqName" required placeholder="e.g. Client Onboarding"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Client</label>
+                            <select id="seqClient" class="w-full px-4 py-3 rounded-xl input-glass text-white" required>
+                                <option value="">-- Select a client --</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Type</label>
+                                <select id="seqType" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                    <option value="Follow-up">Follow-up</option>
+                                    <option value="Payment Reminder">Payment</option>
+                                    <option value="Cold Outreach">Cold</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Tone</label>
+                                <select id="seqTone" class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                                    <option value="Friendly">Friendly</option>
+                                    <option value="Professional">Professional</option>
+                                    <option value="Firm">Firm</option>
+                                    <option value="Casual">Casual</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Steps -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Emails
+                                in Sequence</label>
+                            <div id="seqSteps" class="space-y-3">
+                                <div class="flex gap-2 items-center p-3 bg-slate-800/30 rounded-xl">
+                                    <span class="text-xs font-bold text-indigo-400 w-6">1</span>
+                                    <span class="text-xs text-slate-400">Day</span>
+                                    <input type="number" value="1" min="1" max="30"
+                                        class="w-16 px-2 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs text-center seq-day">
+                                    <span class="text-xs text-slate-500 flex-1">Initial email</span>
+                                </div>
+                                <div class="flex gap-2 items-center p-3 bg-slate-800/30 rounded-xl">
+                                    <span class="text-xs font-bold text-indigo-400 w-6">2</span>
+                                    <span class="text-xs text-slate-400">Day</span>
+                                    <input type="number" value="3" min="1" max="30"
+                                        class="w-16 px-2 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs text-center seq-day">
+                                    <span class="text-xs text-slate-500 flex-1">First follow-up</span>
+                                </div>
+                                <div class="flex gap-2 items-center p-3 bg-slate-800/30 rounded-xl">
+                                    <span class="text-xs font-bold text-indigo-400 w-6">3</span>
+                                    <span class="text-xs text-slate-400">Day</span>
+                                    <input type="number" value="7" min="1" max="30"
+                                        class="w-16 px-2 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs text-center seq-day">
+                                    <span class="text-xs text-slate-500 flex-1">Final follow-up</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="closeAddSequenceModal()"
+                                class="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">Cancel</button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-3 rounded-xl gradient-primary text-white font-medium">Create
+                                Sequence</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <!-- ==================== ANALYTICS PAGE ==================== -->
         <div id="analyticsPage" class="hidden">
             <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
@@ -1383,6 +1556,29 @@
                     </div>
                 </div>
 
+                <!-- Tags -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Tags</h4>
+                    <div class="flex flex-wrap gap-2 mb-3" id="detailTags">
+                        <!-- Tags loaded here -->
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="tagSelect" class="px-3 py-2 rounded-xl input-glass text-white text-sm flex-1">
+                            <option value="">Add tag...</option>
+                            <option value="VIP">VIP</option>
+                            <option value="Slow Payer">Slow Payer</option>
+                            <option value="Referral">Referral</option>
+                            <option value="Hot Lead">Hot Lead</option>
+                            <option value="Recurring">Recurring</option>
+                            <option value="Needs Review">Needs Review</option>
+                        </select>
+                        <button onclick="addTagToClient()"
+                            class="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-3 py-2 rounded-xl text-xs font-bold transition-all">
+                            Add
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Project Info -->
                 <div>
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Project Details</h4>
@@ -1394,6 +1590,10 @@
                         <div>
                             <p class="text-xs text-slate-500 uppercase tracking-wider">Value</p>
                             <p id="detailAmount" class="text-white font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Deadline</p>
+                            <p id="detailDeadline" class="text-white font-medium">-</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-500 uppercase tracking-wider">Status</p>
@@ -1462,6 +1662,16 @@
                     </svg>
                     Generate Email
                 </button>
+                <!-- 👇 ADD THIS NEW BUTTON -->
+                <button onclick="generateInvoice()"
+                    class="w-full mt-3 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all border border-emerald-500/30">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Generate Invoice
+                </button>
             </div>
         </div>
 
@@ -1507,6 +1717,13 @@
                             <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Value
                                 ($)</label>
                             <input type="number" id="editClientAmount"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Deadline</label>
+                            <input type="date" id="editClientDeadline"
                                 class="w-full px-4 py-3 rounded-xl input-glass text-white">
                         </div>
 
@@ -1615,6 +1832,13 @@
 
                     <div>
                         <label
+                            class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Deadline</label>
+                        <input type="date" id="clientDeadline"
+                            class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500">
+                    </div>
+
+                    <div>
+                        <label
                             class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Status</label>
                         <select id="clientStatus" class="w-full px-4 py-3 rounded-xl input-glass text-white">
                             <option value="active">Active</option>
@@ -1698,10 +1922,21 @@
 
                 <!-- Result -->
                 <div id="emailResult" class="hidden space-y-4">
+                    <!-- Subject A/B Toggle -->
                     <div class="bg-slate-800/50 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center justify-between mb-3">
                             <p class="text-xs text-slate-500 uppercase tracking-wider">Subject</p>
-                            <button onclick="copySubject()"
+                            <div class="flex gap-1 bg-slate-700/50 rounded-lg p-0.5">
+                                <button onclick="switchSubject('A')" id="subjectTabA"
+                                    class="px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all">
+                                    A
+                                </button>
+                                <button onclick="switchSubject('B')" id="subjectTabB"
+                                    class="px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all">
+                                    B
+                                </button>
+                            </div>
+                            <button onclick="copyCurrentSubject()"
                                 class="text-xs text-indigo-400 hover:text-indigo-300">Copy</button>
                         </div>
                         <p id="generatedSubject" class="text-white font-medium"></p>
@@ -1948,6 +2183,33 @@
                         class="w-full py-3 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-medium transition-all">
                         Maybe Later
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Recent Activity Modal -->
+    <div id="activityModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeActivityModal()"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4 max-h-[80vh] overflow-y-auto">
+            <div class="glass-card rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white">Recent Activity</h2>
+                    <button onclick="closeActivityModal()"
+                        class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="activityModalList" class="space-y-4">
+                    <!-- Activity loaded here -->
+                </div>
+                <div id="activityModalEmpty" class="text-center py-8 hidden">
+                    <p class="text-slate-400 text-sm">No recent activity</p>
                 </div>
             </div>
         </div>

@@ -22,6 +22,9 @@ let showArchived = false;
 let templates = [];
 let currentTemplate = null;
 let templateToDelete = null;
+let generatedSubjectA = '';
+let generatedSubjectB = '';
+let currentSubjectChoice = 'A';
 
 
 
@@ -248,6 +251,7 @@ window.addEventListener('pageshow', function (event) {
     const templatesPage = document.getElementById('templatesPage');
     const analyticsPage = document.getElementById('analyticsPage');
     const settingsPage = document.getElementById('settingsPage');
+    const sequencesPage = document.getElementById('sequencesPage');
 
     // Hide all pages except dashboard
     if (clientsPage) clientsPage.classList.add('hidden');
@@ -255,6 +259,7 @@ window.addEventListener('pageshow', function (event) {
     if (templatesPage) templatesPage.classList.add('hidden');
     if (analyticsPage) analyticsPage.classList.add('hidden');
     if (settingsPage) settingsPage.classList.add('hidden');
+    if (sequencesPage) sequencesPage.classList.add('hidden');
 
     // Show dashboard with initial styles
     if (dashboardPage) {
@@ -320,6 +325,7 @@ window.addEventListener('pageshow', function (event) {
         await loadEmailHistory();
         await loadDashboard();
         loadTemplates();
+        loadSequences();
     }
 
     initializeDashboard();
@@ -346,7 +352,7 @@ window.addEventListener('pageshow', function (event) {
 // ============================================
 
 function switchPage(page) {
-    if (currentPage === page) return; // Already on this page
+    console.log('🔄 Switching to page:', page);  // ← ADD THIS
 
     // Get all page elements
     const dashboardPage = document.getElementById('dashboardPage');
@@ -355,14 +361,25 @@ function switchPage(page) {
     const templatesPage = document.getElementById('templatesPage');
     const analyticsPage = document.getElementById('analyticsPage');
     const settingsPage = document.getElementById('settingsPage');
+    const sequencesPage = document.getElementById('sequencesPage');
 
-    // Get all nav elements
-    const dashboardNav = document.getElementById('dashboardNav');
-    const clientsNav = document.getElementById('clientsNav');
-    const emailsNav = document.getElementById('emailsNav');
-    const templatesNav = document.getElementById('templatesNav');
-    const analyticsNav = document.getElementById('analyticsNav');
-    const settingsNav = document.getElementById('settingsNav');
+    // HIDE ALL PAGES FIRST
+    if (dashboardPage) dashboardPage.classList.add('hidden');
+    if (clientsPage) clientsPage.classList.add('hidden');
+    if (emailsPage) emailsPage.classList.add('hidden');
+    if (templatesPage) templatesPage.classList.add('hidden');
+    if (analyticsPage) analyticsPage.classList.add('hidden');
+    if (settingsPage) settingsPage.classList.add('hidden');
+    if (sequencesPage) sequencesPage.classList.add('hidden');
+
+    // SHOW ONLY THE SELECTED PAGE
+    const selectedPage = document.getElementById(`${page}Page`);
+    if (selectedPage) {
+        selectedPage.classList.remove('hidden');
+        console.log('✅ Showing page:', page);
+    } else {
+        console.error('❌ Page not found:', page);
+    }
 
     // Get the current active page
     const currentActivePage = document.getElementById(`${currentPage}Page`);
@@ -431,6 +448,10 @@ function switchPage(page) {
             settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             settingsNav.classList.add('text-slate-400');
         }
+        if (sequencesNav) {
+            sequencesNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            sequencesNav.classList.add('text-slate-400');
+        }
 
         // Activate new nav item and load appropriate data
         if (page === 'dashboard' && dashboardNav) {
@@ -457,6 +478,10 @@ function switchPage(page) {
             settingsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             settingsNav.classList.remove('text-slate-400');
             loadSettings();
+        } else if (page === 'sequences' && sequencesNav) {
+            sequencesNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            sequencesNav.classList.remove('text-slate-400');
+            loadSequences();
         }
 
         currentPage = page;
@@ -508,6 +533,7 @@ async function loadDashboard() {
     renderDashboardActivity();
     populateQuickEmailClients();
     initOnboardingChecklist();
+    loadQuickNotes();
 }
 
 function updateDashboardGreeting() {
@@ -529,32 +555,28 @@ function updateDashboardGreeting() {
 }
 
 function updateDashboardStats() {
-    // Total clients
     document.getElementById('dashTotalClients').textContent = clients.length;
 
-    // Needs attention
     const attentionClients = getAttentionClients();
     document.getElementById('dashNeedsAttention').textContent = attentionClients.length;
 
-    // Pending payments
-    const pendingTotal = clients
-        .filter(c => c.status === 'payment_due')
-        .reduce((sum, c) => sum + (c.amount || 0), 0);
+    const pendingTotal = clients.filter(c => c.status === 'payment_due').reduce((sum, c) => sum + (c.amount || 0), 0);
     document.getElementById('dashPendingPayments').textContent = `$${pendingTotal.toLocaleString()}`;
 
-    // Emails sent (from allEmails)
     document.getElementById('dashEmailsSent').textContent = allEmails.length;
 
-    // Quick stats
+    // Bar chart stats
+    const total = clients.length || 1;
     const activeCount = clients.filter(c => c.status === 'active').length;
+    const waitingCount = clients.filter(c => c.status === 'waiting').length;
     const paymentDueCount = clients.filter(c => c.status === 'payment_due').length;
 
     document.getElementById('dashActiveClients').textContent = activeCount;
+    document.getElementById('dashWaitingClients').textContent = waitingCount;
     document.getElementById('dashPaymentDueCount').textContent = paymentDueCount;
 
-    // Progress bars
-    const total = clients.length || 1;
     document.getElementById('dashActiveBar').style.width = `${(activeCount / total) * 100}%`;
+    document.getElementById('dashWaitingBar').style.width = `${(waitingCount / total) * 100}%`;
     document.getElementById('dashPaymentBar').style.width = `${(paymentDueCount / total) * 100}%`;
 
     updateEmailLimitDisplay();
@@ -591,32 +613,7 @@ function renderDashboardAttentionList() {
 }
 
 function renderDashboardActivity() {
-    const container = document.getElementById('dashboardActivityList');
-    const emptyState = document.getElementById('dashboardActivityEmpty');
 
-    const recentEmails = allEmails.slice(0, 3);
-
-    if (recentEmails.length === 0) {
-        container.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        return;
-    }
-
-    emptyState.classList.add('hidden');
-
-    container.innerHTML = recentEmails.map(email => `
-        <div class="flex gap-3">
-            <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
-                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-            </div>
-            <div>
-                <p class="text-sm text-white">Email sent to <span class="text-indigo-300">${email.clients?.name || 'Unknown'}</span></p>
-                <p class="text-xs text-slate-500">${formatDate(email.created_at)} • ${email.type}</p>
-            </div>
-        </div>
-    `).join('');
 }
 
 function populateQuickEmailClients() {
@@ -658,11 +655,16 @@ async function generateQuickEmail() {
 
         // Show in email modal
         currentEmailClient = clients.find(c => c.id === clientId);
-        generatedSubject = data.subject || 'No subject';
+        generatedSubjectA = data.subjectA || data.subject || 'No subject';
+        generatedSubjectB = data.subjectB || data.subjectA || 'No subject';
         generatedBody = data.body || data.fullText;
+        currentSubjectChoice = 'A';
+
+        document.getElementById('generatedSubject').textContent = generatedSubjectA;
+        document.getElementById('subjectTabA').className = 'px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all';
+        document.getElementById('subjectTabB').className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
 
         document.getElementById('emailClientName').textContent = currentEmailClient.name;
-        document.getElementById('generatedSubject').textContent = generatedSubject;
         document.getElementById('generatedBody').textContent = generatedBody;
         document.getElementById('emailConfig').classList.add('hidden');
         document.getElementById('emailResult').classList.remove('hidden');
@@ -784,6 +786,13 @@ function renderClientList() {
                         ` : ''}
                     </h3>
                     <p class="text-sm text-slate-400">${client.business || 'No business'}</p>
+                    ${client.tags && client.tags.length > 0 ? `
+    <div class="flex flex-wrap gap-1 mt-1">
+        ${client.tags.map(tag => `
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">${tag}</span>
+        `).join('')}
+    </div>
+` : ''}
                 </div>
             </div>
             
@@ -801,11 +810,15 @@ function renderClientList() {
                         <p class="text-sm text-white font-medium">$${client.amount.toLocaleString()}</p>
                     </div>
                 ` : ''}
-                <div class="text-right">
-                    <p class="text-xs text-slate-500 uppercase tracking-wider">Last Contact</p>
-                    <p class="text-sm ${isStale ? 'text-amber-400 font-medium' : 'text-white'}">${formatDate(client.last_contacted)}</p>
-                </div>
-                ${getStatusBadge(client.status)}
+               <div class="text-right hidden md:block">
+    <p class="text-xs text-slate-500 uppercase tracking-wider">Deadline</p>
+    <p class="text-sm ${getDeadlineUrgency(client.deadline)}">${client.deadline ? formatDate(client.deadline) : '—'}</p>
+</div>
+<div class="text-right">
+    <p class="text-xs text-slate-500 uppercase tracking-wider">Last Contact</p>
+    <p class="text-sm ${isStale ? 'text-amber-400 font-medium' : 'text-white'}">${formatDate(client.last_contacted)}</p>
+</div>
+${getStatusBadge(client.status)}
             </div>
         </div>
     `;
@@ -852,6 +865,7 @@ async function handleAddClient(e) {
         email: document.getElementById('clientEmail').value || null,
         project: document.getElementById('clientProject').value || null,
         amount: document.getElementById('clientAmount').value ? parseFloat(document.getElementById('clientAmount').value) : null,
+        deadline: document.getElementById('clientDeadline').value || null,
         status: document.getElementById('clientStatus').value
     };
 
@@ -1082,6 +1096,7 @@ function selectClient(clientId) {
     document.getElementById('detailLastContact').textContent = formatDate(client.last_contacted);
     document.getElementById('detailCreated').textContent = formatDate(client.created_at);
     document.getElementById('detailNotes').value = client.notes || '';
+    document.getElementById('detailDeadline').textContent = client.deadline ? formatDate(client.deadline) : '-';
 
     document.getElementById('editClientId').value = client.id;
     document.getElementById('editClientName').value = client.name;
@@ -1090,9 +1105,12 @@ function selectClient(clientId) {
     document.getElementById('editClientProject').value = client.project || '';
     document.getElementById('editClientAmount').value = client.amount || '';
     document.getElementById('editClientStatus').value = client.status;
+    document.getElementById('editClientDeadline').value = client.deadline ? client.deadline.split('T')[0] : '';
 
 
     updateDetailPanelActions(client);
+
+    renderClientTags(client.tags || []);
 
     openDetailPanel();
 }
@@ -1161,6 +1179,7 @@ async function submitAddClientForm() {
         email: document.getElementById('clientEmail').value || null,
         project: document.getElementById('clientProject').value || null,
         amount: document.getElementById('clientAmount').value ? parseFloat(document.getElementById('clientAmount').value) : null,
+        deadline: document.getElementById('clientDeadline').value || null,
         status: document.getElementById('clientStatus').value
     };
 
@@ -1213,6 +1232,7 @@ async function handleEditClient(e) {
         email: document.getElementById('editClientEmail').value || null,
         project: document.getElementById('editClientProject').value || null,
         amount: document.getElementById('editClientAmount').value ? parseFloat(document.getElementById('editClientAmount').value) : null,
+        deadline: document.getElementById('editClientDeadline').value || null,  // ← ADD THIS
         status: document.getElementById('editClientStatus').value
     };
 
@@ -1270,6 +1290,17 @@ async function confirmDelete() {
 // ============================================
 
 function needsAttention(client) {
+    // Check for overdue deadline first (more urgent)
+    if (client.deadline) {
+        const deadline = new Date(client.deadline);
+        const now = new Date();
+        if (deadline < now) return true; // Overdue
+        const diffTime = Math.abs(deadline - now);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays <= 2) return true; // Due within 2 days
+    }
+
+    // Check for stale communication
     if (!client.last_contacted) return true;
     const lastContact = new Date(client.last_contacted);
     const now = new Date();
@@ -1482,10 +1513,14 @@ async function generateEmail() {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Failed to generate');
 
-        generatedSubject = data.subject || 'No subject';
+        generatedSubjectA = data.subjectA || data.subject || 'No subject';
+        generatedSubjectB = data.subjectB || data.subjectA || 'No subject';
         generatedBody = data.body || data.fullText;
+        currentSubjectChoice = 'A';
 
-        document.getElementById('generatedSubject').textContent = generatedSubject;
+        document.getElementById('generatedSubject').textContent = generatedSubjectA;
+        document.getElementById('subjectTabA').className = 'px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all';
+        document.getElementById('subjectTabB').className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
         document.getElementById('generatedBody').textContent = generatedBody;
         document.getElementById('emailConfig').classList.add('hidden');
         document.getElementById('emailResult').classList.remove('hidden');
@@ -1502,8 +1537,26 @@ async function generateEmail() {
     }
 }
 
-function copySubject() {
-    navigator.clipboard.writeText(generatedSubject);
+function switchSubject(choice) {
+    currentSubjectChoice = choice;
+    const subject = choice === 'A' ? generatedSubjectA : generatedSubjectB;
+    document.getElementById('generatedSubject').textContent = subject;
+
+    const tabA = document.getElementById('subjectTabA');
+    const tabB = document.getElementById('subjectTabB');
+
+    if (choice === 'A') {
+        tabA.className = 'px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all';
+        tabB.className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
+    } else {
+        tabB.className = 'px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all';
+        tabA.className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
+    }
+}
+
+function copyCurrentSubject() {
+    const subject = currentSubjectChoice === 'A' ? generatedSubjectA : generatedSubjectB;
+    navigator.clipboard.writeText(subject);
     showToast('Subject copied!', 'success');
 }
 
@@ -1513,7 +1566,8 @@ function copyBody() {
 }
 
 function copyFullEmail() {
-    const fullEmail = `Subject: ${generatedSubject}\n\n${generatedBody}`;
+    const subject = currentSubjectChoice === 'A' ? generatedSubjectA : generatedSubjectB;
+    const fullEmail = `Subject: ${subject}\n\n${generatedBody}`;
     navigator.clipboard.writeText(fullEmail);
     showToast('Full email copied!', 'success');
 }
@@ -1528,9 +1582,8 @@ function openInGmail() {
         showToast('This client has no email address. Please add one first.', 'error');
         return;
     }
-    const subject = encodeURIComponent(generatedSubject);
-    const body = encodeURIComponent(generatedBody);
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${subject}&body=${body}`;
+    const subject = currentSubjectChoice === 'A' ? generatedSubjectA : generatedSubjectB;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(generatedBody)}`;
     window.open(gmailUrl, '_blank');
     showToast(`Opening Gmail for ${currentEmailClient.name}...`, 'success');
 }
@@ -1682,6 +1735,8 @@ async function importClients() {
             email: row.email || null,
             project: row.project || null,
             amount: row.amount ? parseFloat(row.amount) : null,
+            deadline: row.deadline || null,
+            tags: row.tags ? row.tags.split(';').map(t => t.trim()) : [],
             status: row.status || 'active'
         };
 
@@ -1740,7 +1795,7 @@ function exportToCSV() {
     exportClients = sortClientsArray(exportClients);
 
     // Define CSV headers
-    const headers = ['Name', 'Business', 'Email', 'Project', 'Amount', 'Status', 'Last Contacted', 'Notes', 'Archived'];
+    const headers = ['Name', 'Business', 'Email', 'Project', 'Amount', 'Status', 'Tags', 'Last Contacted', 'Notes', 'Archived'];
 
     // Convert clients to CSV rows
     const rows = exportClients.map(client => [
@@ -1752,6 +1807,7 @@ function exportToCSV() {
         client.status || 'active',
         client.last_contacted ? formatDate(client.last_contacted) : 'Never',
         client.notes || '',
+        client.tags ? client.tags.join('; ') : '',
         client.archived ? 'Yes' : 'No'
     ]);
 
@@ -2554,4 +2610,680 @@ async function clearDemoData() {
     // Hide banner
     const banner = document.getElementById('demoBanner');
     if (banner) banner.classList.add('hidden');
+}
+
+function getDeadlineUrgency(deadline) {
+    if (!deadline) return 'text-white';
+    const now = new Date();
+    const dl = new Date(deadline);
+    if (dl < now) return 'text-red-400 font-medium';
+    const diffDays = Math.ceil((dl - now) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 2) return 'text-amber-400 font-medium';
+    return 'text-white';
+}
+
+// ============================================
+// QUICK NOTES
+// ============================================
+
+let quickNotes = [];
+
+async function loadQuickNotes() {
+    try {
+        const { data, error } = await window.supabase
+            .from('profiles')
+            .select('quick_notes')
+            .eq('id', window.userSettings.id)
+            .single();
+
+        if (!error && data?.quick_notes) {
+            quickNotes = typeof data.quick_notes === 'string'
+                ? JSON.parse(data.quick_notes)
+                : data.quick_notes;
+        } else {
+            quickNotes = [];
+        }
+    } catch (e) {
+        quickNotes = [];
+    }
+    renderNotesList();
+}
+
+function renderNotesList() {
+    const list = document.getElementById('notesList');
+    const empty = document.getElementById('notesEmpty');
+    const count = document.getElementById('notesCount');
+
+    if (!list) return;
+
+    const activeNotes = quickNotes.filter(n => !n.done);
+    const doneNotes = quickNotes.filter(n => n.done);
+
+    list.innerHTML = '';
+
+    if (quickNotes.length === 0) {
+        empty.classList.remove('hidden');
+        count.textContent = '';
+        return;
+    }
+
+    empty.classList.add('hidden');
+    count.textContent = `${activeNotes.length} active · ${doneNotes.length} done`;
+
+    // Active notes first
+    activeNotes.forEach((note, index) => {
+        const realIndex = quickNotes.indexOf(note);
+        list.innerHTML += `
+            <div class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 group">
+                <button onclick="toggleNote(${realIndex})" class="w-5 h-5 rounded-full border-2 border-slate-500 hover:border-green-400 flex items-center justify-center flex-shrink-0 transition-all">
+                    <svg class="w-3 h-3 text-transparent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </button>
+                <span class="text-sm text-slate-300 flex-1">${escapeHTML(note.text)}</span>
+                <button onclick="deleteNote(${realIndex})" class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        `;
+    });
+
+    // Done notes (strikethrough)
+    if (doneNotes.length > 0) {
+        list.innerHTML += `<div class="pt-2 mt-2 border-t border-white/5"></div>`;
+        doneNotes.forEach((note, index) => {
+            const realIndex = quickNotes.indexOf(note);
+            list.innerHTML += `
+                <div class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 group opacity-60">
+                    <button onclick="toggleNote(${realIndex})" class="w-5 h-5 rounded-full bg-green-500/20 border-2 border-green-500 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-3 h-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </button>
+                    <span class="text-sm text-slate-500 line-through flex-1">${escapeHTML(note.text)}</span>
+                    <button onclick="deleteNote(${realIndex})" class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        });
+    }
+}
+
+async function addNote() {
+    const input = document.getElementById('newNoteInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    quickNotes.unshift({ text, done: false, created_at: new Date().toISOString() });
+    input.value = '';
+    await saveNotesToDB();
+    renderNotesList();
+}
+
+async function toggleNote(index) {
+    quickNotes[index].done = !quickNotes[index].done;
+    await saveNotesToDB();
+    renderNotesList();
+}
+
+async function deleteNote(index) {
+    quickNotes.splice(index, 1);
+    await saveNotesToDB();
+    renderNotesList();
+}
+
+async function saveNotesToDB() {
+    try {
+        await window.supabase
+            .from('profiles')
+            .update({
+                quick_notes: JSON.stringify(quickNotes),
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', window.userSettings.id);
+    } catch (e) {
+        console.error('Failed to save notes:', e);
+    }
+}
+
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// ============================================
+// CLIENT TAGS
+// ============================================
+
+function renderClientTags(tags) {
+    const container = document.getElementById('detailTags');
+    if (!container) return;
+
+    if (!tags || tags.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500">No tags yet</p>';
+        return;
+    }
+
+    container.innerHTML = tags.map(tag => `
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+            ${tag}
+            <button onclick="removeTagFromClient('${tag}')" class="hover:text-red-400 transition-colors">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </span>
+    `).join('');
+}
+
+async function addTagToClient() {
+    if (!selectedClientId) return;
+    const select = document.getElementById('tagSelect');
+    const tag = select.value;
+    if (!tag) return;
+
+    const client = clients.find(c => c.id === selectedClientId);
+    if (!client) return;
+
+    const tags = [...(client.tags || [])];
+    if (tags.includes(tag)) {
+        showToast('Tag already exists', 'error');
+        return;
+    }
+
+    tags.push(tag);
+
+    try {
+        await updateClient(selectedClientId, { tags });
+        client.tags = tags;
+        renderClientTags(tags);
+        renderClientList();
+        select.value = '';
+        showToast('Tag added', 'success');
+    } catch (e) {
+        showToast('Failed to add tag', 'error');
+    }
+}
+
+async function removeTagFromClient(tag) {
+    if (!selectedClientId) return;
+    const client = clients.find(c => c.id === selectedClientId);
+    if (!client) return;
+
+    const tags = (client.tags || []).filter(t => t !== tag);
+
+    try {
+        await updateClient(selectedClientId, { tags });
+        client.tags = tags;
+        renderClientTags(tags);
+        renderClientList();
+        showToast('Tag removed', 'success');
+    } catch (e) {
+        showToast('Failed to remove tag', 'error');
+    }
+}
+
+function openActivityModal() {
+    const list = document.getElementById('activityModalList');
+    const empty = document.getElementById('activityModalEmpty');
+
+    const recentEmails = allEmails.slice(0, 10);
+
+    if (recentEmails.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+    } else {
+        empty.classList.add('hidden');
+        list.innerHTML = recentEmails.map(email => `
+            <div class="flex gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-white">Email sent to <span class="text-indigo-300">${email.clients?.name || 'Unknown'}</span></p>
+                    <p class="text-xs text-slate-500">${formatDate(email.created_at)} • ${email.type}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('activityModal').classList.remove('hidden');
+}
+
+function closeActivityModal() {
+    document.getElementById('activityModal').classList.add('hidden');
+}
+
+// ============================================
+// EMAIL SEQUENCES
+// ============================================
+
+let sequences = [];
+
+async function loadSequences() {
+    try {
+        const response = await authFetch('/api/sequences');
+        const data = await response.json();
+        sequences = data.sequences || [];
+        renderSequencesGrid();
+    } catch (e) {
+        console.error('Failed to load sequences:', e);
+    }
+}
+
+function renderSequencesGrid() {
+    const grid = document.getElementById('sequencesGrid');
+    const empty = document.getElementById('sequencesEmpty');
+
+    if (sequences.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+    }
+
+    empty.classList.add('hidden');
+    grid.innerHTML = sequences.map(seq => {
+        const currentStep = seq.current_step || 0;
+        const progress = seq.total_steps > 0 ? Math.round((currentStep / seq.total_steps) * 100) : 0;
+        const nextStep = (seq.steps || []).find(s => !s.sent_at);
+        const isComplete = !nextStep && seq.total_steps > 0 && currentStep >= seq.total_steps;
+
+        return `
+        <div class="glass-card rounded-2xl p-5 ${isComplete ? 'opacity-70' : ''}">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="font-semibold text-white">${escapeHTML(seq.name)}</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">${seq.clients?.name || 'Unknown'} • ${seq.type}</p>
+                </div>
+                <span class="status-badge ${seq.status === 'active' ? 'status-active' : 'status-waiting'}">${isComplete ? 'COMPLETED' : (seq.status || 'ACTIVE')}</span>
+            </div>
+            <div class="mb-3">
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-400">Progress</span>
+                    <span class="text-white">${currentStep}/${seq.total_steps}</span>
+                </div>
+                <div class="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+                    <div class="h-full gradient-primary rounded-full" style="width: ${progress}%"></div>
+                </div>
+            </div>
+            ${nextStep ? `
+                <p class="text-xs text-slate-500 mb-3">Next: Day ${nextStep.day_delay} (Step ${nextStep.step_number})</p>
+                <div class="flex gap-2">
+                    <button onclick="sendNextInSequence('${seq.id}')" class="flex-1 gradient-primary text-white py-2 rounded-lg text-xs font-bold">Generate Next Email</button>
+                    <button onclick="deleteSequence('${seq.id}')" class="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all" title="Delete Sequence">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            ` : `
+                <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+                    <p class="text-xs text-green-400 font-medium">✓ All emails sent</p>
+                    <button onclick="deleteSequence('${seq.id}')" class="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all" title="Delete Sequence">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `}
+        </div>`;
+    }).join('');
+}
+
+function openAddSequenceModal() {
+    document.getElementById('addSequenceModal').classList.remove('hidden');
+    // Populate client dropdown
+    const select = document.getElementById('seqClient');
+    select.innerHTML = '<option value="">-- Select a client --</option>' +
+        clients.map(c => `<option value="${c.id}">${c.name} (${c.business || 'N/A'})</option>`).join('');
+}
+
+function closeAddSequenceModal() {
+    document.getElementById('addSequenceModal').classList.add('hidden');
+    document.getElementById('addSequenceForm').reset();
+}
+
+// Attach sequence form handler
+const seqForm = document.getElementById('addSequenceForm');
+if (seqForm) {
+    seqForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const days = document.querySelectorAll('.seq-day');
+        const steps = Array.from(days).map((input, i) => ({
+            stepNumber: i + 1,
+            dayDelay: parseInt(input.value) || 1
+        }));
+
+        const data = {
+            clientId: document.getElementById('seqClient').value,
+            name: document.getElementById('seqName').value,
+            type: document.getElementById('seqType').value,
+            tone: document.getElementById('seqTone').value,
+            steps: steps
+        };
+
+        if (!data.clientId || !data.name) {
+            showToast('Client and name are required', 'error');
+            return;
+        }
+
+        const submitBtn = seqForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+
+        try {
+            const response = await authFetch('/api/sequences', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) throw new Error('Failed');
+            showToast('Sequence created', 'success');
+            closeAddSequenceModal();
+            loadSequences();
+        } catch (e) {
+            showToast('Failed to create sequence', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
+}
+
+async function sendNextInSequence(seqId) {
+    // Find the button that was clicked and show loading state
+    const buttons = document.querySelectorAll(`button[onclick="sendNextInSequence('${seqId}')"]`);
+    const btn = buttons[0];
+    let originalText = '';
+    if (btn) {
+        originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loader"></span> Generating...';
+    }
+
+    try {
+        const response = await authFetch(`/api/sequences/${seqId}/send-next`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ freelancerName: window.userSettings?.name || 'Freelancer' })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+
+        console.log('📊 Server response:', data);
+        console.log('📊 Step:', data.step, 'Total:', data.total);
+
+        // Find the sequence to get client info
+        const sequence = sequences.find(s => s.id === seqId);
+
+        if (sequence && sequence.clients) {
+            currentEmailClient = sequence.clients;
+            document.getElementById('emailClientName').textContent = currentEmailClient.name;
+        }
+
+        // Set the two subjects
+        generatedSubjectA = data.subjectA || data.subject || 'Follow-up';
+        generatedSubjectB = data.subjectB || data.subject || 'Follow-up';
+        generatedBody = data.body;
+        currentSubjectChoice = 'A';
+
+        // Update modal UI with subject A initially
+        document.getElementById('generatedSubject').textContent = generatedSubjectA;
+
+        // Style the subject tabs
+        const tabA = document.getElementById('subjectTabA');
+        const tabB = document.getElementById('subjectTabB');
+        if (tabA && tabB) {
+            tabA.className = 'px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all';
+            tabB.className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
+        }
+
+        document.getElementById('generatedBody').textContent = generatedBody;
+        document.getElementById('emailConfig').classList.add('hidden');
+        document.getElementById('emailResult').classList.remove('hidden');
+        document.getElementById('emailModal').classList.remove('hidden');
+
+        showToast(`Step ${data.step}/${data.total} generated`, 'success');
+
+        await loadSequences();  // Refresh to update progress bar
+        await loadEmailHistory();
+
+    } catch (e) {
+        showToast(e.message || 'Failed to generate', 'error');
+    } finally {
+        // Restore button state
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+}
+
+async function deleteSequence(seqId) {
+    if (!confirm('Delete this sequence?')) return;
+    try {
+        await authFetch(`/api/sequences/${seqId}`, { method: 'DELETE' });
+        showToast('Sequence deleted', 'success');
+        loadSequences();
+    } catch (e) {
+        showToast('Failed to delete', 'error');
+    }
+}
+
+function generateInvoice() {
+    if (!selectedClientId) {
+        showToast('No client selected', 'error');
+        return;
+    }
+
+    const client = clients.find(c => c.id === selectedClientId);
+    if (!client) {
+        showToast('Client not found', 'error');
+        return;
+    }
+
+    // Validate required fields
+    if (!client.amount || client.amount <= 0) {
+        showToast('No project amount set for this client. Please add a value first.', 'error');
+        return;
+    }
+
+    // Build invoice HTML
+    const invoiceHtml = buildInvoiceHtml(client);
+
+    // Open a new window and write the invoice
+    const invoiceWindow = window.open('', '_blank');
+    invoiceWindow.document.write(invoiceHtml);
+    invoiceWindow.document.close();
+    invoiceWindow.print();  // Triggers print dialog → Save as PDF
+}
+
+function buildInvoiceHtml(client) {
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const invoiceNumber = `INV-${client.id.slice(0, 8).toUpperCase()}-${Date.now().toString().slice(-6)}`;
+    const amountFormatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(client.amount);
+
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice - ${client.name}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .invoice {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .invoice-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 30px;
+            color: white;
+        }
+        .invoice-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .invoice-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .invoice-body {
+            padding: 30px;
+        }
+        .client-details {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .client-details h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        .client-details p {
+            color: #475569;
+            margin: 4px 0;
+        }
+        .invoice-items {
+            margin-bottom: 30px;
+        }
+        .invoice-items table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-items th {
+            text-align: left;
+            padding: 12px 8px;
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 2px solid #cbd5e1;
+        }
+        .invoice-items td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+        .total-row {
+            font-weight: 700;
+            background: #f8fafc;
+        }
+        .total-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .invoice {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .invoice-header {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="invoice-header">
+            <h1>INVOICE</h1>
+            <p>Generated by CloseDraft</p>
+        </div>
+        <div class="invoice-body">
+            <div class="client-details">
+                <h3>Bill To:</h3>
+                <p><strong>${escapeHtml(client.name)}</strong></p>
+                ${client.business ? `<p>${escapeHtml(client.business)}</p>` : ''}
+                ${client.email ? `<p>${escapeHtml(client.email)}</p>` : ''}
+            </div>
+            
+            <div class="invoice-details" style="margin-bottom: 30px; display: flex; justify-content: space-between;">
+                <div><strong>Invoice Number:</strong> ${invoiceNumber}</div>
+                <div><strong>Date:</strong> ${today}</div>
+            </div>
+            
+            <div class="invoice-items">
+                <table>
+                    <thead>
+                        <tr><th>Description</th><th>Amount</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${client.project ? escapeHtml(client.project) : 'Professional Services'}${client.deadline ? `<br><small style="color: #64748b;">Due: ${new Date(client.deadline).toLocaleDateString()}</small>` : ''}</td>
+                            <td>${amountFormatted}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Total</strong></td>
+                            <td class="total-amount">${amountFormatted}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="background: #fefce8; padding: 16px; border-radius: 12px; border-left: 4px solid #eab308;">
+                <p style="font-size: 14px; color: #854d0e;"><strong>Payment Instructions</strong><br>
+                Please make payment within 14 days. Contact us for payment methods.</p>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Thank you for your business!<br>CloseDraft – Client management for freelancers</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+}
+
+// Helper to escape HTML (prevent injection)
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function (m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function (c) {
+        return c;
+    });
 }
