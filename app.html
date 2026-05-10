@@ -239,10 +239,6 @@
                         <p class="text-slate-400 text-xs md:text-sm mt-0.5" id="dashboardDate"></p>
                     </div>
                     <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
-                        <button onclick="switchPage('clients')"
-                            class="px-3 md:px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap">
-                            + New Client
-                        </button>
                         <button onclick="openActivityModal()"
                             class="p-2 text-slate-400 hover:text-indigo-400 transition-colors" title="Recent Activity">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1370,35 +1366,53 @@
             </div>
         </div>
 
-        <!-- ==================== SETTINGS PAGE ==================== -->
-        <div id="settingsPage" class="hidden">
-            <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-8 py-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-white tracking-tight">Settings</h2>
-                    <div class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm"
-                        id="settingsAvatar">
-                        JD
-                    </div>
-                </div>
-            </header>
+<!-- ==================== SETTINGS PAGE ==================== -->
+<div id="settingsPage" class="hidden">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg md:text-2xl font-bold text-white tracking-tight">Settings</h2>
+            <div class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm" id="settingsAvatar">
+                JD
+            </div>
+        </div>
+    </header>
 
-            <div class="px-8 py-6 max-w-2xl">
-                <!-- Profile Section -->
-                <div class="glass-card rounded-2xl p-6 mb-6">
-                    <h3 class="text-lg font-bold text-white mb-4">Profile</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label
-                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Name</label>
-                            <input type="text" id="settingsName"
-                                class="w-full px-4 py-3 rounded-xl input-glass text-white" placeholder="Your name">
+    <!-- Content: Two‑column grid on desktop -->
+    <div class="px-4 md:px-8 py-6 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- ===== LEFT COLUMN: Profile + Plan ===== -->
+            <div class="space-y-6">
+                
+                <!-- Profile Card -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center gap-4 mb-6">
+                        <!-- Larger avatar inside the card -->
+                        <div class="w-14 h-14 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20" id="settingsAvatarLarge">
+                            JD
                         </div>
                         <div>
-                            <label
-                                class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Email</label>
+                            <h3 class="text-lg font-bold text-white">Profile</h3>
+                            <p class="text-slate-400 text-sm" id="settingsEmailDisplay">papajed4@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                                Name
+                            </label>
+                            <input type="text" id="settingsName"
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white"
+                                placeholder="Your name">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                                Email
+                            </label>
                             <input type="email" id="settingsEmail"
-                                class="w-full px-4 py-3 rounded-xl input-glass text-white" placeholder="Your email"
-                                disabled>
+                                class="w-full px-4 py-3 rounded-xl input-glass text-white"
+                                placeholder="Your email" disabled>
                             <p class="text-xs text-slate-500 mt-1">Email cannot be changed</p>
                         </div>
                         <button onclick="saveSettings()"
@@ -1408,101 +1422,188 @@
                     </div>
                 </div>
 
-                <!-- Plan Section -->
-                <div class="glass-card rounded-2xl p-6 mb-6">
-                    <h3 class="text-lg font-bold text-white mb-4">Your Plan</h3>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-white font-medium" id="currentPlanDisplay">Free Plan</p>
-                            <p class="text-slate-400 text-sm" id="planDescription">10 clients • 20 AI emails/month</p>
+                <!-- Plan Card -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
-                        <button id="upgradeSettingsBtn" onclick="window.location.href='/pricing.html'"
-                            class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Your Plan</h3>
+                            <p id="planDescription" class="text-sm text-slate-400">Unlimited clients • Unlimited AI emails</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span id="currentPlanDisplay" class="text-xl font-bold text-white">Pro Monthly</span>
+                        <button id="upgradeSettingsBtn"
+                            onclick="window.location.href='/pricing.html'"
+                            class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold hidden">
                             Upgrade to Pro
                         </button>
                     </div>
 
-                    <!-- Subscription Management Note (Pro users only) -->
-                    <div id="subscriptionNote" class="mt-4 pt-4 border-t border-white/5 hidden">
-                        <p class="text-xs text-slate-500">
-                            💡 To manage your subscription (cancel, update payment, or view invoices),
-                            check your email receipt from Polar or contact support.
-                        </p>
-                    </div>
-
-                    <!-- Pro Features List (shown only for Pro users) -->
-                    <div id="proFeaturesList" class="mt-6 pt-6 border-t border-white/5 hidden">
-                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-3">Pro Features</p>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-sm text-slate-300">Unlimited clients</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-sm text-slate-300">Unlimited AI emails</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-sm text-slate-300">Gmail Chrome Extension</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-sm text-slate-300">Priority support</span>
-                            </div>
+                    <!-- Pro features (shown only for Pro users) -->
+                    <div id="proFeaturesList" class="mt-4 grid grid-cols-2 gap-2">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-sm text-slate-300">Unlimited clients</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-sm text-slate-300">Unlimited AI emails</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-sm text-slate-300">Gmail Chrome Extension</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-sm text-slate-300">Priority support</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Discord Notifications (Manual Webhook) -->
-                <div class="glass-card rounded-2xl p-6 mt-6">
-                    <h3 class="text-lg font-bold text-white mb-4">Discord Notifications</h3>
-                    <p class="text-slate-400 text-sm mb-4">Get a message in Discord whenever you send an email.</p>
+                    <!-- Subscription note (Pro users only) -->
+                    <div id="subscriptionNote" class="mt-4 pt-4 border-t border-white/5 text-xs text-slate-500 hidden">
+                        💡 Manage your subscription via the Polar customer portal (link in your email receipt).
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== RIGHT COLUMN: Discord + Danger ===== -->
+            <div class="space-y-6">
+                
+                <!-- Discord Notifications -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                            <!-- Discord icon (simplified) -->
+                            <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.037c-.21.375-.444.864-.608 1.25-1.844-.28-3.7-.28-5.505 0-.164-.386-.4-.875-.61-1.25a.075.075 0 0 0-.079-.037c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.022C1.523 7.184 1.015 11.817 1.575 16.383a.08.08 0 0 0 .031.052c1.828 1.343 3.86 2.4 6.05 3.02a.08.08 0 0 0 .086-.028c.465-.632.88-1.3 1.198-2.005a.076.076 0 0 0-.043-.102c-.635-.24-1.237-.53-1.8-.86a.076.076 0 0 1-.008-.127c.12-.09.24-.18.353-.27a.076.076 0 0 1 .08-.012c3.734 1.706 7.778 1.706 11.456 0a.076.076 0 0 1 .082.012c.113.09.233.18.353.27a.076.076 0 0 1-.008.127c-.563.33-1.165.62-1.8.86a.076.076 0 0 0-.043.102c.318.705.733 1.373 1.198 2.005a.08.08 0 0 0 .086.028c2.19-.62 4.222-1.677 6.05-3.02a.08.08 0 0 0 .032-.052c.672-5.457-1.07-10.198-4.525-11.869a.07.07 0 0 0-.033-.022zm-10.44 9.52c-.87 0-1.59-.78-1.59-1.74 0-.96.7-1.74 1.59-1.74.88 0 1.6.78 1.59 1.74 0 .96-.71 1.74-1.59 1.74zm6.246 0c-.87 0-1.59-.78-1.59-1.74 0-.96.7-1.74 1.59-1.74.88 0 1.6.78 1.59 1.74 0 .96-.71 1.74-1.59 1.74z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Discord Notifications</h3>
+                            <p class="text-sm text-slate-400">Get a message whenever you send an email</p>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1.5">Webhook URL</label>
-                        <input type="url" id="discordWebhookManual" placeholder="https://discord.com/api/webhooks/..."
+                        <input type="url" id="discordWebhookManual"
+                            placeholder="https://discord.com/api/webhooks/..."
                             class="w-full px-4 py-3 rounded-xl input-glass text-white">
                         <div class="flex gap-3 mt-3">
                             <button onclick="saveDiscordWebhookManual()"
-                                class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold">Save</button>
+                                class="gradient-primary text-white px-4 py-2.5 rounded-xl text-sm font-bold">
+                                Save
+                            </button>
                             <button onclick="testDiscordWebhookManual()"
-                                class="bg-slate-700/50 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold">Test</button>
+                                class="bg-slate-700/50 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold">
+                                Test
+                            </button>
                         </div>
                         <div id="discordManualStatus" class="mt-3 text-xs text-slate-500"></div>
                     </div>
                 </div>
+
+                <!-- Telegram Notifications -->
+<div class="glass-card rounded-2xl p-6">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.938z"/>
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-white">Telegram Notifications</h3>
+            <p class="text-sm text-slate-400">Get real-time client alerts via our bot</p>
+        </div>
+    </div>
+
+    <!-- Disconnected state -->
+    <div id="telegramDisconnected" class="hidden">
+        <p class="text-slate-400 text-sm mb-4">Link your Telegram to receive updates directly.</p>
+        <button onclick="connectTelegram()"
+            class="w-full py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold text-sm transition-all">
+            Connect Telegram
+        </button>
+    </div>
+
+    <!-- Connected state -->
+    <div id="telegramConnected" class="hidden">
+        <p class="text-green-400 text-sm font-medium mb-3">✅ Connected – You’re receiving notifications.</p>
+
+        <!-- Notification preference toggles -->
+        <div class="space-y-2 mb-4">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notify me about</p>
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" data-notif-type="new_email" class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" checked onchange="saveTelegramPrefs()">
+                New emails sent
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" data-notif-type="proposal_viewed" class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" onchange="saveTelegramPrefs()">
+                Proposal viewed
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" data-notif-type="follow_up_reminder" class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" onchange="saveTelegramPrefs()">
+                Follow-up reminders
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" data-notif-type="meeting_reminder" class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" onchange="saveTelegramPrefs()">
+                Meeting reminders
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" data-notif-type="lead_inactive" class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" onchange="saveTelegramPrefs()">
+                Lead inactive for 7+ days
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" data-notif-type="client_accepted" class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" onchange="saveTelegramPrefs()">
+                Client accepted proposal
+            </label>
+        </div>
+
+        <button onclick="disconnectTelegram()"
+            class="text-red-400 text-sm hover:text-red-300 transition-colors">
+            Disconnect Telegram
+        </button>
+    </div>
+</div>
+
                 <!-- Danger Zone -->
                 <div class="glass-card rounded-2xl p-6 border border-red-500/20">
-                    <h3 class="text-lg font-bold text-red-400 mb-4">Danger Zone</h3>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-white font-medium">Delete Account</p>
-                            <p class="text-slate-400 text-sm">Permanently delete your account and all data</p>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
                         </div>
-                        <button onclick="confirmDeleteAccount()"
-                            class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-5 py-2.5 rounded-xl text-sm font-bold border border-red-500/30 transition-all">
-                            Delete Account
-                        </button>
+                        <div>
+                            <h3 class="text-lg font-bold text-red-400">Danger Zone</h3>
+                            <p class="text-sm text-slate-400">Permanently delete your account and all data</p>
+                        </div>
                     </div>
+                    <button onclick="confirmDeleteAccount()"
+                        class="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold border border-red-500/30 transition-all">
+                        Delete Account
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Client Detail Slide-Out Panel -->
         <div id="clientDetailPanel"

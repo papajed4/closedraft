@@ -3,6 +3,14 @@ const express = require('express');
 const path = require('path');
 const { supabase, supabaseAdmin } = require('./lib/supabase');
 const { generateEmail, buildPrompt } = require('./lib/gemini');
+const TelegramBot = require('node-telegram-bot-api');
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; // from .env
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN);
+
+const CLOSEDRAFT_URL = process.env.RENDER_EXTERNAL_URL || 'https://closedraft.onrender.com'; 
+bot.setWebHook(`${CLOSEDRAFT_URL}/api/telegram/webhook`);
+
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -305,6 +313,8 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
 
         // Send Discord notification (if webhook is set)
         await sendDiscordNotification(user.id, `📧 Email sent to ${client.name} (${type}) – Hope they answer!`);
+
+        await sendTelegramNotification(user.id, `📧 Email sent to ${client.name} (${type}) – Hope they answer!`, 'new_email');
 
         res.status(200).json({ subjectA, subjectB, body, fullText: generatedText, emailId: savedEmail?.id });
     } catch (error) {
@@ -671,6 +681,8 @@ app.post('/api/sequences/:id/send-next', async (req, res) => {
         // Send Discord notification for sequence email
         await sendDiscordNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`);
 
+        await sendTelegramNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`, 'new_email');
+
         res.status(200).json({
             subjectA, subjectB,
             subject: subjectA,
@@ -797,6 +809,131 @@ async function sendDiscordNotification(userId, message) {
         } catch (e) { console.error('Discord notification failed:', e); }
     }
 }
+
+async function sendTelegramNotification(userId, message, type = 'new_email') {
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('telegram_chat_id, notification_prefs')
+        .eq('id', userId)
+        .single();
+
+    if (!profile?.telegram_chat_id) return;
+    if (profile.notification_prefs && profile.notification_prefs[type] === false) return;
+
+    try {
+        await bot.sendMessage(profile.telegram_chat_id, message);
+    } catch (e) {
+        console.error('Telegram notification failed:', e.message);
+    }
+}
+
+// ==================== TELEGRAM MANAGED NOTIFICATIONS ====================
+
+// Webhook endpoint called by Telegram
+app.post('/api/telegram/webhook', (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+});
+
+// Handle /start UNIQUE_TOKEN
+bot.onText(/\/start (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const token = match[1].trim();
+
+    // Find user by telegram_link_token
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('id, email')
+        .eq('telegram_link_token', token)
+        .single();
+
+    if (profile) {
+        // Store the chat ID and clear the link token (one-time use)
+        await supabaseAdmin
+            .from('profiles')
+            .update({
+                telegram_chat_id: chatId.toString(),
+                telegram_link_token: null
+            })
+            .eq('id', profile.id);
+
+        bot.sendMessage(chatId, '🎉 Welcome to CloseDraft Notifications! You’ll now receive client updates and reminders here.');
+        console.log(`✅ Telegram linked for user ${profile.email}`);
+    } else {
+        bot.sendMessage(chatId, '❌ Invalid or expired link. Please try again from the Settings page.');
+    }
+});
+
+// If user just types /start without token, prompt them
+bot.onText(/^\/start$/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Hi! Please connect your CloseDraft account from the Settings page to receive notifications.');
+});
+
+// ---------- Frontend-facing APIs ----------
+
+// Return the unique link token + URL
+app.get('/api/user/telegram-link', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    // Generate a fresh random token
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(16).toString('hex');
+
+    await supabaseAdmin
+        .from('profiles')
+        .update({ telegram_link_token: token })
+        .eq('id', user.id);
+
+    const botUsername = (await bot.getMe()).username;
+    const link = `https://t.me/${botUsername}?start=${token}`;
+    res.json({ linkToken: token, link });
+});
+
+// Get current connection status and preferences
+app.get('/api/user/telegram-status', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { data } = await supabaseAdmin
+        .from('profiles')
+        .select('telegram_chat_id, telegram_link_token, notification_prefs')
+        .eq('id', user.id)
+        .single();
+
+    const isConnected = !!data?.telegram_chat_id;
+    res.json({
+        connected: isConnected,
+        prefs: data?.notification_prefs || {}
+    });
+});
+
+// Update preferences
+app.post('/api/user/telegram-prefs', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { prefs } = req.body; // entire JSON object
+    await supabaseAdmin
+        .from('profiles')
+        .update({ notification_prefs: prefs })
+        .eq('id', user.id);
+
+    res.json({ success: true });
+});
+
+// Disconnect (clear chat ID)
+app.post('/api/user/telegram-disconnect', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    await supabaseAdmin
+        .from('profiles')
+        .update({ telegram_chat_id: null })
+        .eq('id', user.id);
+
+    res.json({ success: true });
+});
 
 // ==================== SERVE PAGES ====================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));

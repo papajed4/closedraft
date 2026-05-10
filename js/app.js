@@ -2466,16 +2466,21 @@ async function loadSettings() {
     if (window.userSettings) {
         document.getElementById('settingsName').value = window.userSettings.name || '';
         document.getElementById('settingsEmail').value = window.userSettings.email || '';
+        document.getElementById('settingsEmailDisplay').textContent = window.userSettings.email || '';
 
-        const avatar = document.getElementById('settingsAvatar');
-        if (avatar) {
-            avatar.textContent = (window.userSettings.name || 'U').charAt(0).toUpperCase();
-        }
+        const initial = (window.userSettings.name || 'U').charAt(0).toUpperCase();
+        // Update both header avatar and card avatar
+        const headerAvatar = document.getElementById('settingsAvatar');
+        if (headerAvatar) headerAvatar.textContent = initial;
+        const cardAvatar = document.getElementById('settingsAvatarLarge');
+        if (cardAvatar) cardAvatar.textContent = initial;
     }
 
     if (typeof loadDiscordManualStatus === 'function') await loadDiscordManualStatus();
 
-    // Load plan info — add await
+    if (typeof loadTelegramStatus === 'function') await loadTelegramStatus();
+
+    // Load plan info
     await loadUserPlanInfo();
 }
 
@@ -3493,3 +3498,51 @@ async function disconnectDiscord() {
     location.reload();
 }
 
+async function loadTelegramStatus() {
+    const res = await authFetch('/api/user/telegram-status');
+    const data = await res.json();
+    const disconnectedDiv = document.getElementById('telegramDisconnected');
+    const connectedDiv = document.getElementById('telegramConnected');
+
+    if (data.connected) {
+        disconnectedDiv.classList.add('hidden');
+        connectedDiv.classList.remove('hidden');
+        // Set checkboxes according to prefs
+        document.querySelectorAll('.telegram-pref-checkbox').forEach(cb => {
+            const type = cb.getAttribute('data-notif-type');
+            cb.checked = data.prefs[type] !== false;
+        });
+    } else {
+        disconnectedDiv.classList.remove('hidden');
+        connectedDiv.classList.add('hidden');
+    }
+}
+
+async function connectTelegram() {
+    const res = await authFetch('/api/user/telegram-link');
+    const data = await res.json();
+    window.open(data.link, '_blank');
+    showToast('Opening Telegram... Send /start to the bot.', 'info');
+    // Re-check connection after a delay
+    setTimeout(loadTelegramStatus, 5000);
+}
+
+async function disconnectTelegram() {
+    if (!confirm('Disconnect Telegram? You will stop receiving notifications.')) return;
+    await authFetch('/api/user/telegram-disconnect', { method: 'POST' });
+    showToast('Telegram disconnected', 'success');
+    loadTelegramStatus();
+}
+
+async function saveTelegramPrefs() {
+    const prefs = {};
+    document.querySelectorAll('.telegram-pref-checkbox').forEach(cb => {
+        prefs[cb.getAttribute('data-notif-type')] = cb.checked;
+    });
+    await authFetch('/api/user/telegram-prefs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prefs })
+    });
+    showToast('Notification preferences saved', 'success');
+}
