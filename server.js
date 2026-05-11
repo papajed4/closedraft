@@ -7,8 +7,10 @@ const TelegramBot = require('node-telegram-bot-api');
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; // from .env
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN);
 
-const CLOSEDRAFT_URL = process.env.RENDER_EXTERNAL_URL || 'https://closedraft.onrender.com'; 
+const CLOSEDRAFT_URL = process.env.RENDER_EXTERNAL_URL || 'https://closedraft.onrender.com';
 bot.setWebHook(`${CLOSEDRAFT_URL}/api/telegram/webhook`);
+
+const { oauth2Client, encryptToken, getGmailClient } = require('./lib/gmailAuth');
 
 
 
@@ -934,6 +936,405 @@ app.post('/api/user/telegram-disconnect', async (req, res) => {
 
     res.json({ success: true });
 });
+
+async function checkPro(req, res, next) {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { data: profile } = await supabaseAdmin.from('profiles').select('plan').eq('id', user.id).single();
+    if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
+    next();
+}
+
+// ------ CAMPAIGN CREATION ------
+app.post('/api/campaigns', checkPro, async (req, res) => {
+    const user = await getUserFromToken(req);
+    const { name, type, tone, clientIds, steps } = req.body; // steps: [{dayDelay, subject, body}, ...]
+
+    try {
+        // Create campaign
+        const { data: campaign, error: campErr } = await supabaseAdmin
+            .from('campaigns')
+            .insert({ user_id: user.id, name, type, tone })
+            .select()
+            .single();
+        if (campErr) throw campErr;
+
+        // Create leads (links to clients)
+        const leadsInserts = clientIds.map(clientId => ({
+            campaign_id: campaign.id,
+            client_id: clientId,
+        }));
+        const { data: leads, error: leadErr } = await supabaseAdmin.from('campaign_leads').insert(leadsInserts).select();
+        if (leadErr) throw leadErr;
+
+        // Create steps
+        const stepsInserts = steps.map((s, idx) => ({
+            campaign_id: campaign.id,
+            step_number: idx + 1,
+            day_delay: s.dayDelay,
+            subject: s.subject,
+            body: s.body,
+        }));
+        const { error: stepErr } = await supabaseAdmin.from('campaign_steps').insert(stepsInserts);
+        if (stepErr) throw stepErr;
+
+        res.status(201).json({ campaign });
+    } catch (error) {
+        console.error('Create campaign error:', error);
+        res.status(500).json({ error: 'Failed to create campaign' });
+    }
+});
+
+// ------ LAUNCH CAMPAIGN (activate and schedule sends) ------
+app.post('/api/campaigns/:id/launch', checkPro, async (req, res) => {
+    const user = await getUserFromToken(req);
+    const { id } = req.params;
+
+    try {
+        // Fetch campaign with steps and leads
+        const { data: campaign } = await supabaseAdmin
+            .from('campaigns')
+            .select('*, steps:campaign_steps(*), leads:campaign_leads(id, client_id)')
+            .eq('id', id)
+            .eq('user_id', user.id)
+            .single();
+
+        if (!campaign || campaign.status !== 'draft') return res.status(400).json({ error: 'Invalid campaign' });
+
+        // Update status to active
+        await supabaseAdmin.from('campaigns').update({ status: 'active', updated_at: new Date().toISOString() }).eq('id', id);
+
+        // Create scheduled sends for each lead & step
+        const now = new Date();
+        const sendInserts = [];
+        for (const lead of campaign.leads) {
+            for (const step of campaign.steps) {
+                const scheduledTime = new Date(now);
+                scheduledTime.setDate(scheduledTime.getDate() + step.day_delay);
+                sendInserts.push({
+                    campaign_id: id,
+                    lead_id: lead.id,
+                    step_number: step.step_number,
+                    subject: step.subject,
+                    body: step.body,
+                    scheduled_at: scheduledTime.toISOString(),
+                });
+            }
+        }
+
+        if (sendInserts.length > 0) {
+            await supabaseAdmin.from('campaign_sends').insert(sendInserts);
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Launch campaign error:', error);
+        res.status(500).json({ error: 'Launch failed' });
+    }
+});
+
+// ------ LIST CAMPAIGNS ------
+app.get('/api/campaigns', checkPro, async (req, res) => {
+  const user = await getUserFromToken(req);
+  try {
+    // Fetch campaigns with manual counts
+    const { data: campaigns, error } = await supabaseAdmin
+      .from('campaigns')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Fetch counts manually for each campaign
+// Fetch counts manually for each campaign
+const enriched = await Promise.all(
+  campaigns.map(async (campaign) => {
+    const [
+      { count: leadsCount },
+      { count: stepsCount },
+      { count: sentCount },
+      { count: totalSends },
+      { data: leadsData }
+    ] = await Promise.all([
+      supabaseAdmin
+        .from('campaign_leads')
+        .select('*', { count: 'exact', head: true })
+        .eq('campaign_id', campaign.id),
+      supabaseAdmin
+        .from('campaign_steps')
+        .select('*', { count: 'exact', head: true })
+        .eq('campaign_id', campaign.id),
+      supabaseAdmin
+        .from('campaign_sends')
+        .select('*', { count: 'exact', head: true })
+        .eq('campaign_id', campaign.id)
+        .eq('status', 'sent'),
+      supabaseAdmin
+        .from('campaign_sends')
+        .select('*', { count: 'exact', head: true })
+        .eq('campaign_id', campaign.id),
+      supabaseAdmin
+        .from('campaign_leads')
+        .select('status')
+        .eq('campaign_id', campaign.id)
+    ]);
+
+    const anyReplied = leadsData ? leadsData.some(l => l.status === 'replied') : false;
+
+    return {
+      ...campaign,
+      leads: { count: leadsCount },
+      steps: { count: stepsCount },
+      sentCount,
+      totalSends,
+      anyReplied,
+    };
+  })
+);
+
+    res.json({ campaigns: enriched });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch campaigns' });
+  }
+});
+
+// ------ DELETE CAMPAIGN ------
+app.delete('/api/campaigns/:id', checkPro, async (req, res) => {
+  const user = await getUserFromToken(req);
+  const { id } = req.params;
+
+  try {
+    // Verify the campaign belongs to the user
+    const { data: campaign } = await supabaseAdmin
+      .from('campaigns')
+      .select('id')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .single();
+
+    if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
+
+    // Delete all related campaign_sends, campaign_steps, campaign_leads, then the campaign itself
+    await supabaseAdmin.from('campaign_sends').delete().eq('campaign_id', id);
+    await supabaseAdmin.from('campaign_steps').delete().eq('campaign_id', id);
+    await supabaseAdmin.from('campaign_leads').delete().eq('campaign_id', id);
+    await supabaseAdmin.from('campaigns').delete().eq('id', id).eq('user_id', user.id);
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Delete campaign error:', error);
+    res.status(500).json({ error: 'Failed to delete campaign' });
+  }
+});
+
+// ------ GENERATE AI STEPS (for campaign creation) ------
+app.post('/api/campaigns/generate-steps', checkPro, async (req, res) => {
+    const user = await getUserFromToken(req);
+    const { type, tone, numSteps } = req.body;
+
+    // Use existing Gemini prompt builder (customize for multi-step)
+    // For MVP, generate one email per step with increasing urgency
+    const steps = [];
+    for (let i = 0; i < (numSteps || 3); i++) {
+        const prompt = buildPrompt({ name: 'Client', business: '', project: '' }, type, tone, '');
+        const generated = await generateEmail(prompt);
+        // Parse out subject and body (simplified)
+        const subjectMatch = generated.match(/^Subject A:\s*(.+)$/m);
+        const body = generated.replace(/^Subject [AB]:\s*.+\n+/gm, '').trim();
+        steps.push({
+            dayDelay: [1, 3, 7][i] || (i * 3),
+            subject: subjectMatch ? subjectMatch[1].trim() : `${type} #${i + 1}`,
+            body: body || generated,
+        });
+    }
+    res.json({ steps });
+});
+
+
+// Generate Google OAuth URL
+app.get('/api/gmail/auth-url', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const authUrl = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        prompt: 'consent',          // ← force re‑consent to always get a refresh token
+        scope: ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.readonly'],
+        state: JSON.stringify({ userId: user.id }),
+    });
+    res.json({ url: authUrl });
+});
+
+// Handle OAuth callback
+app.get('/api/gmail/callback', async (req, res) => {
+    const { code, state } = req.query;
+    if (!code || !state) return res.status(400).send('Missing parameters');
+
+    let userId;
+    try { userId = JSON.parse(state).userId; } catch { return res.status(400).send('Invalid state'); }
+
+    try {
+        const { tokens } = await oauth2Client.getToken(code);
+        console.log('Tokens received:', JSON.stringify(tokens, null, 2));   // <-- ADD
+
+        if (!tokens.refresh_token) {
+            console.error('❌ No refresh token received – user must re-authorize');
+            return res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?gmail_error=missing_refresh_token`);
+        }
+
+        const encryptedRefresh = encryptToken(tokens.refresh_token);
+        console.log('Encrypted refresh token:', encryptedRefresh.slice(0, 20) + '...');
+
+        const { error } = await supabaseAdmin
+            .from('user_gmail_tokens')
+            .upsert({
+                user_id: userId,
+                access_token: tokens.access_token,
+                refresh_token: encryptedRefresh,
+                expiry_date: tokens.expiry_date, // ✅ correct
+                updated_at: new Date().toISOString(),
+            }, { onConflict: 'user_id' });
+
+        if (error) {
+            console.error('❌ Upsert error:', error);
+            return res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?gmail_error=db_error`);
+        }
+
+        console.log(`✅ Gmail tokens stored for user ${userId}`);
+        res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?gmail_connected=1`);
+
+    } catch (error) {
+        console.error('OAuth error:', error);
+        res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?gmail_error=1`);
+    }
+});
+
+// Get connection status
+app.get('/api/gmail/status', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { data } = await supabaseAdmin.from('user_gmail_tokens').select('id').eq('user_id', user.id).single();
+    res.json({ connected: !!data });
+});
+
+// Disconnect
+app.post('/api/gmail/disconnect', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    await supabaseAdmin.from('user_gmail_tokens').delete().eq('user_id', user.id);
+    res.json({ success: true });
+});
+
+const { sendGmailEmail } = require('./lib/sendEmail');
+
+// Scheduler: runs every 2 minutes
+setInterval(async () => {
+    console.log('📤 Checking pending sends...');
+    try {
+        const { data: pending } = await supabaseAdmin
+            .from('campaign_sends')
+            .select('*, campaign:campaign_id(user_id), lead:lead_id(client_id)')
+            .eq('status', 'pending')
+            .lte('scheduled_at', new Date().toISOString());
+
+        for (const send of pending) {
+            const userId = send.campaign.user_id;
+            const clientId = send.lead.client_id;
+            const { data: client } = await supabaseAdmin.from('clients').select('email, name').eq('id', clientId).single();
+            if (!client || !client.email) continue;
+
+            try {
+               const result = await sendGmailEmail(userId, client.email, send.subject, send.body);
+// Update send record with the REAL Message‑ID for reply detection
+await supabaseAdmin.from('campaign_sends').update({
+    sent_at: new Date().toISOString(),
+    message_id: result.headerMessageId,   // ⬅️ use the long RFC 2822 ID
+    status: 'sent',
+}).eq('id', send.id);
+
+                // Update lead status to in_progress
+                await supabaseAdmin.from('campaign_leads').update({ current_step: send.step_number }).eq('id', send.lead_id);
+            } catch (e) {
+                console.error(`Failed to send to ${client.email}:`, e);
+                await supabaseAdmin.from('campaign_sends').update({ status: 'failed' }).eq('id', send.id);
+            }
+        }
+    } catch (err) {
+        console.error('Scheduler error:', err);
+    }
+}, 120000); // 2 min
+
+// Reply detection: runs every 5 minutes
+// Reply detection: runs every 10 seconds (TEMPORARY – change back to 300000 after testing)
+// Reply detection: runs every 10 seconds (TEMPORARY – change back to 300000 after testing)
+setInterval(async () => {
+  console.log('🔄 Checking for replies...');
+  try {
+    const { data: sentMessages } = await supabaseAdmin
+      .from('campaign_sends')
+      .select('message_id, campaign:campaign_id(user_id), lead:lead_id(id)')
+      .not('message_id', 'is', null)
+      .eq('status', 'sent');
+
+    const userMsgs = {};
+    for (const sm of sentMessages) {
+      if (!sm.campaign || !sm.lead) continue;   // ← safety
+      const uid = sm.campaign.user_id;
+      if (!uid) continue;
+      if (!userMsgs[uid]) userMsgs[uid] = [];
+      userMsgs[uid].push(sm);
+    }
+
+    for (const [userId, messages] of Object.entries(userMsgs)) {
+      try {
+        const gmail = await getGmailClient(userId);
+        const res = await gmail.users.messages.list({
+          userId: 'me',
+          maxResults: 10,
+          q: 'is:inbox'
+        });
+        if (!res.data.messages) continue;
+
+        for (const msg of res.data.messages) {
+          const full = await gmail.users.messages.get({
+            userId: 'me',
+            id: msg.id,
+            format: 'metadata',
+            metadataHeaders: ['In-Reply-To', 'References']
+          });
+
+          const payload = full?.data?.payload;
+          if (!payload || !payload.headers) continue;   // ← guard
+
+          const headers = payload.headers;
+          const inReplyTo = headers.find(h => h.name === 'In-Reply-To')?.value;
+          const references = headers.find(h => h.name === 'References')?.value;
+          const allRefs = [inReplyTo, ...(references ? references.split(' ') : [])].filter(Boolean);
+
+          for (const ref of allRefs) {
+            const matchedMsg = messages.find(m => m.message_id === ref);
+            if (matchedMsg) {
+              // Stop campaign for this lead
+              await supabaseAdmin.from('campaign_leads')
+                .update({ status: 'replied' })
+                .eq('id', matchedMsg.lead.id);
+              await supabaseAdmin.from('campaign_sends')
+                .update({ status: 'replied' })
+                .eq('lead_id', matchedMsg.lead.id)
+                .eq('status', 'pending');
+              console.log(`✅ Reply detected – campaign stopped for lead ${matchedMsg.lead.id}`);
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        console.error(`Reply detection error for user ${userId}:`, e);
+      }
+    }
+  } catch (err) {
+    console.error('Reply detection error:', err);
+  }
+}, 300000); 
 
 // ==================== SERVE PAGES ====================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));

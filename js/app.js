@@ -26,7 +26,9 @@ let generatedSubjectA = '';
 let generatedSubjectB = '';
 let currentSubjectChoice = 'A';
 
-
+// --- New global declarations for page & nav elements ---
+let dashboardPage, clientsPage, emailsPage, templatesPage, analyticsPage, settingsPage, sequencesPage, campaignsPage;
+let dashboardNav, clientsNav, emailsNav, templatesNav, analyticsNav, settingsNav, campaignsNav, sequencesNav;
 
 // Wait for auth to set userSettings
 if (!window.userSettings || window.userSettings.name === 'Freelancer') {
@@ -244,14 +246,15 @@ window.addEventListener('pageshow', function (event) {
 });
 
 (async function () {
-    // Get all page elements
-    const dashboardPage = document.getElementById('dashboardPage');
-    const clientsPage = document.getElementById('clientsPage');
-    const emailsPage = document.getElementById('emailsPage');
-    const templatesPage = document.getElementById('templatesPage');
-    const analyticsPage = document.getElementById('analyticsPage');
-    const settingsPage = document.getElementById('settingsPage');
-    const sequencesPage = document.getElementById('sequencesPage');
+    // Get all page elements - now assign to globals (no const)
+    dashboardPage = document.getElementById('dashboardPage');
+    clientsPage = document.getElementById('clientsPage');
+    emailsPage = document.getElementById('emailsPage');
+    templatesPage = document.getElementById('templatesPage');
+    analyticsPage = document.getElementById('analyticsPage');
+    settingsPage = document.getElementById('settingsPage');
+    sequencesPage = document.getElementById('sequencesPage');
+    campaignsPage = document.getElementById('campaignsPage');
 
     // Hide all pages except dashboard
     if (clientsPage) clientsPage.classList.add('hidden');
@@ -260,6 +263,7 @@ window.addEventListener('pageshow', function (event) {
     if (analyticsPage) analyticsPage.classList.add('hidden');
     if (settingsPage) settingsPage.classList.add('hidden');
     if (sequencesPage) sequencesPage.classList.add('hidden');
+    if (campaignsPage) campaignsPage.classList.add('hidden');
 
     // Show dashboard with initial styles
     if (dashboardPage) {
@@ -271,13 +275,14 @@ window.addEventListener('pageshow', function (event) {
     // Set default page to dashboard
     currentPage = 'dashboard';
 
-    // Set active nav item to dashboard
-    const dashboardNav = document.getElementById('dashboardNav');
-    const clientsNav = document.getElementById('clientsNav');
-    const emailsNav = document.getElementById('emailsNav');
-    const templatesNav = document.getElementById('templatesNav');
-    const analyticsNav = document.getElementById('analyticsNav');
-    const settingsNav = document.getElementById('settingsNav');
+    // Set active nav item to dashboard - using globals
+    dashboardNav = document.getElementById('dashboardNav');
+    clientsNav = document.getElementById('clientsNav');
+    emailsNav = document.getElementById('emailsNav');
+    templatesNav = document.getElementById('templatesNav');
+    analyticsNav = document.getElementById('analyticsNav');
+    campaignsNav = document.getElementById('campaignsNav');
+    sequencesNav = document.getElementById('sequencesNav');
 
     // Remove active state from all nav items first
     if (dashboardNav) {
@@ -304,6 +309,10 @@ window.addEventListener('pageshow', function (event) {
         settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
         settingsNav.classList.add('text-slate-400');
     }
+    if (campaignsNav) {
+        campaignsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+        campaignsNav.classList.add('text-slate-400');
+    }
 
     // Set dashboard nav as active
     if (dashboardNav) {
@@ -325,7 +334,6 @@ window.addEventListener('pageshow', function (event) {
         await loadEmailHistory();
         await loadDashboard();
         loadTemplates();
-        loadSequences();
     }
 
     initializeDashboard();
@@ -354,27 +362,18 @@ window.addEventListener('pageshow', function (event) {
 function switchPage(page) {
     console.log('🔄 Switching to page:', page);  // ← ADD THIS
 
-    // Get all page elements
-    const dashboardPage = document.getElementById('dashboardPage');
-    const clientsPage = document.getElementById('clientsPage');
-    const emailsPage = document.getElementById('emailsPage');
-    const templatesPage = document.getElementById('templatesPage');
-    const analyticsPage = document.getElementById('analyticsPage');
-    const settingsPage = document.getElementById('settingsPage');
-    const sequencesPage = document.getElementById('sequencesPage');
-
-    // HIDE ALL PAGES FIRST
-    if (dashboardPage) dashboardPage.classList.add('hidden');
-    if (clientsPage) clientsPage.classList.add('hidden');
-    if (emailsPage) emailsPage.classList.add('hidden');
-    if (templatesPage) templatesPage.classList.add('hidden');
-    if (analyticsPage) analyticsPage.classList.add('hidden');
-    if (settingsPage) settingsPage.classList.add('hidden');
-    if (sequencesPage) sequencesPage.classList.add('hidden');
-
-    // SHOW ONLY THE SELECTED PAGE
+    // Get all page elements (now global)
     const selectedPage = document.getElementById(`${page}Page`);
     if (selectedPage) {
+        // Hide all pages first
+        if (dashboardPage) dashboardPage.classList.add('hidden');
+        if (clientsPage) clientsPage.classList.add('hidden');
+        if (emailsPage) emailsPage.classList.add('hidden');
+        if (templatesPage) templatesPage.classList.add('hidden');
+        if (analyticsPage) analyticsPage.classList.add('hidden');
+        if (sequencesPage) sequencesPage.classList.add('hidden');
+        if (campaignsPage) campaignsPage.classList.add('hidden');
+
         selectedPage.classList.remove('hidden');
         console.log('✅ Showing page:', page);
     } else {
@@ -444,13 +443,13 @@ function switchPage(page) {
             analyticsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             analyticsNav.classList.add('text-slate-400');
         }
-        if (settingsNav) {
-            settingsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
-            settingsNav.classList.add('text-slate-400');
-        }
         if (sequencesNav) {
             sequencesNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             sequencesNav.classList.add('text-slate-400');
+        }
+        if (campaignsNav) {
+            campaignsNav.classList.remove('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            campaignsNav.classList.add('text-slate-400');
         }
 
         // Activate new nav item and load appropriate data
@@ -474,14 +473,16 @@ function switchPage(page) {
             analyticsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             analyticsNav.classList.remove('text-slate-400');
             // Analytics is a static page, no data loading needed
-        } else if (page === 'settings' && settingsNav) {
-            settingsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
-            settingsNav.classList.remove('text-slate-400');
-            loadSettings();
         } else if (page === 'sequences' && sequencesNav) {
             sequencesNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             sequencesNav.classList.remove('text-slate-400');
             loadSequences();
+        } else if (page === 'settings') {      // ← ADD THIS
+            loadSettings();  
+        }  else if (page === 'campaigns' && campaignsNav) {
+            campaignsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
+            campaignsNav.classList.remove('text-slate-400');
+            loadCampaigns();
         }
 
         currentPage = page;
@@ -679,6 +680,29 @@ async function generateQuickEmail() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
+    }
+}
+
+function updateSidebarProfile() {
+    const avatar = document.getElementById('sidebarProfileAvatar');
+    const nameEl = document.getElementById('sidebarProfileName');
+    const emailEl = document.getElementById('sidebarProfileEmail');
+    const badge = document.getElementById('sidebarProBadge');
+    if (!avatar || !nameEl || !emailEl || !badge) return;
+
+    const settings = window.userSettings || userSettings;
+    const initial = (settings.name || 'U').charAt(0).toUpperCase();
+    
+    avatar.textContent = initial;
+    nameEl.textContent = settings.name || 'Freelancer';
+    emailEl.textContent = settings.email || '';
+    
+    // Show Pro badge only on Pro plans
+    const plan = window.userPlan || 'free';
+    if (plan !== 'free') {
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
     }
 }
 
@@ -1129,11 +1153,11 @@ function selectClient(clientId) {
     setValue('editClientEmail', client.email || '');
     setValue('editClientProject', client.project || '');
     setValue('editClientAmount', client.amount || '');
-    
+
     const statusSelect = document.getElementById('editClientStatus');
     if (statusSelect) statusSelect.value = client.status;
     else console.warn('⚠️ Missing element: #editClientStatus');
-    
+
     const deadlineInput = document.getElementById('editClientDeadline');
     if (deadlineInput) deadlineInput.value = client.deadline ? client.deadline.split('T')[0] : '';
     else console.warn('⚠️ Missing element: #editClientDeadline');
@@ -2480,6 +2504,8 @@ async function loadSettings() {
 
     if (typeof loadTelegramStatus === 'function') await loadTelegramStatus();
 
+    if (typeof loadGmailStatus === 'function') await loadGmailStatus();
+
     // Load plan info
     await loadUserPlanInfo();
 }
@@ -2541,6 +2567,7 @@ async function saveSettings() {
 
         // Update local settings
         window.userSettings.name = name;
+        updateSidebarProfile();
 
         // Update all avatars
         const initial = name.charAt(0).toUpperCase();
@@ -2931,11 +2958,33 @@ function closeActivityModal() {
 let sequences = [];
 
 async function loadSequences() {
+    // First check Gmail connection
     try {
+        const gmailRes = await authFetch('/api/gmail/status');
+        const gmailData = await gmailRes.json();
+        const gmailConnected = gmailData.connected;
+
+        const grid = document.getElementById('sequencesGrid');
+        const empty = document.getElementById('sequencesEmpty');
+        const gmailRequired = document.getElementById('sequencesGmailRequired');
+
+        if (!gmailConnected) {
+            // Hide normal content, show Gmail required message
+            if (grid) grid.innerHTML = '';
+            if (empty) empty.classList.add('hidden');
+            if (gmailRequired) gmailRequired.classList.remove('hidden');
+            return;
+        }
+
+        // Hide the Gmail required message
+        if (gmailRequired) gmailRequired.classList.add('hidden');
+
+        // Existing code to load sequences...
         const response = await authFetch('/api/sequences');
         const data = await response.json();
         sequences = data.sequences || [];
         renderSequencesGrid();
+
     } catch (e) {
         console.error('Failed to load sequences:', e);
     }
@@ -2943,6 +2992,7 @@ async function loadSequences() {
 
 function renderSequencesGrid() {
     const grid = document.getElementById('sequencesGrid');
+    if (!grid) return;
     const empty = document.getElementById('sequencesEmpty');
 
     if (sequences.length === 0) {
@@ -3546,3 +3596,413 @@ async function saveTelegramPrefs() {
     });
     showToast('Notification preferences saved', 'success');
 }
+
+// Gmail connection ------------------------------------------------------------
+function connectGmail() {
+    authFetch('/api/gmail/auth-url')
+        .then(r => r.json())
+        .then(data => { window.location.href = data.url; });
+}
+
+async function disconnectGmail() {
+    if (!confirm('Disconnect Gmail? You will stop sending campaigns.')) return;
+    try {
+        const res = await authFetch('/api/gmail/disconnect', { method: 'POST' });
+        if (res.ok) {
+            showToast('Gmail disconnected', 'success');
+            // Refresh settings UI if we're on the settings page
+            if (typeof loadGmailStatus === 'function') await loadGmailStatus();
+            // Also update campaigns page if visible
+            const campaignsPage = document.getElementById('campaignsPage');
+            if (campaignsPage && !campaignsPage.classList.contains('hidden')) {
+                loadCampaigns();
+            }
+        } else {
+            showToast('Failed to disconnect', 'error');
+        }
+    } catch (e) {
+        showToast('Error disconnecting Gmail', 'error');
+    }
+}
+
+async function loadGmailStatus() {
+    try {
+        const res = await authFetch('/api/gmail/status');
+        const data = await res.json();
+        const connected = data.connected;
+
+        document.getElementById('gmailSettingsDisconnected').classList.toggle('hidden', connected);
+        document.getElementById('gmailSettingsConnected').classList.toggle('hidden', !connected);
+    } catch (e) {
+        console.error('Failed to load Gmail status in settings', e);
+    }
+}
+
+// Check Gmail status and load campaigns
+async function loadCampaigns() {
+    const gmailNotConnected = document.getElementById('gmailNotConnected');
+    const gmailConnected = document.getElementById('gmailConnected');
+    const campaignsList = document.getElementById('campaignsList');
+    const campaignsEmpty = document.getElementById('campaignsEmpty');
+
+    // 1. Check Gmail connection
+    try {
+        const statusRes = await authFetch('/api/gmail/status');
+        if (!statusRes.ok) throw new Error(`Server returned ${statusRes.status}`);
+
+        const { connected } = await statusRes.json();
+
+        if (connected) {
+            gmailNotConnected.classList.add('hidden');
+            gmailConnected.classList.remove('hidden');
+        } else {
+            gmailNotConnected.classList.remove('hidden');
+            gmailConnected.classList.add('hidden');
+            // Clear campaign list if not connected
+            campaignsList.innerHTML = '';
+            campaignsEmpty.classList.add('hidden');
+            return;
+        }
+
+        // 2. Fetch campaigns
+        const resp = await authFetch('/api/campaigns');
+        if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
+
+        const { campaigns } = await resp.json();
+        renderCampaignsList(campaigns);
+
+    } catch (err) {
+        console.error('loadCampaigns error:', err);
+        gmailNotConnected.classList.remove('hidden');
+        campaignsList.innerHTML = '';
+        campaignsEmpty.classList.add('hidden');
+        showToast('Failed to load campaigns. Please try again.', 'error');
+    }
+}
+
+// Watch for the gmail_connected query parameter on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('gmail_connected') === '1') {
+        showToast('Gmail connected successfully!', 'success');
+        // Remove parameter from URL without reloading
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+        // If campaigns page is currently visible, reload it
+        const campaignsPage = document.getElementById('campaignsPage');
+        if (campaignsPage && !campaignsPage.classList.contains('hidden')) {
+            loadCampaigns();
+        }
+    }
+});
+
+function renderCampaignsList(campaigns) {
+    const container = document.getElementById('campaignsList');
+    const empty = document.getElementById('campaignsEmpty');
+    if (campaigns.length === 0) {
+        empty.classList.remove('hidden');
+        container.innerHTML = '';
+        return;
+    }
+    empty.classList.add('hidden');
+container.innerHTML = campaigns.map(c => {
+    const progress = c.totalSends > 0 
+        ? Math.round((c.sentCount / c.totalSends) * 100) 
+        : 0;
+
+    return `
+    <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-indigo-500/30 relative group">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h3 class="font-semibold text-white flex items-center gap-2">
+            ${c.name}
+            ${c.anyReplied ? '<span class="status-badge status-active">Replied</span>' : ''}
+          </h3>
+          <p class="text-xs text-slate-400">${c.type} • ${c.tone} • ${c.status}</p>
+        </div>
+        <!-- Delete button (always visible, less obtrusive) -->
+        <button onclick="event.stopPropagation(); deleteCampaign('${c.id}')" 
+                class="p-1.5 text-slate-500 hover:text-red-400 rounded-lg transition-all"
+                title="Delete Campaign">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="mb-3">
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-slate-400">Progress</span>
+          <span class="text-white">${c.sentCount}/${c.totalSends} emails sent</span>
+        </div>
+        <div class="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+          <div class="h-full gradient-primary rounded-full" style="width: ${progress}%"></div>
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-500">${c.leads?.count || 0} leads • ${c.steps?.count || 0} steps</p>
+      
+      ${c.status === 'draft' 
+        ? `<button onclick="launchCampaign('${c.id}')" class="mt-2 gradient-primary text-white px-3 py-1 rounded-lg text-xs">Launch</button>` 
+        : ''}
+    </div>
+    `;
+}).join('');
+}
+
+async function launchCampaign(id) {
+    await authFetch(`/api/campaigns/${id}/launch`, { method: 'POST' });
+    showToast('Campaign launched! Emails will be sent automatically.', 'success');
+    loadCampaigns();
+}
+
+async function deleteCampaign(id) {
+    if (!confirm('Delete this campaign? This cannot be undone.')) return;
+
+    try {
+        const res = await authFetch(`/api/campaigns/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete');
+        showToast('Campaign deleted', 'success');
+        loadCampaigns();  // refresh the list
+    } catch (err) {
+        showToast('Failed to delete campaign', 'error');
+    }
+}
+
+// Populate client checkboxes when opening the campaign modal
+function openCreateCampaignModal() {
+    const container = document.getElementById('campaignClientList');
+    container.innerHTML = clients.map(c => `
+    <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+      <input type="checkbox" class="campaign-client-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0" value="${c.id}">
+      ${c.name} (${c.business || 'N/A'})
+    </label>
+  `).join('');
+
+    // Reset steps to default three empty ones
+    document.getElementById('campaignSteps').innerHTML = `
+    <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl">
+      <span class="text-xs font-bold text-indigo-400">1</span>
+      <div class="flex-1 space-y-2">
+        <input type="text" placeholder="Subject" class="campaign-step-subject w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs">
+        <textarea placeholder="Body" rows="2" class="campaign-step-body w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs resize-none"></textarea>
+      </div>
+      <span class="text-xs text-slate-500">Day <input type="number" value="1" min="1" max="30" class="campaign-step-day w-14 px-1 py-1 rounded bg-slate-700/50 border border-white/10 text-white text-xs text-center"></span>
+    </div>
+    <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl">
+      <span class="text-xs font-bold text-indigo-400">2</span>
+      <div class="flex-1 space-y-2">
+        <input type="text" placeholder="Subject" class="campaign-step-subject w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs">
+        <textarea placeholder="Body" rows="2" class="campaign-step-body w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs resize-none"></textarea>
+      </div>
+      <span class="text-xs text-slate-500">Day <input type="number" value="3" min="1" max="30" class="campaign-step-day w-14 px-1 py-1 rounded bg-slate-700/50 border border-white/10 text-white text-xs text-center"></span>
+    </div>
+    <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl">
+      <span class="text-xs font-bold text-indigo-400">3</span>
+      <div class="flex-1 space-y-2">
+        <input type="text" placeholder="Subject" class="campaign-step-subject w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs">
+        <textarea placeholder="Body" rows="2" class="campaign-step-body w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs resize-none"></textarea>
+      </div>
+      <span class="text-xs text-slate-500">Day <input type="number" value="7" min="1" max="30" class="campaign-step-day w-14 px-1 py-1 rounded bg-slate-700/50 border border-white/10 text-white text-xs text-center"></span>
+    </div>
+  `;
+
+    document.getElementById('createCampaignModal').classList.remove('hidden');
+}
+
+// Generate AI steps via API
+async function generateCampaignSteps() {
+    const type = document.getElementById('campaignType').value;
+    const tone = document.getElementById('campaignTone').value;
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+
+    try {
+        const res = await authFetch('/api/campaigns/generate-steps', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, tone, numSteps: 3 })
+        });
+        const data = await res.json();
+
+        if (data.steps && data.steps.length) {
+            const stepsContainer = document.getElementById('campaignSteps');
+            stepsContainer.innerHTML = data.steps.map((step, i) => `
+        <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl">
+          <span class="text-xs font-bold text-indigo-400">${i + 1}</span>
+          <div class="flex-1 space-y-2">
+            <input type="text" value="${step.subject}" class="campaign-step-subject w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs">
+            <textarea rows="2" class="campaign-step-body w-full px-3 py-1.5 rounded-lg bg-slate-700/50 border border-white/10 text-white text-xs resize-none">${step.body}</textarea>
+          </div>
+          <span class="text-xs text-slate-500">Day <input type="number" value="${step.dayDelay}" min="1" max="30" class="campaign-step-day w-14 px-1 py-1 rounded bg-slate-700/50 border border-white/10 text-white text-xs text-center"></span>
+        </div>
+      `).join('');
+            showToast('AI steps generated! Edit if needed.', 'success');
+        }
+    } catch (e) {
+        showToast('Failed to generate steps', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+    }
+}
+
+// Handle campaign form submission
+document.getElementById('createCampaignForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('campaignName').value;
+    const type = document.getElementById('campaignType').value;
+    const tone = document.getElementById('campaignTone').value;
+    const clientIds = Array.from(document.querySelectorAll('.campaign-client-checkbox:checked')).map(cb => cb.value);
+    if (!name || clientIds.length === 0) return showToast('Name and at least one client required', 'error');
+
+    const steps = [];
+    document.querySelectorAll('#campaignSteps > div').forEach(stepDiv => {
+        const subject = stepDiv.querySelector('.campaign-step-subject')?.value;
+        const body = stepDiv.querySelector('.campaign-step-body')?.value;
+        const dayDelay = parseInt(stepDiv.querySelector('.campaign-step-day')?.value) || 1;
+        if (subject && body) steps.push({ dayDelay, subject, body });
+    });
+    if (steps.length === 0) return showToast('At least one step required', 'error');
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const origText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating...';
+
+    try {
+        await authFetch('/api/campaigns', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, type, tone, clientIds, steps })
+        });
+        showToast('Campaign created!', 'success');
+        closeCreateCampaignModal();
+        loadCampaigns();
+    } catch (err) {
+        showToast('Failed to create campaign', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = origText;
+    }
+});
+
+function closeCreateCampaignModal() {
+    document.getElementById('createCampaignModal').classList.add('hidden');
+    // Refresh campaigns list after modal closes
+    loadCampaigns();
+}
+
+// Detect Gmail connection redirect & monitor campaigns page visibility
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('gmail_connected') === '1') {
+        showToast('Gmail connected successfully!', 'success');
+        // Remove parameter without reloading
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+        // If campaigns page is currently visible, reload it
+        const campaignsPage = document.getElementById('campaignsPage');
+        if (campaignsPage && !campaignsPage.classList.contains('hidden')) {
+            loadCampaigns();
+        }
+    }
+
+    // MutationObserver: when campaigns page becomes visible, re-check Gmail status
+    const observer = new MutationObserver(() => {
+        const campaignsPage = document.getElementById('campaignsPage');
+        if (campaignsPage && !campaignsPage.classList.contains('hidden')) {
+            authFetch('/api/gmail/status')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('gmailNotConnected').classList.toggle('hidden', data.connected);
+                })
+                .catch(() => { });
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+});
+
+function openSingleSequenceModal() {
+    // Populate client dropdown
+    const select = document.getElementById('singleSeqClient');
+    select.innerHTML = '<option value="">-- Select a client --</option>' +
+        clients.map(c => `<option value="${c.id}">${c.name} (${c.business || 'N/A'})</option>`).join('');
+    document.getElementById('singleSequenceForm').reset();
+    document.getElementById('singleSequenceModal').classList.remove('hidden');
+}
+
+function closeSingleSequenceModal() {
+    document.getElementById('singleSequenceModal').classList.add('hidden');
+}
+
+document.getElementById('singleSequenceForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const clientId = document.getElementById('singleSeqClient').value;
+    const name = document.getElementById('singleSeqName').value;
+    const type = document.getElementById('singleSeqType').value;
+    const tone = document.getElementById('singleSeqTone').value;
+
+    if (!clientId || !name) {
+        return showToast('Client and name are required', 'error');
+    }
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const origText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating...';
+
+    try {
+        // AI‑generated steps with default timings (day 1, 3, 7)
+        const steps = [];
+        const defaultDelays = [1, 3, 7];
+        for (let i = 0; i < 3; i++) {
+            const res = await authFetch('/api/campaigns/generate-steps', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type, tone, numSteps: 1 })
+            });
+            const data = await res.json();
+            if (data.steps && data.steps.length) {
+                steps.push({
+                    dayDelay: defaultDelays[i],
+                    subject: data.steps[0].subject,
+                    body: data.steps[0].body
+                });
+            }
+        }
+
+        // Create campaign (single lead)
+        const res = await authFetch('/api/campaigns', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name,
+                type,
+                tone,
+                clientIds: [clientId],
+                steps
+            })
+        });
+
+        if (!res.ok) throw new Error('Failed to create campaign');
+
+        const campaign = await res.json();
+        // Auto‑launch
+        await authFetch(`/api/campaigns/${campaign.campaign.id}/launch`, { method: 'POST' });
+
+        showToast('Single sequence started! Emails will be sent automatically.', 'success');
+        closeSingleSequenceModal();
+        loadCampaigns();
+    } catch (err) {
+        showToast(err.message || 'Failed to create sequence', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = origText;
+    }
+});
