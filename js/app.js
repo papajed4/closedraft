@@ -2500,7 +2500,7 @@ async function loadSettings() {
         if (cardAvatar) cardAvatar.textContent = initial;
     }
 
-    if (typeof loadDiscordManualStatus === 'function') await loadDiscordManualStatus();
+   if (typeof loadDiscordStatus === 'function') await loadDiscordStatus();
 
     if (typeof loadTelegramStatus === 'function') await loadTelegramStatus();
 
@@ -3462,90 +3462,60 @@ function escapeHtml(str) {
     });
 }
 
-async function startDiscordOAuth() {
+// ==================== DISCORD OAUTH ====================
+function connectDiscord() {
+    authFetch('/api/discord/auth-url')
+        .then(r => r.json())
+        .then(data => { window.location.href = data.url; });
+}
+
+async function loadDiscordStatus() {
     try {
-        const res = await authFetch('/api/discord/auth-url');
+        const res = await authFetch('/api/discord/status');
         const data = await res.json();
-        if (data.url) {
-            window.location.href = data.url;
+
+        const disconnectedDiv = document.getElementById('discordDisconnected');
+        const connectedDiv = document.getElementById('discordConnected');
+        const statusText = document.getElementById('discordStatusText');
+
+        if (data.connected) {
+            disconnectedDiv.classList.add('hidden');
+            connectedDiv.classList.remove('hidden');
+            if (statusText && data.username) {
+                statusText.textContent = `✅ Connected as ${data.username} – You‘re receiving notifications in your private channel.`;
+            }
+            // Set checkboxes according to prefs
+            document.querySelectorAll('.discord-pref-checkbox').forEach(cb => {
+                const type = cb.getAttribute('data-notif-type');
+                cb.checked = data.prefs[type] !== false;
+            });
         } else {
-            showToast('Failed to start Discord auth', 'error');
+            disconnectedDiv.classList.remove('hidden');
+            connectedDiv.classList.add('hidden');
         }
     } catch (e) {
-        showToast('Error connecting Discord', 'error');
+        console.error('Failed to load Discord status', e);
     }
 }
 
-async function saveDiscordWebhookManual() {
-    const url = document.getElementById('discordWebhookManual').value;
-    if (!url) return showToast('Enter a webhook URL', 'error');
-    const res = await authFetch('/api/user/discord-webhook', {
+async function saveDiscordPrefs() {
+    const prefs = {};
+    document.querySelectorAll('.discord-pref-checkbox').forEach(cb => {
+        prefs[cb.getAttribute('data-notif-type')] = cb.checked;
+    });
+    await authFetch('/api/discord/prefs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhookUrl: url })
+        body: JSON.stringify({ prefs })
     });
-    if (res.ok) {
-        showToast('Discord webhook saved', 'success');
-        loadDiscordManualStatus();
-    } else showToast('Failed to save', 'error');
+    showToast('Discord notification preferences saved', 'success');
 }
 
-async function testDiscordWebhookManual() {
-    const url = document.getElementById('discordWebhookManual').value;
-    if (!url) return showToast('Enter a webhook URL first', 'error');
-    const res = await authFetch('/api/discord/test', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhookUrl: url })
-    });
-    if (res.ok) showToast('Test message sent to Discord!', 'success');
-    else showToast('Failed to send test', 'error');
-}
-
-async function loadDiscordManualStatus() {
-    const res = await authFetch('/api/user/discord-webhook');
-    const data = await res.json();
-    const statusDiv = document.getElementById('discordManualStatus');
-    const input = document.getElementById('discordWebhookManual');
-    if (data.webhookUrl) {
-        statusDiv.innerHTML = '✅ Connected – you will receive notifications.';
-        input.value = data.webhookUrl;
-    } else {
-        statusDiv.innerHTML = 'Not connected. Paste a webhook URL above.';
-    }
-}
-
-
-async function loadDiscordGuilds() {
-    const res = await authFetch('/api/discord/guilds');
-    const guilds = await res.json();
-    const select = document.getElementById('discordGuildSelect');
-    select.innerHTML = '<option value="">Select a server...</option>';
-    guilds.forEach(g => {
-        select.innerHTML += `<option value="${g.id}">${g.name}</option>`;
-    });
-    select.onchange = loadDiscordChannels;
-}
-
-async function loadDiscordChannels() {
-    const guildId = document.getElementById('discordGuildSelect').value;
-    if (!guildId) return;
-    const res = await authFetch(`/api/discord/guilds/${guildId}/channels`);
-    const channels = await res.json();
-    const select = document.getElementById('discordChannelSelect');
-    select.innerHTML = '<option value="">Select a channel...</option>';
-    channels.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">#${c.name}</option>`;
-    });
-}
-
-
-
-async function disconnectDiscord() {
-    if (!confirm('Disconnect Discord? You will no longer receive notifications.')) return;
+async function disconnectDiscordOAuth() {
+    if (!confirm('Disconnect Discord? You will stop receiving notifications.')) return;
     await authFetch('/api/discord/disconnect', { method: 'POST' });
     showToast('Discord disconnected', 'success');
-    location.reload();
+    loadDiscordStatus();
 }
 
 async function loadTelegramStatus() {
@@ -3911,6 +3881,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loadCampaigns();
         }
     }
+      // Auto-open Discord invite after connection
+  if (params.get('discord_connected') === '1') {
+    showToast('Discord connected! Join the server to start receiving notifications.', 'success');
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, '', newUrl);
+    window.open('https://discord.gg/JbBeQW8MP5', '_blank');
+  }
 
     // MutationObserver: when campaigns page becomes visible, re-check Gmail status
     const observer = new MutationObserver(() => {

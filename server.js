@@ -10,6 +10,69 @@ const bot = new TelegramBot(TELEGRAM_BOT_TOKEN);
 const CLOSEDRAFT_URL = process.env.RENDER_EXTERNAL_URL || 'https://closedraft.onrender.com';
 bot.setWebHook(`${CLOSEDRAFT_URL}/api/telegram/webhook`);
 
+const { Client, GatewayIntentBits, PermissionsBitField } = require('discord.js');
+const discordClient = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+    ]
+});
+
+// Channel name template
+function notificationChannelName(username) {
+    const clean = (username || 'user').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    return `${clean}-notifications`;
+}
+
+// Bot ready
+discordClient.once('clientReady', () => {
+    console.log(`🤖 Discord bot logged in as ${discordClient.user.tag}`);
+});
+
+// When a new member joins the CloseDraft server
+discordClient.on('guildMemberAdd', async (member) => {
+    const guild = member.guild;
+    const discordId = member.user.id;
+    const discordUsername = member.user.username;
+
+    // Find profile that has this discord_id but no channel yet
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('id, discord_channel_id')
+        .eq('discord_id', discordId)
+        .single();
+
+    if (!profile || profile.discord_channel_id) return;
+
+    // Create a private notification channel
+    try {
+        const channel = await guild.channels.create({
+            name: notificationChannelName(discordUsername),
+            type: 0, // text channel
+            permissionOverwrites: [
+                { id: guild.roles.everyone, deny: [PermissionsBitField.Flags.ViewChannel] },
+                { id: member.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory] },
+                { id: discordClient.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory] },
+            ],
+        });
+
+        // Save channel ID in database
+        await supabaseAdmin
+            .from('profiles')
+            .update({ discord_channel_id: channel.id })
+            .eq('id', profile.id);
+
+        // Send welcome message
+        channel.send('✅ Welcome to CloseDraft Notifications!\nYou‘ll now receive client alerts and reminders here.');
+        console.log(`📁 Created notification channel for ${discordUsername}`);
+    } catch (err) {
+        console.error('Failed to create channel:', err);
+    }
+});
+
+// Login the bot
+discordClient.login(process.env.DISCORD_BOT_TOKEN);
+
 const { oauth2Client, encryptToken, getGmailClient } = require('./lib/gmailAuth');
 
 
@@ -313,7 +376,6 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
                 });
         }
 
-        // Send Discord notification (if webhook is set)
         await sendDiscordNotification(user.id, `📧 Email sent to ${client.name} (${type}) – Hope they answer!`);
 
         await sendTelegramNotification(user.id, `📧 Email sent to ${client.name} (${type}) – Hope they answer!`, 'new_email');
@@ -680,8 +742,7 @@ app.post('/api/sequences/:id/send-next', async (req, res) => {
         const sentStepsCount = sequence.steps.filter(s => s.sent_at).length + 1;
         await supabaseAdmin.from('sequences').update({ current_step: sentStepsCount, updated_at: new Date().toISOString() }).eq('id', id);
 
-        // Send Discord notification for sequence email
-        await sendDiscordNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`);
+                await sendDiscordNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`);
 
         await sendTelegramNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`, 'new_email');
 
@@ -751,65 +812,184 @@ app.post('/api/client-activities', async (req, res) => {
     res.status(201).json({ success: true });
 });
 
-// ==================== DISCORD NOTIFICATIONS (MANUAL WEBHOOK) ====================
-// Save/get webhook URL
-app.get('/api/user/discord-webhook', async (req, res) => {
-    const user = await getUserFromToken(req);
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    const { data } = await supabaseAdmin
-        .from('profiles')
-        .select('discord_webhook_url')
-        .eq('id', user.id)
-        .single();
-    res.json({ webhookUrl: data?.discord_webhook_url || null });
+// ==================== DISCORD OAUTH (NEW) ====================
+const { oauth2Client: discordOAuth2 } = new (require('google-auth-library').OAuth2Client)();
+// We'll use simple fetch for Discord OAuth
+
+// Generate Discord OAuth URL
+app.get('/api/discord/auth-url', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const params = new URLSearchParams({
+    client_id: process.env.DISCORD_CLIENT_ID,
+    redirect_uri: process.env.DISCORD_REDIRECT_URI,
+    response_type: 'code',
+    scope: 'identify',
+    state: JSON.stringify({ userId: user.id }),
+  });
+
+  res.json({ url: `https://discord.com/api/oauth2/authorize?${params}` });
 });
 
-app.post('/api/user/discord-webhook', async (req, res) => {
-    const user = await getUserFromToken(req);
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    const { webhookUrl } = req.body;
+// Discord OAuth callback
+app.get('/api/discord/callback', async (req, res) => {
+  const { code, state } = req.query;
+  if (!code || !state) return res.status(400).send('Missing parameters');
+
+  let userId;
+  try { userId = JSON.parse(state).userId; } catch { return res.status(400).send('Invalid state'); }
+
+  try {
+    // Exchange code for token
+    const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: process.env.DISCORD_CLIENT_ID,
+        client_secret: process.env.DISCORD_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: process.env.DISCORD_REDIRECT_URI,
+      }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) throw new Error('Failed to get token');
+
+    // Fetch user info
+    const userRes = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    });
+    const userData = await userRes.json();
+
+    // Store Discord ID and username
     await supabaseAdmin
-        .from('profiles')
-        .update({ discord_webhook_url: webhookUrl })
-        .eq('id', user.id);
-    res.json({ success: true });
+      .from('profiles')
+      .update({
+        discord_id: userData.id,
+        discord_username: userData.username,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+
+    // Redirect to app with success
+    res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?discord_connected=1`);
+  } catch (error) {
+    console.error('Discord OAuth error:', error);
+    res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?discord_error=1`);
+  }
 });
 
-// Test webhook
-app.post('/api/discord/test', async (req, res) => {
-    const user = await getUserFromToken(req);
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    const { webhookUrl } = req.body;
-    if (!webhookUrl) return res.status(400).json({ error: 'No webhook URL provided' });
-    try {
-        const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: `✅ CloseDraft test from ${user.email}` })
-        });
-        if (response.ok) res.json({ success: true });
-        else res.status(500).json({ error: 'Discord webhook failed' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// Get Discord connection status
+app.get('/api/discord/status', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { data } = await supabaseAdmin
+    .from('profiles')
+    .select('discord_id, discord_username, discord_channel_id, discord_notification_prefs')
+    .eq('id', user.id)
+    .single();
+
+  res.json({
+    connected: !!data?.discord_channel_id,
+    username: data?.discord_username || null,
+    prefs: data?.discord_notification_prefs || {},
+  });
+});
+
+// Disconnect Discord
+app.post('/api/discord/disconnect', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  await supabaseAdmin
+    .from('profiles')
+    .update({ discord_id: null, discord_username: null, discord_channel_id: null })
+    .eq('id', user.id);
+
+  res.json({ success: true });
+});
+
+// Update Discord notification preferences
+app.post('/api/discord/prefs', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { prefs } = req.body;
+  await supabaseAdmin
+    .from('profiles')
+    .update({ discord_notification_prefs: prefs })
+    .eq('id', user.id);
+
+  res.json({ success: true });
+});
+
+// Manual channel creation for existing server members
+app.post('/api/discord/create-channel', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('discord_id, discord_username, discord_channel_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile?.discord_id) return res.status(400).json({ error: 'Discord not connected' });
+  if (profile.discord_channel_id) return res.status(200).json({ message: 'Channel already exists' });
+
+  try {
+    const guild = discordClient.guilds.cache.first(); // your CloseDraft server
+    if (!guild) throw new Error('Bot not in server');
+
+    const member = await guild.members.fetch(profile.discord_id);
+    if (!member) throw new Error('Member not found in server');
+
+    const channel = await guild.channels.create({
+      name: notificationChannelName(profile.discord_username || 'user'),
+      type: 0, // text channel
+      permissionOverwrites: [
+        { id: guild.roles.everyone, deny: [PermissionsBitField.Flags.ViewChannel] },
+        { id: member.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory] },
+        { id: discordClient.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory] },
+      ],
+    });
+
+    await supabaseAdmin
+      .from('profiles')
+      .update({ discord_channel_id: channel.id })
+      .eq('id', user.id);
+
+    channel.send('✅ Welcome to CloseDraft Notifications!\nYou‘ll now receive client alerts and reminders here.');
+    res.status(201).json({ channelId: channel.id });
+  } catch (err) {
+    console.error('Manual channel creation failed:', err);
+    res.status(500).json({ error: 'Failed to create channel' });
+  }
 });
 
 // Helper to send notification to user's Discord webhook
-async function sendDiscordNotification(userId, message) {
-    const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('discord_webhook_url')
-        .eq('id', userId)
-        .single();
-    if (profile?.discord_webhook_url) {
-        try {
-            await fetch(profile.discord_webhook_url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: message })
-            });
-        } catch (e) { console.error('Discord notification failed:', e); }
+async function sendDiscordNotification(userId, message, type = 'new_email') {
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('discord_id, discord_channel_id, discord_notification_prefs')
+    .eq('id', userId)
+    .single();
+
+  if (!profile?.discord_channel_id) return;
+  if (profile.discord_notification_prefs && profile.discord_notification_prefs[type] === false) return;
+
+  try {
+    const channel = await discordClient.channels.fetch(profile.discord_channel_id);
+    if (channel) {
+      // Add a direct mention so the user gets a ping/phone notification
+      const mention = profile.discord_id ? `<@${profile.discord_id}>` : '';
+      await channel.send(`${mention} ${message}`);
     }
+  } catch (e) {
+    console.error('Discord notification failed:', e.message);
+  }
 }
 
 async function sendTelegramNotification(userId, message, type = 'new_email') {
@@ -1034,97 +1214,97 @@ app.post('/api/campaigns/:id/launch', checkPro, async (req, res) => {
 
 // ------ LIST CAMPAIGNS ------
 app.get('/api/campaigns', checkPro, async (req, res) => {
-  const user = await getUserFromToken(req);
-  try {
-    // Fetch campaigns with manual counts
-    const { data: campaigns, error } = await supabaseAdmin
-      .from('campaigns')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+    const user = await getUserFromToken(req);
+    try {
+        // Fetch campaigns with manual counts
+        const { data: campaigns, error } = await supabaseAdmin
+            .from('campaigns')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
 
-    if (error) throw error;
+        if (error) throw error;
 
-    // Fetch counts manually for each campaign
-// Fetch counts manually for each campaign
-const enriched = await Promise.all(
-  campaigns.map(async (campaign) => {
-    const [
-      { count: leadsCount },
-      { count: stepsCount },
-      { count: sentCount },
-      { count: totalSends },
-      { data: leadsData }
-    ] = await Promise.all([
-      supabaseAdmin
-        .from('campaign_leads')
-        .select('*', { count: 'exact', head: true })
-        .eq('campaign_id', campaign.id),
-      supabaseAdmin
-        .from('campaign_steps')
-        .select('*', { count: 'exact', head: true })
-        .eq('campaign_id', campaign.id),
-      supabaseAdmin
-        .from('campaign_sends')
-        .select('*', { count: 'exact', head: true })
-        .eq('campaign_id', campaign.id)
-        .eq('status', 'sent'),
-      supabaseAdmin
-        .from('campaign_sends')
-        .select('*', { count: 'exact', head: true })
-        .eq('campaign_id', campaign.id),
-      supabaseAdmin
-        .from('campaign_leads')
-        .select('status')
-        .eq('campaign_id', campaign.id)
-    ]);
+        // Fetch counts manually for each campaign
+        // Fetch counts manually for each campaign
+        const enriched = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const [
+                    { count: leadsCount },
+                    { count: stepsCount },
+                    { count: sentCount },
+                    { count: totalSends },
+                    { data: leadsData }
+                ] = await Promise.all([
+                    supabaseAdmin
+                        .from('campaign_leads')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('campaign_id', campaign.id),
+                    supabaseAdmin
+                        .from('campaign_steps')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('campaign_id', campaign.id),
+                    supabaseAdmin
+                        .from('campaign_sends')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('campaign_id', campaign.id)
+                        .eq('status', 'sent'),
+                    supabaseAdmin
+                        .from('campaign_sends')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('campaign_id', campaign.id),
+                    supabaseAdmin
+                        .from('campaign_leads')
+                        .select('status')
+                        .eq('campaign_id', campaign.id)
+                ]);
 
-    const anyReplied = leadsData ? leadsData.some(l => l.status === 'replied') : false;
+                const anyReplied = leadsData ? leadsData.some(l => l.status === 'replied') : false;
 
-    return {
-      ...campaign,
-      leads: { count: leadsCount },
-      steps: { count: stepsCount },
-      sentCount,
-      totalSends,
-      anyReplied,
-    };
-  })
-);
+                return {
+                    ...campaign,
+                    leads: { count: leadsCount },
+                    steps: { count: stepsCount },
+                    sentCount,
+                    totalSends,
+                    anyReplied,
+                };
+            })
+        );
 
-    res.json({ campaigns: enriched });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch campaigns' });
-  }
+        res.json({ campaigns: enriched });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch campaigns' });
+    }
 });
 
 // ------ DELETE CAMPAIGN ------
 app.delete('/api/campaigns/:id', checkPro, async (req, res) => {
-  const user = await getUserFromToken(req);
-  const { id } = req.params;
+    const user = await getUserFromToken(req);
+    const { id } = req.params;
 
-  try {
-    // Verify the campaign belongs to the user
-    const { data: campaign } = await supabaseAdmin
-      .from('campaigns')
-      .select('id')
-      .eq('id', id)
-      .eq('user_id', user.id)
-      .single();
+    try {
+        // Verify the campaign belongs to the user
+        const { data: campaign } = await supabaseAdmin
+            .from('campaigns')
+            .select('id')
+            .eq('id', id)
+            .eq('user_id', user.id)
+            .single();
 
-    if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
+        if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
 
-    // Delete all related campaign_sends, campaign_steps, campaign_leads, then the campaign itself
-    await supabaseAdmin.from('campaign_sends').delete().eq('campaign_id', id);
-    await supabaseAdmin.from('campaign_steps').delete().eq('campaign_id', id);
-    await supabaseAdmin.from('campaign_leads').delete().eq('campaign_id', id);
-    await supabaseAdmin.from('campaigns').delete().eq('id', id).eq('user_id', user.id);
+        // Delete all related campaign_sends, campaign_steps, campaign_leads, then the campaign itself
+        await supabaseAdmin.from('campaign_sends').delete().eq('campaign_id', id);
+        await supabaseAdmin.from('campaign_steps').delete().eq('campaign_id', id);
+        await supabaseAdmin.from('campaign_leads').delete().eq('campaign_id', id);
+        await supabaseAdmin.from('campaigns').delete().eq('id', id).eq('user_id', user.id);
 
-    res.status(200).json({ success: true });
-  } catch (error) {
-    console.error('Delete campaign error:', error);
-    res.status(500).json({ error: 'Failed to delete campaign' });
-  }
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Delete campaign error:', error);
+        res.status(500).json({ error: 'Failed to delete campaign' });
+    }
 });
 
 // ------ GENERATE AI STEPS (for campaign creation) ------
@@ -1244,13 +1424,13 @@ setInterval(async () => {
             if (!client || !client.email) continue;
 
             try {
-               const result = await sendGmailEmail(userId, client.email, send.subject, send.body);
-// Update send record with the REAL Message‑ID for reply detection
-await supabaseAdmin.from('campaign_sends').update({
-    sent_at: new Date().toISOString(),
-    message_id: result.headerMessageId,   // ⬅️ use the long RFC 2822 ID
-    status: 'sent',
-}).eq('id', send.id);
+                const result = await sendGmailEmail(userId, client.email, send.subject, send.body);
+                // Update send record with the REAL Message‑ID for reply detection
+                await supabaseAdmin.from('campaign_sends').update({
+                    sent_at: new Date().toISOString(),
+                    message_id: result.headerMessageId,   // ⬅️ use the long RFC 2822 ID
+                    status: 'sent',
+                }).eq('id', send.id);
 
                 // Update lead status to in_progress
                 await supabaseAdmin.from('campaign_leads').update({ current_step: send.step_number }).eq('id', send.lead_id);
@@ -1268,73 +1448,73 @@ await supabaseAdmin.from('campaign_sends').update({
 // Reply detection: runs every 10 seconds (TEMPORARY – change back to 300000 after testing)
 // Reply detection: runs every 10 seconds (TEMPORARY – change back to 300000 after testing)
 setInterval(async () => {
-  console.log('🔄 Checking for replies...');
-  try {
-    const { data: sentMessages } = await supabaseAdmin
-      .from('campaign_sends')
-      .select('message_id, campaign:campaign_id(user_id), lead:lead_id(id)')
-      .not('message_id', 'is', null)
-      .eq('status', 'sent');
+    console.log('🔄 Checking for replies...');
+    try {
+        const { data: sentMessages } = await supabaseAdmin
+            .from('campaign_sends')
+            .select('message_id, campaign:campaign_id(user_id), lead:lead_id(id)')
+            .not('message_id', 'is', null)
+            .eq('status', 'sent');
 
-    const userMsgs = {};
-    for (const sm of sentMessages) {
-      if (!sm.campaign || !sm.lead) continue;   // ← safety
-      const uid = sm.campaign.user_id;
-      if (!uid) continue;
-      if (!userMsgs[uid]) userMsgs[uid] = [];
-      userMsgs[uid].push(sm);
-    }
-
-    for (const [userId, messages] of Object.entries(userMsgs)) {
-      try {
-        const gmail = await getGmailClient(userId);
-        const res = await gmail.users.messages.list({
-          userId: 'me',
-          maxResults: 10,
-          q: 'is:inbox'
-        });
-        if (!res.data.messages) continue;
-
-        for (const msg of res.data.messages) {
-          const full = await gmail.users.messages.get({
-            userId: 'me',
-            id: msg.id,
-            format: 'metadata',
-            metadataHeaders: ['In-Reply-To', 'References']
-          });
-
-          const payload = full?.data?.payload;
-          if (!payload || !payload.headers) continue;   // ← guard
-
-          const headers = payload.headers;
-          const inReplyTo = headers.find(h => h.name === 'In-Reply-To')?.value;
-          const references = headers.find(h => h.name === 'References')?.value;
-          const allRefs = [inReplyTo, ...(references ? references.split(' ') : [])].filter(Boolean);
-
-          for (const ref of allRefs) {
-            const matchedMsg = messages.find(m => m.message_id === ref);
-            if (matchedMsg) {
-              // Stop campaign for this lead
-              await supabaseAdmin.from('campaign_leads')
-                .update({ status: 'replied' })
-                .eq('id', matchedMsg.lead.id);
-              await supabaseAdmin.from('campaign_sends')
-                .update({ status: 'replied' })
-                .eq('lead_id', matchedMsg.lead.id)
-                .eq('status', 'pending');
-              console.log(`✅ Reply detected – campaign stopped for lead ${matchedMsg.lead.id}`);
-              break;
-            }
-          }
+        const userMsgs = {};
+        for (const sm of sentMessages) {
+            if (!sm.campaign || !sm.lead) continue;   // ← safety
+            const uid = sm.campaign.user_id;
+            if (!uid) continue;
+            if (!userMsgs[uid]) userMsgs[uid] = [];
+            userMsgs[uid].push(sm);
         }
-      } catch (e) {
-        console.error(`Reply detection error for user ${userId}:`, e);
-      }
+
+        for (const [userId, messages] of Object.entries(userMsgs)) {
+            try {
+                const gmail = await getGmailClient(userId);
+                const res = await gmail.users.messages.list({
+                    userId: 'me',
+                    maxResults: 10,
+                    q: 'is:inbox'
+                });
+                if (!res.data.messages) continue;
+
+                for (const msg of res.data.messages) {
+                    const full = await gmail.users.messages.get({
+                        userId: 'me',
+                        id: msg.id,
+                        format: 'metadata',
+                        metadataHeaders: ['In-Reply-To', 'References']
+                    });
+
+                    const payload = full?.data?.payload;
+                    if (!payload || !payload.headers) continue;   // ← guard
+
+                    const headers = payload.headers;
+                    const inReplyTo = headers.find(h => h.name === 'In-Reply-To')?.value;
+                    const references = headers.find(h => h.name === 'References')?.value;
+                    const allRefs = [inReplyTo, ...(references ? references.split(' ') : [])].filter(Boolean);
+
+                    for (const ref of allRefs) {
+                        const matchedMsg = messages.find(m => m.message_id === ref);
+                        if (matchedMsg) {
+                            // Stop campaign for this lead
+                            await supabaseAdmin.from('campaign_leads')
+                                .update({ status: 'replied' })
+                                .eq('id', matchedMsg.lead.id);
+                            await supabaseAdmin.from('campaign_sends')
+                                .update({ status: 'replied' })
+                                .eq('lead_id', matchedMsg.lead.id)
+                                .eq('status', 'pending');
+                            console.log(`✅ Reply detected – campaign stopped for lead ${matchedMsg.lead.id}`);
+                            break;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(`Reply detection error for user ${userId}:`, e);
+            }
+        }
+    } catch (err) {
+        console.error('Reply detection error:', err);
     }
-  } catch (err) {
-    console.error('Reply detection error:', err);
-  }
-}, 300000); 
+}, 300000);
 
 // ==================== SERVE PAGES ====================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
