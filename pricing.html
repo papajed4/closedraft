@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Pricing | CloseDraft</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -78,68 +79,73 @@
 
 <body class="bg-background">
 
-<!-- Navigation -->
-<nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center gap-2">
-            <div
-                class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
-                    </path>
-                </svg>
-            </div>
-            <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
-                    class="text-indigo-400">Draft</span></a>
-        </div>
-
-        <!-- Desktop Nav Links -->
-        <div class="hidden md:flex items-center space-x-8">
-            <a href="/features.html"
-                class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
-            <a href="/pricing.html"
-                class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
-            <a href="/resources.html"
-                class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
-        </div>
-
-        <!-- Mobile Hamburger + Auth Buttons -->
-        <div class="flex items-center space-x-3">
-            <!-- Auth Buttons (Desktop) -->
-            <div class="hidden md:flex items-center space-x-4" id="navAuth">
-                <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign In</a>
-                <a href="/signup.html"
-                    class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
-                    Started</a>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
+                        class="text-indigo-400">Draft</span></a>
             </div>
 
-            <!-- Mobile Hamburger Button -->
-            <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
-                <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-                <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/features.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
+                <a href="/pricing.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
+                <a href="/resources.html"
+                    class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+            </div>
 
-    <!-- Mobile Menu Dropdown -->
-    <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
-        <div class="px-6 py-4 space-y-3">
-            <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
-            <a href="/pricing.html" class="block text-slate-400 hover:text-white font-medium py-2">Pricing</a>
-            <a href="/resources.html" class="block text-slate-400 hover:text-white font-medium py-2">Resources</a>
-            <div class="pt-3 border-t border-white/10 space-y-3" id="mobileNavAuth">
-                <a href="/login.html" class="block text-slate-400 hover:text-white font-medium py-2">Sign In</a>
-                <a href="/signup.html"
-                    class="block text-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold">Get Started</a>
+            <!-- Mobile Hamburger + Auth Buttons -->
+            <div class="flex items-center space-x-3">
+                <!-- Auth Buttons (Desktop) -->
+                <div class="hidden md:flex items-center space-x-4" id="navAuth">
+                    <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign
+                        In</a>
+                    <a href="/signup.html"
+                        class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                        Started</a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
+                    <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
             </div>
         </div>
-    </div>
-</nav>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
+            <div class="px-6 py-4 space-y-3">
+                <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
+                <a href="/pricing.html" class="block text-slate-400 hover:text-white font-medium py-2">Pricing</a>
+                <a href="/resources.html" class="block text-slate-400 hover:text-white font-medium py-2">Resources</a>
+                <div class="pt-3 border-t border-white/10 space-y-3" id="mobileNavAuth">
+                    <a href="/login.html" class="block text-slate-400 hover:text-white font-medium py-2">Sign In</a>
+                    <a href="/signup.html"
+                        class="block text-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold">Get
+                        Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <main class="pt-28">
         <!-- Hero -->
@@ -260,7 +266,35 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
-                            <span class="text-slate-300">Gmail Chrome Extension</span>
+                            <span class="text-slate-300">Gmail integration & reply detection</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">AutoDraft automated campaigns</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Discord & Telegram notifications</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Chrome Extension</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-slate-300">Invoice generator & activity timeline</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +307,7 @@
                 </div>
             </div>
 
-            <!-- Beta Lifetime Deal Banner -->
+            <!-- Beta Lifetime Deal Banner (commented out) -->
             <!-- <div class="mt-8 text-center">
                 <p class="text-slate-500 text-sm">
                     🎉 Beta users: <span class="text-white">Lifetime Pro</span> available for <span
@@ -284,35 +318,161 @@
             </div> -->
         </section>
 
+        <!-- Full Feature Comparison Table -->
+        <section class="py-8 px-6 max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-white text-center mb-8">Full feature comparison</h2>
+            <div class="glass rounded-3xl overflow-hidden">
+                <!-- Table Header -->
+                <div class="grid grid-cols-3 px-6 py-4 bg-white/5 border-b border-white/5">
+                    <div class="text-sm font-bold text-white uppercase tracking-wider">Feature</div>
+                    <div class="text-sm font-bold text-white uppercase tracking-wider text-center">Free</div>
+                    <div class="text-sm font-bold text-white uppercase tracking-wider text-center">Pro</div>
+                </div>
+                <!-- Table Rows -->
+                <div class="divide-y divide-white/5">
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Clients</span>
+                        <span class="text-slate-400 text-sm text-center">10</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Unlimited</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">AI emails / month</span>
+                        <span class="text-slate-400 text-sm text-center">20</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Unlimited</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Email templates</span>
+                        <span class="text-slate-400 text-sm text-center">Basic</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Full library + custom tones</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">AutoDraft campaigns</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Unlimited single & bulk</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Automated sending</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Via Gmail</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Reply detection</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Auto‑stops campaigns</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Gmail integration</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Send & receive tracking</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Discord notifications</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Private channel + mentions</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Telegram notifications</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Direct bot messages</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Chrome Extension</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Gmail compose button</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Invoice generator</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">One‑click PDF</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Client activity timeline</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Full history</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Bulk import / export</span>
+                        <span class="text-slate-400 text-sm text-center">CSV import (limited)</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Full CSV import & export</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3">
+                        <span class="text-slate-300 text-sm">Priority support</span>
+                        <span class="text-red-400 text-sm text-center">—</span>
+                        <span class="text-green-400 text-sm text-center font-medium">Dedicated help</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- FAQ -->
         <section class="py-20 px-6 max-w-3xl mx-auto">
             <h2 class="text-3xl font-bold text-white text-center mb-12">Frequently asked questions</h2>
-            <div class="space-y-4">
-                <div class="glass rounded-xl p-6">
-                    <h4 class="font-bold text-white mb-2">Can I cancel anytime?</h4>
-                    <p class="text-slate-400">Yes. No contracts, no commitments. Cancel your subscription anytime from
-                        your account settings.</p>
-                </div>
-                <div class="glass rounded-xl p-6">
-                    <h4 class="font-bold text-white mb-2">Is there a free trial?</h4>
-                    <p class="text-slate-400">Yes! You can start with the Free plan. Upgrade to Pro anytime when you
-                        need more clients and emails.</p>
-                </div>
-                <div class="glass rounded-xl p-6">
-                    <h4 class="font-bold text-white mb-2">Do you offer refunds?</h4>
-                    <p class="text-slate-400">Yes, we offer a 30-day money-back guarantee if you're not satisfied with
-                        CloseDraft.</p>
-                </div>
-                <div class="glass rounded-xl p-6">
-                    <h4 class="font-bold text-white mb-2">Can I upgrade or downgrade later?</h4>
-                    <p class="text-slate-400">Absolutely. You can upgrade to Pro or downgrade to Free anytime from your
-                        account settings.</p>
-                </div>
-                <div class="glass rounded-xl p-6">
-                    <h4 class="font-bold text-white mb-2">What happens when I hit the free limits?</h4>
-                    <p class="text-slate-400">You'll see a friendly upgrade prompt. Your data stays safe—you just can't
-                        add more clients or generate more emails until you upgrade.</p>
-                </div>
+            <div class="space-y-3">
+                <details class="glass rounded-xl p-5 group">
+                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                        Can I cancel anytime?
+                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </summary>
+                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes. No contracts, no
+                        commitments. Cancel your subscription anytime from your account settings.</p>
+                </details>
+
+                <details class="glass rounded-xl p-5 group">
+                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                        Is there a free trial?
+                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </summary>
+                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes! You can start with the Free
+                        plan. Upgrade to Pro anytime when you need more clients and emails.</p>
+                </details>
+
+                <details class="glass rounded-xl p-5 group">
+                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                        Do you offer refunds?
+                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </summary>
+                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Yes, we offer a 30-day
+                        money-back guarantee if you're not satisfied with CloseDraft.</p>
+                </details>
+
+                <details class="glass rounded-xl p-5 group">
+                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                        Can I upgrade or downgrade later?
+                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </summary>
+                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">Absolutely. You can upgrade to
+                        Pro or downgrade to Free anytime from your account settings.</p>
+                </details>
+
+                <details class="glass rounded-xl p-5 group">
+                    <summary class="font-bold text-white cursor-pointer flex items-center justify-between">
+                        What happens when I hit the free limits?
+                        <svg class="w-5 h-5 text-slate-400 transition-transform group-open:rotate-180" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </summary>
+                    <p class="text-slate-400 text-sm mt-4 pt-4 border-t border-white/5">You'll see a friendly upgrade
+                        prompt. Your data stays safe—you just can't add more clients or generate more emails until you
+                        upgrade.</p>
+                </details>
             </div>
         </section>
 
@@ -392,9 +552,9 @@
     <script>
         // Product IDs from Polar.sh (Test Mode)
         const PRODUCT_IDS = {
-            monthly: '779abdfc-3dc4-4d22-9c71-edf61888d4fb',  
-            yearly: '63a563d9-736c-4f2f-b68e-c9b24916f5be',     
-            lifetime: 'a64e6dfd-ddbb-4c47-b409-bfceb3efebac'   
+            monthly: '779abdfc-3dc4-4d22-9c71-edf61888d4fb',
+            yearly: '63a563d9-736c-4f2f-b68e-c9b24916f5be',
+            lifetime: 'a64e6dfd-ddbb-4c47-b409-bfceb3efebac'
         };
 
         let isYearly = false;

@@ -2,10 +2,12 @@
 <html class="dark" lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Terms of Service | CloseDraft</title>
-
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,11 +27,13 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0b1326;
             color: #dae2fd;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .glass {
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -37,34 +41,56 @@
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
 
+        .bento-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .bento-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .icon-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
         .legal-content h2 {
             font-size: 1.5rem;
             font-weight: 700;
             color: white;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             margin-bottom: 1rem;
         }
 
         .legal-content h3 {
-            font-size: 1.2rem;
+            font-size: 1.125rem;
             font-weight: 600;
             color: #e2e8f0;
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
         }
 
-        .legal-content p {
+        .legal-content p,
+        .legal-content li {
             color: #94a3b8;
             line-height: 1.7;
             margin-bottom: 1rem;
         }
 
         .legal-content ul {
-            color: #94a3b8;
-            line-height: 1.7;
-            margin-bottom: 1rem;
             padding-left: 1.5rem;
             list-style-type: disc;
+            margin-bottom: 1rem;
         }
 
         .legal-content a {
@@ -83,7 +109,6 @@
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <!-- Logo -->
             <div class="flex items-center gap-2">
                 <div
                     class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -95,8 +120,6 @@
                 <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
                         class="text-indigo-400">Draft</span></a>
             </div>
-
-            <!-- Desktop Nav Links -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="/features.html"
                     class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
@@ -105,10 +128,7 @@
                 <a href="/resources.html"
                     class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
             </div>
-
-            <!-- Mobile Hamburger + Auth Buttons -->
             <div class="flex items-center space-x-3">
-                <!-- Auth Buttons (Desktop) -->
                 <div class="hidden md:flex items-center space-x-4" id="navAuth">
                     <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign
                         In</a>
@@ -116,8 +136,6 @@
                         class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
                         Started</a>
                 </div>
-
-                <!-- Mobile Hamburger Button -->
                 <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
                     <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,8 +149,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Mobile Menu Dropdown -->
         <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
             <div class="px-6 py-4 space-y-3">
                 <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
@@ -150,135 +166,387 @@
 
     <main class="pt-32 px-6 pb-20">
         <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-12">
+
+            <!-- Hero -->
+            <div class="text-center mb-16">
                 <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Legal</span>
-                <h1 class="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">Terms of Service</h1>
-                <p class="text-slate-400">Last updated: April 17, 2026</p>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mt-4 mb-4">Terms of Service</h1>
+                <p class="text-slate-400 text-lg">Last updated: May 12, 2026</p>
             </div>
 
+            <!-- Bento Highlight Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
+                <div class="bento-card flex flex-col items-start">
+                    <div class="icon-circle bg-indigo-500/20 text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-semibold mb-1">Fair Use Limits</h3>
+                    <p class="text-slate-400 text-sm">Free plan includes up to 10 clients and 20 AI emails per month.
+                        Pro unlocks unlimited access.</p>
+                </div>
+                <div class="bento-card flex flex-col items-start">
+                    <div class="icon-circle bg-green-500/20 text-green-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-semibold mb-1">Cancel Anytime</h3>
+                    <p class="text-slate-400 text-sm">No long-term contracts. Cancel your Pro subscription via Polar.sh
+                        and keep your data.</p>
+                </div>
+                <div class="bento-card flex flex-col items-start">
+                    <div class="icon-circle bg-amber-500/20 text-amber-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-semibold mb-1">User Responsibility</h3>
+                    <p class="text-slate-400 text-sm">You are responsible for reviewing AI-generated content before
+                        sending it to clients.</p>
+                </div>
+            </div>
+
+            <!-- Terms Content -->
             <div class="glass rounded-3xl p-8 md:p-10 legal-content">
-                <p>Welcome to CloseDraft! By accessing or using our service, you agree to be bound by these Terms of
-                    Service.</p>
+                <p>Welcome to CloseDraft! By accessing or using our platform (the “Service”), including any related
+                    features like AI email generation, Gmail integration, Discord/Telegram notifications, and our Chrome
+                    Extension, you agree to these Terms of Service. Please read them carefully.</p>
 
-                <h2>1. Definitions</h2>
+                <!-- Table of Contents -->
+                <div class="my-8">
+                    <h3 class="text-white font-semibold text-lg mb-3">Contents</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#definitions"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">1.
+                            Definitions</a>
+                        <a href="#accounts"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">2.
+                            Accounts</a>
+                        <a href="#subscriptions"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">3.
+                            Subscriptions & Payments</a>
+                        <a href="#usage"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">4.
+                            Acceptable Use</a>
+                        <a href="#ip"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">5.
+                            Intellectual Property</a>
+                        <a href="#third-party"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">6.
+                            Third‑Party Services</a>
+                        <a href="#disclaimers"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">7.
+                            Disclaimers</a>
+                        <a href="#liability"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">8.
+                            Limitation of Liability</a>
+                        <a href="#indemnification"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">9.
+                            Indemnification</a>
+                        <a href="#termination"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">10.
+                            Termination</a>
+                        <a href="#governing"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">11.
+                            Governing Law</a>
+                        <a href="#contact"
+                            class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-300 text-sm hover:border-indigo-500/50 transition-all">12.
+                            Contact</a>
+                    </div>
+                </div>
+
+                <!-- 1. Definitions -->
+                <h2 id="definitions">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                    </span>
+                    1. Definitions
+                </h2>
                 <ul>
-                    <li><strong>"CloseDraft," "we," "us," or "our"</strong> refers to CloseDraft, the service provider.
+                    <li><strong>"CloseDraft," "we," "us," "our"</strong> — the CloseDraft platform and its operators.
                     </li>
-                    <li><strong>"Service"</strong> refers to the CloseDraft platform, including the web dashboard, AI
-                        email generation, and Chrome Extension.</li>
-                    <li><strong>"User," "you," or "your"</strong> refers to the individual or entity using our Service.
-                    </li>
-                    <li><strong>"Client Data"</strong> refers to information you input about your freelance clients.
-                    </li>
-                    <li><strong>"AI Content"</strong> refers to emails and drafts generated by our AI assistant.</li>
+                    <li><strong>"Service"</strong> — all features provided: client dashboard, AI email generation,
+                        templates, AutoDraft campaigns, Gmail integration, Chrome Extension, Discord/Telegram
+                        notifications, invoice generator, etc.</li>
+                    <li><strong>"User," "you," "your"</strong> — any individual or entity that registers for the
+                        Service.</li>
+                    <li><strong>"Client Data"</strong> — information you enter about your freelance clients (names,
+                        project details, payment amounts, etc.).</li>
+                    <li><strong>"AI Content"</strong> — emails, subjects, and drafts generated by our integration with
+                        Google Gemini.</li>
                 </ul>
 
-                <h2>2. Account Registration</h2>
+                <!-- 2. Accounts -->
+                <h2 id="accounts">
+                    <span class="w-8 h-8 rounded-lg bg-purple-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </span>
+                    2. Account Registration
+                </h2>
                 <ul>
-                    <li>You must be at least 18 years old to use CloseDraft.</li>
-                    <li>You are responsible for maintaining the security of your account credentials.</li>
-                    <li>You agree to provide accurate and complete information during registration.</li>
-                    <li>You may not share your account with others or transfer it to another party.</li>
+                    <li>You must be at least 18 years old.</li>
+                    <li>You are responsible for maintaining the confidentiality of your login credentials and any
+                        activities under your account.</li>
+                    <li>Provide accurate, complete information and keep it updated.</li>
+                    <li>You may not share your account credentials with others or transfer your account to another
+                        party.</li>
                 </ul>
 
-                <h2>3. Subscription and Payment</h2>
+                <!-- 3. Subscriptions & Payments -->
+                <h2 id="subscriptions">
+                    <span class="w-8 h-8 rounded-lg bg-green-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </span>
+                    3. Subscriptions & Payments
+                </h2>
+                <h3>Free Plan</h3>
                 <ul>
-                    <li><strong>Free Plan:</strong> Limited to 10 clients and 20 AI-generated emails per month.</li>
-                    <li><strong>Pro Plan:</strong> Unlimited clients and AI emails. Billed monthly ($29) or yearly
-                        ($288).</li>
-                    <li><strong>Payment Processing:</strong> Payments are handled by Polar.sh. By subscribing, you agree
-                        to their terms.</li>
-                    <li><strong>Cancellation:</strong> You may cancel your subscription at any time via the Polar
-                        Customer Portal (link in your receipt email). Cancellation takes effect at the end of your
-                        current billing period.</li>
-                    <li><strong>Refunds:</strong> We offer a 30-day money-back guarantee for annual plans. Monthly plans
-                        are non-refundable.</li>
+                    <li>Limited to 10 clients and 20 AI email generations per month.</li>
+                    <li>Includes basic templates, manual follow‑ups, and email history.</li>
+                </ul>
+                <h3>Pro Plan</h3>
+                <ul>
+                    <li>Unlimited clients, unlimited AI emails, Gmail integration, unlimited AutoDraft campaigns, Chrome
+                        Extension access, and priority support.</li>
+                    <li>Billed monthly ($29) or yearly ($288, equivalent to $24/month). Yearly plans include one free
+                        month.</li>
+                </ul>
+                <h3>Payment Processing</h3>
+                <ul>
+                    <li>All payments are handled by <strong>Polar.sh</strong>. By subscribing, you agree to their terms
+                        of service.</li>
+                    <li>We never see or store your full credit card number.</li>
+                    <li>Subscriptions automatically renew unless cancelled before the billing date. You can cancel at
+                        any time via the Polar Customer Portal (link provided in your receipt email).</li>
+                </ul>
+                <h3>Refunds</h3>
+                <ul>
+                    <li>30‑day money‑back guarantee for annual Pro plans. Monthly Pro plans are non‑refundable.</li>
+                    <li>No refunds for partial months or unused service days.</li>
                 </ul>
 
-                <h2>4. Acceptable Use</h2>
-                <p>You agree NOT to use CloseDraft to:</p>
+                <!-- 4. Acceptable Use -->
+                <h2 id="usage">
+                    <span class="w-8 h-8 rounded-lg bg-amber-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                            </path>
+                        </svg>
+                    </span>
+                    4. Acceptable Use
+                </h2>
+                <p>You agree <strong>not</strong> to use CloseDraft to:</p>
                 <ul>
-                    <li>Send spam, phishing emails, or unsolicited commercial messages.</li>
+                    <li>Send spam, phishing, or unsolicited commercial messages — including through AI‑generated emails
+                        or AutoDraft campaigns.</li>
                     <li>Harass, threaten, or defraud any person or entity.</li>
-                    <li>Upload or transmit malware, viruses, or harmful code.</li>
-                    <li>Violate any applicable laws or regulations (including CAN-SPAM and GDPR).</li>
-                    <li>Reverse engineer, decompile, or attempt to extract the source code of our Service.</li>
+                    <li>Upload or transmit malware, viruses, or any harmful code.</li>
+                    <li>Violate any applicable laws (including CAN‑SPAM, GDPR, and data protection regulations).</li>
+                    <li>Reverse engineer, decompile, or attempt to extract the source code.</li>
                     <li>Use the Service to build a competing product.</li>
+                    <li>Deliberately misuse the AI to generate offensive, discriminatory, or illegal content.</li>
                 </ul>
-                <p>We reserve the right to suspend or terminate accounts that violate these terms.</p>
+                <p>We reserve the right to suspend or terminate accounts that violate these terms, without prior notice.
+                </p>
 
-                <h2>5. Intellectual Property</h2>
+                <!-- 5. Intellectual Property -->
+                <h2 id="ip">
+                    <span class="w-8 h-8 rounded-lg bg-pink-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
+                    5. Intellectual Property
+                </h2>
                 <ul>
-                    <li><strong>Our IP:</strong> CloseDraft, our logo, website design, and underlying code are our
-                        exclusive property.</li>
-                    <li><strong>Your Data:</strong> You retain full ownership of your Client Data. We claim no ownership
-                        over it.</li>
-                    <li><strong>AI Content:</strong> You own the emails generated by our AI. We do not claim copyright
-                        over AI-generated content.</li>
-                    <li><strong>License to Us:</strong> By using the Service, you grant us a limited license to store
-                        and process your Client Data solely to provide the Service.</li>
+                    <li><strong>Our IP:</strong> CloseDraft’s branding, website design, underlying code, Chrome
+                        Extension, and the AutoDraft/AI Email system are our exclusive property or licensed to us.</li>
+                    <li><strong>Your Data:</strong> You retain full ownership of all Client Data you input. We claim no
+                        rights over it except the limited license needed to provide the Service.</li>
+                    <li><strong>AI Content:</strong> You own the emails and subject lines generated by our AI.
+                        CloseDraft does not claim copyright over AI‑generated content.</li>
+                    <li><strong>Grant of License to Us:</strong> By using the Service, you grant us a worldwide,
+                        royalty‑free license to host, store, and display your Client Data solely for the purpose of
+                        running the Service for you.</li>
                 </ul>
 
-                <h2>6. Third-Party Services</h2>
-                <p>CloseDraft integrates with third-party services including:</p>
+                <!-- 6. Third‑Party Services -->
+                <h2 id="third-party">
+                    <span class="w-8 h-8 rounded-lg bg-cyan-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                            </path>
+                        </svg>
+                    </span>
+                    6. Third‑Party Integrations
+                </h2>
+                <p>CloseDraft integrates with several third‑party services. We are not responsible for their
+                    availability or practices.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div class="bento-card">
+                        <h3 class="text-white font-semibold mb-2">Gmail (Google APIs)</h3>
+                        <p class="text-slate-400 text-sm">You authorize CloseDraft to send emails and access your inbox
+                            <strong>solely to detect replies</strong>. Google’s <a
+                                href="https://developers.google.com/terms" target="_blank">API Services Data Policy</a>
+                            applies.</p>
+                    </div>
+                    <div class="bento-card">
+                        <h3 class="text-white font-semibold mb-2">Discord & Telegram</h3>
+                        <p class="text-slate-400 text-sm">You consent to receive automated notifications. You can
+                            disconnect at any time from Settings.</p>
+                    </div>
+                    <div class="bento-card">
+                        <h3 class="text-white font-semibold mb-2">Chrome Extension</h3>
+                        <p class="text-slate-400 text-sm">The CloseDraft Chrome Extension injects a button into Gmail’s
+                            compose window. It only accesses the recipient’s email address to match with your CloseDraft
+                            clients.</p>
+                    </div>
+                    <div class="bento-card">
+                        <h3 class="text-white font-semibold mb-2">Polar.sh</h3>
+                        <p class="text-slate-400 text-sm">All payment data is processed by Polar.sh. By subscribing, you
+                            agree to Polar’s <a href="https://polar.sh/legal/terms" target="_blank">Terms of
+                                Service</a>.</p>
+                    </div>
+                </div>
+
+                <!-- 7. Disclaimers -->
+                <h2 id="disclaimers">
+                    <span class="w-8 h-8 rounded-lg bg-red-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z">
+                            </path>
+                        </svg>
+                    </span>
+                    7. Disclaimer of Warranties
+                </h2>
+                <p>The Service is provided <strong>"AS IS"</strong> and <strong>"AS AVAILABLE."</strong> We make no
+                    warranties, express or implied, including:</p>
                 <ul>
-                    <li><strong>Google Gemini AI:</strong> Powers our email generation.</li>
-                    <li><strong>Supabase:</strong> Database and authentication.</li>
-                    <li><strong>Polar.sh:</strong> Payment processing.</li>
+                    <li>That the Service will be uninterrupted, timely, secure, or error‑free.</li>
+                    <li>That AI‑generated content will be accurate, appropriate, or suitable for your specific purpose.
+                    </li>
+                    <li>That any errors in the Service will be corrected.</li>
                 </ul>
-                <p>We are not responsible for the availability or practices of these third-party services.</p>
+                <p><strong>You are solely responsible for reviewing all AI‑generated emails before sending.</strong> We
+                    strongly recommend proofreading every email generated by CloseDraft.</p>
 
-                <h2>7. Disclaimer of Warranties</h2>
-                <p>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE." WE MAKE NO WARRANTIES, EXPRESS OR IMPLIED,
-                    INCLUDING:</p>
-                <ul>
-                    <li>That the Service will be uninterrupted, error-free, or secure.</li>
-                    <li>That AI-generated content will be accurate, appropriate, or error-free.</li>
-                    <li>That the Service will meet your specific requirements.</li>
-                </ul>
-                <p>You are solely responsible for reviewing and approving all AI-generated emails before sending.</p>
-
-                <h2>8. Limitation of Liability</h2>
-                <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, CLOSEDRAFT SHALL NOT BE LIABLE FOR:</p>
+                <!-- 8. Limitation of Liability -->
+                <h2 id="liability">
+                    <span class="w-8 h-8 rounded-lg bg-orange-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </span>
+                    8. Limitation of Liability
+                </h2>
+                <p>To the maximum extent permitted by law, CloseDraft shall not be liable for:</p>
                 <ul>
                     <li>Any indirect, incidental, special, consequential, or punitive damages.</li>
-                    <li>Loss of profits, revenue, data, or business opportunities.</li>
-                    <li>Any damages exceeding the amount you paid us in the 12 months preceding the claim.</li>
+                    <li>Loss of profits, revenue, data, or business opportunities arising from your use of the Service.
+                    </li>
+                    <li>Any damages exceeding the total amount you paid to us in the twelve (12) months preceding the
+                        claim.</li>
                 </ul>
 
-                <h2>9. Indemnification</h2>
+                <!-- 9. Indemnification -->
+                <h2 id="indemnification">
+                    <span class="w-8 h-8 rounded-lg bg-teal-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                            </path>
+                        </svg>
+                    </span>
+                    9. Indemnification
+                </h2>
                 <p>You agree to indemnify and hold harmless CloseDraft and its affiliates from any claims, damages, or
                     expenses arising from:</p>
                 <ul>
                     <li>Your violation of these Terms.</li>
-                    <li>Your use of the Service (including emails you send).</li>
-                    <li>Your violation of any third-party rights.</li>
+                    <li>Your use of the Service, including emails you send to clients (whether AI‑generated or manual).
+                    </li>
+                    <li>Your violation of any third‑party rights or applicable law.</li>
                 </ul>
 
-                <h2>10. Termination</h2>
+                <!-- 10. Termination -->
+                <h2 id="termination">
+                    <span class="w-8 h-8 rounded-lg bg-slate-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                            </path>
+                        </svg>
+                    </span>
+                    10. Termination
+                </h2>
                 <ul>
-                    <li><strong>By You:</strong> You may delete your account at any time via Settings.</li>
-                    <li><strong>By Us:</strong> We may suspend or terminate your account for violation of these Terms,
-                        with or without notice.</li>
+                    <li><strong>By You:</strong> You may delete your account at any time via Settings → Danger Zone.
+                        Your data will be permanently erased within 30 days.</li>
+                    <li><strong>By Us:</strong> We may suspend or terminate your account if you breach these Terms, with
+                        or without prior notice.</li>
                     <li><strong>Effect of Termination:</strong> Upon termination, your right to access the Service
-                        ceases. We will delete your Client Data within 30 days.</li>
+                        ceases immediately. We will delete your Client Data within 30 days.</li>
                 </ul>
 
-                <h2>11. Changes to These Terms</h2>
-                <p>We may update these Terms from time to time. We'll notify you of material changes via email or
-                    through the Service. Continued use of the Service after changes constitutes acceptance.</p>
+                <!-- 11. Governing Law -->
+                <h2 id="governing">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
+                            </path>
+                        </svg>
+                    </span>
+                    11. Governing Law
+                </h2>
+                <p>These Terms are governed by the laws of the State of California, United States, without regard to
+                    conflict of law principles.</p>
 
-                <h2>12. Governing Law</h2>
-                <p>These Terms are governed by the laws of [Your State/Country], without regard to conflict of law
-                    principles.</p>
-
-                <h2>13. Contact Us</h2>
-                <p>For questions about these Terms, contact us at:</p>
+                <!-- 12. Contact -->
+                <h2 id="contact">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 inline-flex items-center justify-center mr-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </span>
+                    12. Contact Us
+                </h2>
+                <p>For any questions regarding these Terms, reach out to:</p>
                 <p><strong>Email:</strong> <a href="mailto:closedraft@gmail.com">closedraft@gmail.com</a></p>
+                <p class="mt-8 text-sm text-slate-500">Thank you for choosing CloseDraft. We built this platform to help
+                    freelancers like you stay organized, get paid faster, and never lose a client to a forgotten inbox
+                    again.</p>
             </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="pt-20 pb-10 bg-slate-950/50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -330,10 +598,12 @@
                 <div class="flex gap-6">
                     <a href="#" class="hover:text-indigo-400">Twitter</a>
                     <a href="#" class="hover:text-indigo-400">LinkedIn</a>
+                    <a href="#" class="hover:text-indigo-400">YouTube</a>
                 </div>
             </div>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/nav.js"></script>
 </body>
