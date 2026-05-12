@@ -37,6 +37,48 @@
 
 <body class="flex min-h-screen overflow-hidden">
 
+    <!-- Mobile Notice Overlay -->
+    <div id="mobileNotice"
+        class="hidden fixed inset-0 z-[200] bg-background/95 backdrop-blur-md flex items-center justify-center p-6">
+        <div class="text-center max-w-sm">
+            <!-- Logo -->
+            <div class="flex items-center justify-center gap-2 mb-8">
+                <div
+                    class="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold text-white tracking-tight">Close<span
+                        class="text-indigo-400">Draft</span></span>
+            </div>
+
+            <!-- Message -->
+            <h2 class="text-xl font-bold text-white mb-3">Desktop experience only</h2>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                CloseDraft is currently optimized for <strong class="text-white">desktop and laptop</strong> screens.
+                For the best experience, please switch to a larger device.
+            </p>
+
+            <!-- Coming soon badge -->
+            <div
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-6">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Mobile optimization coming soon
+            </div>
+
+            <!-- Continue anyway (dismissible once) -->
+            <!-- <button onclick="dismissMobileNotice()"
+                class="text-slate-500 text-xs hover:text-slate-400 transition-colors underline underline-offset-2">
+                Continue anyway (not recommended)
+            </button> -->
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 z-[100] bg-background flex items-center justify-center">
         <div class="text-center">
@@ -2532,6 +2574,38 @@
     </div>
 
     <script>
+        // Show the overlay on screens smaller than 768px
+        function checkMobileNotice() {
+            const overlay = document.getElementById('mobileNotice');
+            if (!overlay) return;
+
+            // Only show on mobile
+            if (window.innerWidth < 768) {
+                overlay.classList.remove('hidden');
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // Dismiss and set a flag so it doesn't re‑appear on this page load
+        function dismissMobileNotice() {
+            const overlay = document.getElementById('mobileNotice');
+            if (overlay) overlay.classList.add('hidden');
+            // Optionally set sessionStorage so they can dismiss it once
+            sessionStorage.setItem('mobileNoticeDismissed', 'true');
+        }
+
+        // Re‑check on resize (so it appears if they rotate or resize)
+        window.addEventListener('resize', checkMobileNotice);
+
+        // Check on page load (but respect dismissal)
+        window.addEventListener('DOMContentLoaded', function () {
+            if (sessionStorage.getItem('mobileNoticeDismissed') === 'true') return;
+            checkMobileNotice();
+        });
+    </script>
+
+    <script>
         // Conditional logging
         const isDevelopment = window.location.hostname === 'localhost' ||
             window.location.hostname === '127.0.0.1';
@@ -2548,6 +2622,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+
         // Supabase config
         const SUPABASE_URL = 'https://txibbsaodcpaturobeok.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24';
