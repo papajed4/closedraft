@@ -432,7 +432,7 @@ app.get('/api/templates', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     try {
-        const { data: templates, error } = await supabase
+        const { data: templates, error } = await supabaseAdmin
             .from('templates')
             .select('*')
             .eq('user_id', user.id)
@@ -453,7 +453,7 @@ app.post('/api/templates', async (req, res) => {
     if (!name || !body) return res.status(400).json({ error: 'Name and body are required' });
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('templates')
             .insert([{ user_id: user.id, name, type, tone, subject, body }])
             .select()
@@ -473,7 +473,7 @@ app.patch('/api/templates/:id', async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('templates')
             .update({ ...updates, updated_at: new Date().toISOString() })
             .eq('id', id)
@@ -494,7 +494,7 @@ app.delete('/api/templates/:id', async (req, res) => {
 
     const { id } = req.params;
     try {
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from('templates')
             .delete()
             .eq('id', id)

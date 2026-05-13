@@ -478,11 +478,12 @@ function switchPage(page) {
             sequencesNav.classList.remove('text-slate-400');
             loadSequences();
         } else if (page === 'settings') {      // ← ADD THIS
-            loadSettings();  
-        }  else if (page === 'campaigns' && campaignsNav) {
+            loadSettings();
+        } else if (page === 'campaigns' && campaignsNav) {
             campaignsNav.classList.add('text-white', 'border-l-2', 'border-indigo-500', 'bg-indigo-500/10');
             campaignsNav.classList.remove('text-slate-400');
             loadCampaigns();
+            updateGmailStatusIndicator();
         }
 
         currentPage = page;
@@ -692,11 +693,11 @@ function updateSidebarProfile() {
 
     const settings = window.userSettings || userSettings;
     const initial = (settings.name || 'U').charAt(0).toUpperCase();
-    
+
     avatar.textContent = initial;
     nameEl.textContent = settings.name || 'Freelancer';
     emailEl.textContent = settings.email || '';
-    
+
     // Show Pro badge only on Pro plans
     const plan = window.userPlan || 'free';
     if (plan !== 'free') {
@@ -939,32 +940,82 @@ function renderTemplatesGrid() {
 
     emptyState.classList.add('hidden');
 
+    // Helper to get the right badge color for each type
+    function getTypeBadgeColor(type) {
+        switch (type) {
+            case 'Follow-up': return 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20';
+            case 'Payment Reminder': return 'bg-amber-500/10 text-amber-300 border-amber-500/20';
+            case 'Cold Outreach': return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20';
+            default: return 'bg-slate-500/10 text-slate-300 border-slate-500/20';
+        }
+    }
+
+    // Helper for tone badge color
+    function getToneBadgeColor(tone) {
+        switch (tone) {
+            case 'Friendly': return 'bg-green-500/10 text-green-300 border-green-500/20';
+            case 'Professional': return 'bg-blue-500/10 text-blue-300 border-blue-500/20';
+            case 'Firm': return 'bg-red-500/10 text-red-300 border-red-500/20';
+            case 'Casual': return 'bg-purple-500/10 text-purple-300 border-purple-500/20';
+            default: return 'bg-slate-500/10 text-slate-300 border-slate-500/20';
+        }
+    }
+
     container.innerHTML = templates.map(template => `
-        <div class="glass-card rounded-2xl p-5 hover:border-indigo-500/30 transition-all cursor-pointer group" onclick="useTemplate('${template.id}')">
-            <div class="flex items-start justify-between mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white">${template.name}</h3>
-                </div>
-                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onclick="event.stopPropagation(); editTemplate('${template.id}')" class="p-1.5 text-slate-400 hover:text-indigo-400 rounded-lg hover:bg-white/5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                    </button>
-                    <button onclick="event.stopPropagation(); deleteTemplate('${template.id}')" class="p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-white/5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                </div>
+        <div class="glass-card rounded-2xl p-5 flex flex-col gap-4 relative group hover:border-indigo-500/30 transition-all cursor-pointer" onclick="useTemplate('${template.id}')">
+            
+            <!-- Edit/Delete buttons – hidden until hover -->
+            <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                <button onclick="event.stopPropagation(); editTemplate('${template.id}')" 
+                    class="p-1.5 rounded-lg bg-slate-700/80 text-slate-400 hover:text-indigo-400 hover:bg-slate-700 transition-colors" title="Edit">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                </button>
+                <button onclick="event.stopPropagation(); deleteTemplate('${template.id}')" 
+                    class="p-1.5 rounded-lg bg-slate-700/80 text-slate-400 hover:text-red-400 hover:bg-slate-700 transition-colors" title="Delete">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
             </div>
-            <p class="text-xs text-slate-400 mb-2">${template.type} • ${template.tone}</p>
-            <p class="text-sm text-slate-300 line-clamp-2">${template.body?.substring(0, 100)}...</p>
+
+            <!-- Type & Tone pills -->
+            <div class="flex flex-wrap gap-2 pr-16">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold border ${getTypeBadgeColor(template.type)}">
+                    ${template.type || 'No type'}
+                </span>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold border ${getToneBadgeColor(template.tone)}">
+                    ${template.tone || 'No tone'}
+                </span>
+            </div>
+
+            <!-- Template name -->
+            <div>
+                <h3 class="font-semibold text-white text-sm mb-1">${escapeHTML(template.name)}</h3>
+                <p class="text-xs text-slate-400 line-clamp-2">
+                    ${template.body ? escapeHTML(template.body.substring(0, 100)) + '...' : 'No content'}
+                </p>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-white/5"></div>
+
+            <!-- Bottom row: subject preview or dates (optional) -->
+            <div class="flex items-center text-xs text-slate-500 gap-4">
+                <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    ${template.subject ? escapeHTML(template.subject) : 'No subject'}
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    ${template.created_at ? formatDate(template.created_at) : 'Recently'}
+                </span>
+            </div>
         </div>
     `).join('');
 }
@@ -972,6 +1023,33 @@ function renderTemplatesGrid() {
 function openAddTemplateModal() {
     document.getElementById('addTemplateModal').classList.remove('hidden');
     document.getElementById('addTemplateForm').reset();
+    
+    // Reset type pills to default (first one active)
+    document.querySelectorAll('.add-type-pill').forEach((b, i) => {
+        if (i === 0) {
+            b.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            b.classList.add('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+        } else {
+            b.classList.remove('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+            b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+        }
+    });
+    document.getElementById('templateType').value = 'Follow-up';
+    
+    // Reset tone pills to default (first one active)
+    document.querySelectorAll('.add-tone-pill').forEach((b, i) => {
+        if (i === 0) {
+            b.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            b.classList.add('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+        } else {
+            b.classList.remove('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+            b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+        }
+    });
+    document.getElementById('templateTone').value = 'Friendly';
+    
+    // Initialize click handlers for the pills
+    initAddTemplatePills();
 }
 
 function closeAddTemplateModal() {
@@ -1010,16 +1088,38 @@ function editTemplate(templateId) {
     const template = templates.find(t => t.id === templateId);
     if (!template) return;
 
-    currentTemplate = template;
-
     document.getElementById('editTemplateId').value = template.id;
     document.getElementById('editTemplateName').value = template.name;
-    document.getElementById('editTemplateType').value = template.type;
-    document.getElementById('editTemplateTone').value = template.tone;
     document.getElementById('editTemplateSubject').value = template.subject || '';
     document.getElementById('editTemplateBody').value = template.body;
 
+    // Set active type pill
+    document.querySelectorAll('.edit-type-pill').forEach(b => {
+        if (b.dataset.type === template.type) {
+            b.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            b.classList.add('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+        } else {
+            b.classList.remove('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+            b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+        }
+    });
+    document.getElementById('editTemplateType').value = template.type;
+
+    // Set active tone pill
+    document.querySelectorAll('.edit-tone-pill').forEach(b => {
+        if (b.dataset.tone === template.tone) {
+            b.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            b.classList.add('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+        } else {
+            b.classList.remove('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+            b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+        }
+    });
+    document.getElementById('editTemplateTone').value = template.tone;
+
     document.getElementById('editTemplateModal').classList.remove('hidden');
+    
+    initEditTemplatePills();
 }
 
 function closeEditTemplateModal() {
@@ -1099,6 +1199,65 @@ function useTemplate(templateId) {
 
     // Store template for later use
     localStorage.setItem('pendingTemplate', JSON.stringify(template));
+}
+
+// Pill selection helpers for Add / Edit Template modals
+function initAddTemplatePills() {
+    // Type pills
+    document.querySelectorAll('.add-type-pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active from all type pills
+            document.querySelectorAll('.add-type-pill').forEach(b => {
+                b.classList.remove('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+                b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            });
+            // Activate clicked
+            this.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            this.classList.add('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+            document.getElementById('templateType').value = this.dataset.type;
+        });
+    });
+
+    // Tone pills
+    document.querySelectorAll('.add-tone-pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.add-tone-pill').forEach(b => {
+                b.classList.remove('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+                b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            });
+            this.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            this.classList.add('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+            document.getElementById('templateTone').value = this.dataset.tone;
+        });
+    });
+}
+
+function initEditTemplatePills() {
+    // Type pills
+    document.querySelectorAll('.edit-type-pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.edit-type-pill').forEach(b => {
+                b.classList.remove('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+                b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            });
+            this.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            this.classList.add('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
+            document.getElementById('editTemplateType').value = this.dataset.type;
+        });
+    });
+
+    // Tone pills
+    document.querySelectorAll('.edit-tone-pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.edit-tone-pill').forEach(b => {
+                b.classList.remove('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+                b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            });
+            this.classList.remove('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
+            this.classList.add('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
+            document.getElementById('editTemplateTone').value = this.dataset.tone;
+        });
+    });
 }
 
 // ============================================
@@ -2073,25 +2232,27 @@ function updateEmailTabCounts() {
 function filterEmails(filter) {
     currentEmailFilter = filter;
 
-    // Update active tab styling
-    ['All', 'Followup', 'Payment', 'Cold'].forEach(tab => {
-        const btn = document.getElementById(`emailTab${tab}`);
+    // Reset all tabs to default style
+    ['emailTabAll', 'emailTabFollowup', 'emailTabPayment', 'emailTabCold'].forEach(id => {
+        const btn = document.getElementById(id);
         if (!btn) return;
-
-        const isActive = (tab === filter) ||
-            (tab === 'All' && filter === 'all') ||
-            (tab === 'Followup' && filter === 'Follow-up') ||
-            (tab === 'Payment' && filter === 'Payment Reminder') ||
-            (tab === 'Cold' && filter === 'Cold Outreach');
-
-        if (isActive) {
-            btn.classList.add('text-indigo-300', 'border-b-2', 'border-indigo-500');
-            btn.classList.remove('text-slate-400');
-        } else {
-            btn.classList.remove('text-indigo-300', 'border-b-2', 'border-indigo-500');
-            btn.classList.add('text-slate-400');
-        }
+        btn.classList.remove('bg-indigo-500/20', 'text-indigo-300', 'border-indigo-500/30');
+        btn.classList.add('bg-transparent', 'text-slate-400', 'border-transparent');
     });
+
+    // Activate the correct tab
+    const tabMap = {
+        'all': 'emailTabAll',
+        'Follow-up': 'emailTabFollowup',
+        'Payment Reminder': 'emailTabPayment',
+        'Cold Outreach': 'emailTabCold'
+    };
+    const activeTabId = tabMap[filter];
+    const activeBtn = document.getElementById(activeTabId);
+    if (activeBtn) {
+        activeBtn.classList.remove('bg-transparent', 'text-slate-400', 'border-transparent');
+        activeBtn.classList.add('bg-indigo-500/20', 'text-indigo-300', 'border-indigo-500/30');
+    }
 
     renderEmailHistoryList();
 }
@@ -2102,7 +2263,6 @@ function renderEmailHistoryList() {
     const noResults = document.getElementById('noEmailResults');
 
     if (!container) return;
-
     container.innerHTML = '';
 
     let filteredEmails = allEmails;
@@ -2110,12 +2270,10 @@ function renderEmailHistoryList() {
         filteredEmails = allEmails.filter(e => e.type === currentEmailFilter);
     }
 
-    // Hide both states initially
     if (emptyState) emptyState.classList.add('hidden');
     if (noResults) noResults.classList.add('hidden');
 
     if (filteredEmails.length === 0) {
-        // Check if there are any emails at all
         if (allEmails.length === 0) {
             if (emptyState) emptyState.classList.remove('hidden');
         } else {
@@ -2124,32 +2282,55 @@ function renderEmailHistoryList() {
         return;
     }
 
-
-    if (emptyState) emptyState.classList.add('hidden');
+    // Helper to return a colored tone badge
+    function getToneBadge(tone) {
+        switch (tone) {
+            case 'Friendly': return 'bg-green-500/10 text-green-400 border-green-500/20';
+            case 'Professional': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+            case 'Firm': return 'bg-red-500/10 text-red-400 border-red-500/20';
+            case 'Casual': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+            default: return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+        }
+    }
 
     container.innerHTML = filteredEmails.map(email => `
-        <div class="grid grid-cols-12 items-center px-6 py-4 hover:bg-white/5 transition-all cursor-pointer" onclick="viewEmailDetail('${email.id}')">
-            <div class="col-span-3 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs">
-                    ${email.clients?.name?.charAt(0) || '?'}
+        <tr class="hover:bg-white/[0.02] transition-colors group relative cursor-pointer"
+            onclick="viewEmailDetail('${email.id}')">
+            <td class="py-4 px-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs shrink-0">
+                        ${email.clients?.name?.charAt(0) || '?'}
+                    </div>
+                    <div>
+                        <p class="text-white font-medium text-sm">${email.clients?.name || 'Unknown'}</p>
+                        <p class="text-slate-500 text-[11px]">${email.clients?.business || ''}</p>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="text-sm font-medium text-white">${email.clients?.name || 'Unknown'}</h4>
-                    <p class="text-xs text-slate-500">${email.clients?.business || ''}</p>
-                </div>
-            </div>
-            <div class="col-span-4">
-                <p class="text-sm text-white truncate">${email.subject || 'No subject'}</p>
-                <p class="text-xs text-slate-500 truncate">${email.body?.substring(0, 50)}...</p>
-            </div>
-            <div class="col-span-2">
-                <span class="text-xs px-2 py-1 rounded-full bg-indigo-500/20 text-indigo-300">${email.type}</span>
-            </div>
-            <div class="col-span-2 text-xs text-slate-400">${formatDate(email.created_at)}</div>
-            <div class="col-span-1 text-right">
-                <span class="text-xs px-2 py-1 rounded-full bg-slate-700/50 text-slate-400">${email.tone}</span>
-            </div>
-        </div>
+            </td>
+            <td class="py-4 px-6">
+                <p class="text-white text-sm">${email.subject || 'No subject'}</p>
+                <p class="text-slate-500 text-[11px] truncate max-w-[220px]">${email.body?.substring(0, 60) || ''}...</p>
+            </td>
+            <td class="py-4 px-6">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    ${email.type}
+                </span>
+            </td>
+            <td class="py-4 px-6 text-slate-400 text-sm">${formatDate(email.created_at)}</td>
+            <td class="py-4 px-6">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${getToneBadge(email.tone)}">
+                    ${email.tone}
+                </span>
+            </td>
+            <td class="py-4 px-6 text-right">
+                <button class="text-slate-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+                        onclick="event.stopPropagation(); viewEmailDetail('${email.id}')">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                    </svg>
+                </button>
+            </td>
+        </tr>
     `).join('');
 }
 
@@ -2500,7 +2681,7 @@ async function loadSettings() {
         if (cardAvatar) cardAvatar.textContent = initial;
     }
 
-   if (typeof loadDiscordStatus === 'function') await loadDiscordStatus();
+    if (typeof loadDiscordStatus === 'function') await loadDiscordStatus();
 
     if (typeof loadTelegramStatus === 'function') await loadTelegramStatus();
 
@@ -3610,8 +3791,12 @@ async function loadGmailStatus() {
 
 // Check Gmail status and load campaigns
 async function loadCampaigns() {
-    const gmailNotConnected = document.getElementById('gmailNotConnected');
-    const gmailConnected = document.getElementById('gmailConnected');
+    const gmailStatusCard = document.getElementById('gmailStatusCard');
+    const gmailStatusIcon = document.getElementById('gmailStatusIcon');
+    const gmailStatusTitle = document.getElementById('gmailStatusTitle');
+    const gmailStatusEmail = document.getElementById('gmailStatusEmail');
+    const gmailDisconnectBtn = document.getElementById('gmailDisconnectBtn');
+    const gmailConnectBtn = document.getElementById('gmailConnectBtn');
     const campaignsList = document.getElementById('campaignsList');
     const campaignsEmpty = document.getElementById('campaignsEmpty');
 
@@ -3619,34 +3804,76 @@ async function loadCampaigns() {
     try {
         const statusRes = await authFetch('/api/gmail/status');
         if (!statusRes.ok) throw new Error(`Server returned ${statusRes.status}`);
+        const { connected, email } = await statusRes.json();
 
-        const { connected } = await statusRes.json();
+        gmailStatusCard.classList.remove('hidden');
 
         if (connected) {
-            gmailNotConnected.classList.add('hidden');
-            gmailConnected.classList.remove('hidden');
+            gmailStatusIcon.className = 'w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center';
+            gmailStatusIcon.innerHTML = `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>`;
+            gmailStatusTitle.textContent = 'Gmail connected';
+            gmailStatusTitle.className = 'font-semibold text-white text-sm';
+            gmailStatusEmail.textContent = email || 'user@example.com';
+            gmailDisconnectBtn.classList.remove('hidden');
+            gmailConnectBtn.classList.add('hidden');
         } else {
-            gmailNotConnected.classList.remove('hidden');
-            gmailConnected.classList.add('hidden');
-            // Clear campaign list if not connected
-            campaignsList.innerHTML = '';
-            campaignsEmpty.classList.add('hidden');
-            return;
+            gmailStatusIcon.className = 'w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center';
+            gmailStatusIcon.innerHTML = `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>`;
+            gmailStatusTitle.textContent = 'Gmail disconnected';
+            gmailStatusTitle.className = 'font-semibold text-slate-400 text-sm';
+            gmailStatusEmail.textContent = '';
+            gmailDisconnectBtn.classList.add('hidden');
+            gmailConnectBtn.classList.remove('hidden');
         }
-
-        // 2. Fetch campaigns
-        const resp = await authFetch('/api/campaigns');
-        if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
-
-        const { campaigns } = await resp.json();
-        renderCampaignsList(campaigns);
-
     } catch (err) {
-        console.error('loadCampaigns error:', err);
-        gmailNotConnected.classList.remove('hidden');
+        gmailStatusCard.classList.add('hidden');
+    }
+
+    // 2. Update header indicator
+    updateGmailStatusIndicator();
+
+    // 3. Fetch and render campaigns
+    if (!gmailStatusCard.classList.contains('hidden') && gmailStatusTitle.textContent === 'Gmail connected') {
+        try {
+            const resp = await authFetch('/api/campaigns');
+            if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
+            const { campaigns } = await resp.json();
+            renderCampaignsList(campaigns);
+        } catch (err) {
+            campaignsList.innerHTML = '';
+            campaignsEmpty.classList.remove('hidden');
+            campaignsEmpty.textContent = 'Failed to load campaigns.';
+        }
+    } else {
         campaignsList.innerHTML = '';
         campaignsEmpty.classList.add('hidden');
-        showToast('Failed to load campaigns. Please try again.', 'error');
+    }
+}
+
+async function updateGmailStatusIndicator() {
+    const indicator = document.getElementById('gmailStatusIndicator');
+    const dot = document.getElementById('gmailStatusDot');
+    const text = document.getElementById('gmailStatusText');
+    if (!indicator || !dot || !text) return;
+
+    try {
+        const res = await authFetch('/api/gmail/status');
+        const data = await res.json();
+        const connected = data.connected;
+
+        indicator.classList.remove('hidden');
+
+        if (connected) {
+            dot.className = 'w-2 h-2 rounded-full status-dot-connected';
+            text.textContent = 'Gmail connected';
+            text.className = 'text-xs font-medium text-green-400';
+        } else {
+            dot.className = 'w-2 h-2 rounded-full status-dot-disconnected';
+            text.textContent = 'Gmail disconnected';
+            text.className = 'text-xs font-medium text-slate-400';
+        }
+    } catch (e) {
+        indicator.classList.add('hidden');
     }
 }
 
@@ -3675,50 +3902,84 @@ function renderCampaignsList(campaigns) {
         return;
     }
     empty.classList.add('hidden');
-container.innerHTML = campaigns.map(c => {
-    const progress = c.totalSends > 0 
-        ? Math.round((c.sentCount / c.totalSends) * 100) 
-        : 0;
 
-    return `
-    <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-indigo-500/30 relative group">
-      <div class="flex items-start justify-between mb-3">
-        <div>
-          <h3 class="font-semibold text-white flex items-center gap-2">
-            ${c.name}
-            ${c.anyReplied ? '<span class="status-badge status-active">Replied</span>' : ''}
-          </h3>
-          <p class="text-xs text-slate-400">${c.type} • ${c.tone} • ${c.status}</p>
-        </div>
-        <!-- Delete button (always visible, less obtrusive) -->
-        <button onclick="event.stopPropagation(); deleteCampaign('${c.id}')" 
-                class="p-1.5 text-slate-500 hover:text-red-400 rounded-lg transition-all"
-                title="Delete Campaign">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-          </svg>
-        </button>
-      </div>
+    container.innerHTML = campaigns.map(c => {
+        const progress = c.totalSends > 0
+            ? Math.round((c.sentCount / c.totalSends) * 100)
+            : 0;
+        const isComplete = progress === 100 && c.totalSends > 0;
+        const statusClass = c.status === 'active' ? 'bg-green-500/15 text-green-400' :
+            c.status === 'draft' ? 'bg-slate-500/15 text-slate-400' :
+                c.anyReplied ? 'bg-blue-500/15 text-blue-400' : 'bg-slate-500/15 text-slate-400';
+        const statusDot = c.status === 'active' ? 'bg-green-400' :
+            c.status === 'draft' ? 'bg-slate-400' :
+                c.anyReplied ? 'bg-blue-400' : 'bg-slate-400';
+        const statusLabel = c.status === 'active' ? 'Active' :
+            c.status === 'draft' ? 'Draft' :
+                c.anyReplied ? 'Replied' : c.status;
 
-      <!-- Progress bar -->
-      <div class="mb-3">
-        <div class="flex justify-between text-xs mb-1">
-          <span class="text-slate-400">Progress</span>
-          <span class="text-white">${c.sentCount}/${c.totalSends} emails sent</span>
-        </div>
-        <div class="h-2 bg-slate-700/50 rounded-full overflow-hidden">
-          <div class="h-full gradient-primary rounded-full" style="width: ${progress}%"></div>
-        </div>
-      </div>
+        return `
+        <div class="glass-card rounded-2xl p-5 flex flex-col gap-4 relative group hover:border-indigo-500/30 transition-all">
+            <!-- Top row: status badge + delete button -->
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${statusClass} text-[10px] font-semibold mb-2">
+                        <span class="w-1.5 h-1.5 rounded-full ${statusDot}"></span>
+                        ${statusLabel}
+                    </div>
+                    <h3 class="font-semibold text-white text-sm">${escapeHTML(c.name)}</h3>
+                    <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        ${c.type} · ${c.tone}
+                    </p>
+                </div>
+                <button onclick="event.stopPropagation(); deleteCampaign('${c.id}')" 
+                    class="p-1.5 text-slate-500 hover:text-red-400 rounded-lg transition-all opacity-0 group-hover:opacity-100" 
+                    title="Delete Campaign">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+            </div>
 
-      <p class="text-xs text-slate-500">${c.leads?.count || 0} leads • ${c.steps?.count || 0} steps</p>
-      
-      ${c.status === 'draft' 
-        ? `<button onclick="launchCampaign('${c.id}')" class="mt-2 gradient-primary text-white px-3 py-1 rounded-lg text-xs">Launch</button>` 
-        : ''}
-    </div>
-    `;
-}).join('');
+            <!-- Progress section -->
+            <div class="space-y-1.5">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-300 font-medium">${c.sentCount}/${c.totalSends} emails sent</span>
+                    <span class="text-slate-500">${progress}%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
+                    <div class="h-full gradient-primary rounded-full transition-all duration-500 ${isComplete ? 'opacity-50' : ''}" style="width: ${progress}%"></div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-white/5"></div>
+
+            <!-- Bottom row: stats + optional launch button -->
+            <div class="flex items-center justify-between">
+                <div class="flex gap-4 text-xs text-slate-500">
+                    <span class="flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        ${c.leads?.count || 0} leads
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        ${c.steps?.count || 0} steps
+                    </span>
+                </div>
+                ${c.status === 'draft'
+                ? `<button onclick="event.stopPropagation(); launchCampaign('${c.id}')" class="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-xs font-bold transition-all">Launch</button>`
+                : ''}
+            </div>
+        </div>`;
+    }).join('');
 }
 
 async function launchCampaign(id) {
@@ -3741,7 +4002,29 @@ async function deleteCampaign(id) {
 }
 
 // Populate client checkboxes when opening the campaign modal
-function openCreateCampaignModal() {
+async function openCreateCampaignModal() {
+    // Check Gmail connection first
+    try {
+        const res = await authFetch('/api/gmail/status');
+        if (!res.ok) throw new Error('Failed to check Gmail status');
+        const data = await res.json();
+        if (!data.connected) {
+            showToast('Please connect your Gmail account to use AutoDraft', 'error');
+            const gmailCard = document.getElementById('gmailStatusCard');
+            if (gmailCard) {
+                gmailCard.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'ring-offset-background');
+                setTimeout(() => {
+                    gmailCard.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'ring-offset-background');
+                }, 3000);
+            }
+            return;
+        }
+    } catch (e) {
+        showToast('Unable to verify Gmail connection', 'error');
+        return;
+    }
+
+    // Existing modal population code
     const container = document.getElementById('campaignClientList');
     container.innerHTML = clients.map(c => `
     <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
@@ -3881,13 +4164,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loadCampaigns();
         }
     }
-      // Auto-open Discord invite after connection
-  if (params.get('discord_connected') === '1') {
-    showToast('Discord connected! Join the server to start receiving notifications.', 'success');
-    const newUrl = window.location.pathname;
-    window.history.replaceState({}, '', newUrl);
-    window.open('https://discord.gg/JbBeQW8MP5', '_blank');
-  }
+    // Auto-open Discord invite after connection
+    if (params.get('discord_connected') === '1') {
+        showToast('Discord connected! Join the server to start receiving notifications.', 'success');
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+        window.open('https://discord.gg/JbBeQW8MP5', '_blank');
+    }
 
     // MutationObserver: when campaigns page becomes visible, re-check Gmail status
     const observer = new MutationObserver(() => {
@@ -3904,8 +4187,30 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(document.body, { childList: true, subtree: true });
 });
 
-function openSingleSequenceModal() {
-    // Populate client dropdown
+async function openSingleSequenceModal() {
+    // Check if Gmail is connected before allowing single sequence
+    try {
+        const res = await authFetch('/api/gmail/status');
+        if (!res.ok) throw new Error('Failed to check Gmail status');
+        const data = await res.json();
+        if (!data.connected) {
+            showToast('Please connect your Gmail account to use AutoDraft', 'error');
+            // Optionally highlight the Gmail connection card
+            const gmailCard = document.getElementById('gmailStatusCard');
+            if (gmailCard) {
+                gmailCard.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'ring-offset-background');
+                setTimeout(() => {
+                    gmailCard.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'ring-offset-background');
+                }, 3000);
+            }
+            return; // stop here – do not open modal
+        }
+    } catch (e) {
+        showToast('Unable to verify Gmail connection', 'error');
+        return;
+    }
+
+    // If connected, proceed with original modal logic
     const select = document.getElementById('singleSeqClient');
     select.innerHTML = '<option value="">-- Select a client --</option>' +
         clients.map(c => `<option value="${c.id}">${c.name} (${c.business || 'N/A'})</option>`).join('');
@@ -3917,7 +4222,7 @@ function closeSingleSequenceModal() {
     document.getElementById('singleSequenceModal').classList.add('hidden');
 }
 
-document.getElementById('singleSequenceForm').addEventListener('submit', async function(e) {
+document.getElementById('singleSequenceForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const clientId = document.getElementById('singleSeqClient').value;

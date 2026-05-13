@@ -676,3 +676,23 @@ main {
         grid-column: span 12 / span 12;
     }
 }
+
+/* Pulsing green dot for Gmail connected state */
+@keyframes pulse-green {
+    0%, 100% {
+        background-color: #34d399;
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5);
+    }
+    50% {
+        background-color: #6ee7b7;
+        box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+    }
+}
+
+.status-dot-connected {
+    animation: pulse-green 2s infinite;
+}
+
+.status-dot-disconnected {
+    background-color: #f87171;
+}
