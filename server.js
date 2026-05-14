@@ -349,6 +349,74 @@ app.post('/api/generate-email', async (req, res) => {
     return res.status(200).json({ subjectA: mockSubject, subjectB: mockSubject, body: mockBody, emailId: savedEmail?.id });
 });
 
+app.post('/api/generate-all-attention', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  // Pro check
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single();
+  if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
+
+  const { type = 'Follow-up', tone = 'Friendly', freelancerName } = req.body;
+
+  // Get all attention clients
+  const { data: clients } = await supabaseAdmin
+    .from('clients')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('archived', false);
+
+  const attentionClients = clients.filter(c => {
+    if (c.deadline && new Date(c.deadline) < new Date()) return true;
+    if (!c.last_contacted) return true;
+    const daysStale = Math.ceil((new Date() - new Date(c.last_contacted)) / (1000 * 60 * 60 * 24));
+    return daysStale >= 7;
+  });
+
+  if (attentionClients.length === 0) {
+    return res.json({ drafts: [] });
+  }
+
+  const drafts = [];
+  for (const client of attentionClients) {
+    try {
+      const prompt = buildPrompt(client, type, tone, freelancerName || '');
+      const generatedText = await generateEmail(prompt);
+
+      let subjectA = '', subjectB = '', body = generatedText;
+      const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
+      const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
+      if (subjectAMatch && subjectBMatch) {
+        subjectA = subjectAMatch[1].trim();
+        subjectB = subjectBMatch[1].trim();
+        body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
+      } else {
+        const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
+        if (subjectMatch) {
+          subjectA = subjectMatch[1].trim();
+          subjectB = subjectA;
+          body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
+        }
+      }
+
+      drafts.push({
+        client: { id: client.id, name: client.name, email: client.email, business: client.business },
+        subjectA,
+        subjectB,
+        body
+      });
+    } catch (e) {
+      console.error(`Failed to generate for ${client.name}:`, e);
+    }
+  }
+
+  res.json({ drafts });
+});
+
 async function generateEmailForClient(client, type, tone, freelancerName, res, user) {
     try {
         const prompt = buildPrompt(client, type, tone, freelancerName || '');

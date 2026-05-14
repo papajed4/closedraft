@@ -26,6 +26,7 @@ let generatedSubjectA = '';
 let generatedSubjectB = '';
 let currentSubjectChoice = 'A';
 let confirmCallback = null;
+let allDrafts = [];
 
 // --- New global declarations for page & nav elements ---
 let dashboardPage, clientsPage, emailsPage, templatesPage, analyticsPage, settingsPage, sequencesPage, campaignsPage;
@@ -200,6 +201,98 @@ function showEmailListSkeleton() {
             container.appendChild(skeletonRow);
         }
     }
+}
+
+
+async function followUpAll() {
+    const btn = document.getElementById('followUpAllBtn');
+    const origHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Generating...';
+
+    try {
+        const res = await authFetch('/api/generate-all-attention', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'Follow-up',
+                tone: 'Friendly',
+                freelancerName: window.userSettings?.name || 'Freelancer'
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed');
+
+        allDrafts = data.drafts;
+        renderAllDrafts(allDrafts);
+        document.getElementById('followUpAllModal').classList.remove('hidden');
+    } catch (e) {
+        showToast(e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+    }
+}
+
+function renderAllDrafts(drafts) {
+    const container = document.getElementById('followUpAllList');
+    container.innerHTML = drafts.map((draft, i) => `
+        <div class="glass-card rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-300 font-bold text-xs">${draft.client.name.charAt(0)}</div>
+                    <span class="text-white font-semibold text-sm">${draft.client.name}</span>
+                </div>
+                <button onclick="sendSingleDraft(${i})" class="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg font-bold">Send</button>
+            </div>
+            <p class="text-xs text-slate-400 mb-1">Subject: ${draft.subjectA}</p>
+            <textarea class="w-full bg-slate-800/50 text-slate-300 text-sm rounded-xl p-3 resize-none" rows="4" oninput="updateDraft(${i}, this.value)">${draft.body}</textarea>
+        </div>
+    `).join('');
+
+    const sendAllBtn = document.getElementById('sendAllDraftsBtn');
+    if (drafts.length > 0) sendAllBtn.classList.remove('hidden');
+    else sendAllBtn.classList.add('hidden');
+}
+
+function updateDraft(index, newBody) {
+    allDrafts[index].body = newBody;
+}
+
+async function sendSingleDraft(index) {
+    const draft = allDrafts[index];
+    try {
+        const res = await authFetch('/api/send-now', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                clientId: draft.client.id,
+                subject: draft.subjectA,
+                body: draft.body,
+                type: 'Follow-up',
+                tone: 'Friendly',
+                freelancerName: window.userSettings?.name || 'Freelancer'
+            })
+        });
+        if (!res.ok) throw new Error('Failed to send');
+        showToast(`Sent to ${draft.client.name}`, 'success');
+        allDrafts.splice(index, 1);
+        renderAllDrafts(allDrafts);
+    } catch (e) {
+        showToast(`Failed to send to ${draft.client.name}`, 'error');
+    }
+}
+
+async function sendAllDrafts() {
+    for (let i = allDrafts.length - 1; i >= 0; i--) {
+        await sendSingleDraft(i);
+    }
+    closeFollowUpAllModal();
+}
+
+function closeFollowUpAllModal() {
+    document.getElementById('followUpAllModal').classList.add('hidden');
+    allDrafts = [];
 }
 
 // ==================== CLIENT SEARCH FUNCTIONS ====================
@@ -577,17 +670,22 @@ async function loadDashboard() {
             sessionStorage.setItem('needsAttentionTooltipShown', 'true');
             setTimeout(() => tooltip.classList.add('hidden'), 8000);
         }
-         // ✅ Show welcome modal only if there are clients (demo scenario)
+        // Show welcome modal only if there are clients (demo scenario)
         if (clients.length > 0) {
             showWelcomeModal();
         }
     }
+
+    // ✅ Moved OUTSIDE the tooltip block – runs every time for Pro users
+    if (getUserPlan() !== 'free') {
+        const followUpAllBtn = document.getElementById('followUpAllBtn');
+        if (followUpAllBtn) followUpAllBtn.classList.remove('hidden');
+    }
+
     function dismissTooltip() {
         document.getElementById('needsAttentionTooltip')?.classList.add('hidden');
     }
 }
-
-
 function showWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
     if (modal) modal.classList.remove('hidden');
@@ -1448,6 +1546,19 @@ function selectClient(clientId) {
         loadClientTimeline(clientId);
     } else {
         console.warn('⚠️ loadClientTimeline() not defined – timeline may be missing');
+    }
+
+      // ✅ Toggle invoice button based on plan
+    const invoiceBtn = document.getElementById('invoiceBtn');
+    const invoiceBtnLocked = document.getElementById('invoiceBtnLocked');
+    if (invoiceBtn && invoiceBtnLocked) {
+        if (getUserPlan() === 'free') {
+            invoiceBtn.classList.add('hidden');
+            invoiceBtnLocked.classList.remove('hidden');
+        } else {
+            invoiceBtn.classList.remove('hidden');
+            invoiceBtnLocked.classList.add('hidden');
+        }
     }
 
     // Open the panel
@@ -2528,14 +2639,19 @@ function openDetailInGmail() {
 async function updateSendButtons() {
     const sendBtn = document.getElementById('sendNowBtn');
     const connectBtn = document.getElementById('connectGmailToSendBtn');
-    if (!sendBtn || !connectBtn) return;
+    const lockedBtn = document.getElementById('sendNowLockedBtn');
+    if (!sendBtn || !connectBtn || !lockedBtn) return;
 
     const plan = getUserPlan();
     if (plan === 'free') {
         sendBtn.classList.add('hidden');
         connectBtn.classList.add('hidden');
+        lockedBtn.classList.remove('hidden');
         return;
     }
+
+    // Pro user – hide the locked button
+    lockedBtn.classList.add('hidden');
 
     try {
         const res = await authFetch('/api/gmail/status');
@@ -3898,7 +4014,20 @@ async function loadDiscordStatus() {
 
         const disconnectedDiv = document.getElementById('discordDisconnected');
         const connectedDiv = document.getElementById('discordConnected');
+        const freeDisconnectedDiv = document.getElementById('discordDisconnectedFree'); // ← THIS LINE MUST EXIST
         const statusText = document.getElementById('discordStatusText');
+
+        const plan = getUserPlan();
+        if (plan === 'free' && !data.connected) {
+            disconnectedDiv.classList.add('hidden');
+            connectedDiv.classList.add('hidden');
+            freeDisconnectedDiv.classList.remove('hidden');
+            if (statusText) {
+                statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-disconnected"></span>Not connected</span>`;
+                statusText.className = 'text-xs text-slate-400 mt-0.5';
+            }
+            return;
+        }
 
         if (data.connected) {
             disconnectedDiv.classList.add('hidden');
@@ -3949,10 +4078,24 @@ async function disconnectDiscordOAuth() {
 async function loadTelegramStatus() {
     const res = await authFetch('/api/user/telegram-status');
     const data = await res.json();
+    
     const disconnectedDiv = document.getElementById('telegramDisconnected');
     const connectedDiv = document.getElementById('telegramConnected');
+    const freeDisconnectedDiv = document.getElementById('telegramDisconnectedFree'); // ← THIS LINE MUST EXIST
     const statusText = document.getElementById('telegramStatusText');
 
+    const plan = getUserPlan();
+    if (plan === 'free' && !data.connected) {
+        disconnectedDiv.classList.add('hidden');
+        connectedDiv.classList.add('hidden');
+        freeDisconnectedDiv.classList.remove('hidden');
+        if (statusText) {
+            statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-disconnected"></span>Not connected</span>`;
+            statusText.className = 'text-xs text-slate-400 mt-0.5';
+        }
+        return;
+    }
+    freeDisconnectedDiv.classList.add('hidden');
     if (data.connected) {
         disconnectedDiv.classList.add('hidden');
         connectedDiv.classList.remove('hidden');
@@ -4044,8 +4187,22 @@ async function loadGmailStatus() {
 
         document.getElementById('gmailSettingsDisconnected').classList.toggle('hidden', connected);
         document.getElementById('gmailSettingsConnected').classList.toggle('hidden', !connected);
-
+        
+        const freeDisconnectedDiv = document.getElementById('gmailSettingsDisconnectedFree'); // ← THIS LINE
         const statusText = document.getElementById('gmailSettingsStatus');
+
+        const plan = getUserPlan();
+        if (plan === 'free' && !connected) {
+            document.getElementById('gmailSettingsDisconnected').classList.add('hidden');
+            document.getElementById('gmailSettingsConnected').classList.add('hidden');
+            freeDisconnectedDiv.classList.remove('hidden');
+            if (statusText) {
+                statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-disconnected"></span>Not connected</span>`;
+                statusText.className = 'text-xs text-slate-400 mt-0.5';
+            }
+            return;
+        }
+        freeDisconnectedDiv.classList.add('hidden');
         if (connected) {
             statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-connected"></span>Connected as ${data.email || 'user@example.com'}</span>`;
             statusText.className = 'text-xs text-green-400 mt-0.5 font-medium';
@@ -4068,6 +4225,25 @@ async function loadCampaigns() {
     const gmailConnectBtn = document.getElementById('gmailConnectBtn');
     const campaignsList = document.getElementById('campaignsList');
     const campaignsEmpty = document.getElementById('campaignsEmpty');
+
+        const plan = getUserPlan();
+    const singleBtn = document.getElementById('singleSeqBtn');      // the original Pro button
+    const singleLocked = document.getElementById('singleSeqBtnLocked');
+    const bulkBtn = document.getElementById('bulkBtn');            // the original Pro button
+    const bulkLocked = document.getElementById('bulkBtnLocked');
+    
+    if (plan === 'free') {
+        if (singleBtn) singleBtn.classList.add('hidden');
+        if (singleLocked) singleLocked.classList.remove('hidden');
+        if (bulkBtn) bulkBtn.classList.add('hidden');
+        if (bulkLocked) bulkLocked.classList.remove('hidden');
+    } else {
+        if (singleBtn) singleBtn.classList.remove('hidden');
+        if (singleLocked) singleLocked.classList.add('hidden');
+        if (bulkBtn) bulkBtn.classList.remove('hidden');
+        if (bulkLocked) bulkLocked.classList.add('hidden');
+    }
+
 
     // 1. Check Gmail connection
     try {

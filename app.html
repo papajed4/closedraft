@@ -503,6 +503,13 @@
                                     </svg>
                                     Needs Attention
                                 </h3>
+                                <button id="followUpAllBtn" onclick="followUpAll()"
+    class="hidden text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-1">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+    </svg>
+    Follow Up All
+</button>
                                 <a href="#" onclick="switchPage('clients'); filterAttentionClients(); return false;"
                                     class="text-xs text-indigo-400 hover:text-indigo-300">View All →</a>
                             </div>
@@ -1765,6 +1772,15 @@
                             </svg>
                             New Single
                         </button>
+                        <!-- Locked New Single (Free users) -->
+<button id="singleSeqBtnLocked" onclick="showUpgradeModal('campaigns')"
+    class="hidden bg-slate-700/30 text-slate-500 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 opacity-60 cursor-not-allowed">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+    New Single
+    <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full ml-1">Pro</span>
+</button>
                         <button onclick="openCreateCampaignModal()"
                             class="bg-slate-700/50 hover:bg-slate-700 text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 border border-white/10 transition-all">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1773,6 +1789,15 @@
                             </svg>
                             New Bulk
                         </button>
+                        <!-- Locked New Bulk (Free users) -->
+<button id="bulkBtnLocked" onclick="showUpgradeModal('campaigns')"
+    class="hidden bg-slate-700/30 text-slate-500 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 opacity-60 cursor-not-allowed">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
+    </svg>
+    New Bulk
+    <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full ml-1">Pro</span>
+</button>
                         <div
                             class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             JD
@@ -2174,6 +2199,14 @@
                                     Connect Discord
                                 </button>
                             </div>
+                            <!-- Free user locked state -->
+<div id="discordDisconnectedFree" class="hidden">
+    <button onclick="showUpgradeModal('discord')"
+        class="w-full py-2.5 rounded-xl bg-slate-700/30 text-slate-500 border border-slate-600/30 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
+        Connect Discord
+        <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">Pro</span>
+    </button>
+</div>
                         </div>
 
                         <!-- Telegram Notifications Card -->
@@ -2248,6 +2281,15 @@
                                     Connect Telegram
                                 </button>
                             </div>
+                            <!-- Free user locked state -->
+<div id="telegramDisconnectedFree" class="hidden">
+    <p class="text-slate-400 text-xs mb-4">Link your Telegram to receive updates directly.</p>
+    <button onclick="showUpgradeModal('telegram')"
+        class="w-full py-2.5 rounded-xl bg-slate-700/30 text-slate-500 border border-slate-600/30 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
+        Connect Telegram
+        <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">Pro</span>
+    </button>
+</div>
                         </div>
 
                         <!-- Gmail Integration Card -->
@@ -2290,6 +2332,15 @@
                                     Connect Gmail
                                 </button>
                             </div>
+                            <!-- Free user locked state -->
+<div id="gmailSettingsDisconnectedFree" class="hidden">
+    <p class="text-slate-400 text-xs mb-4">Send automated follow‑ups and sequences from your Gmail.</p>
+    <button onclick="showUpgradeModal('gmail')"
+        class="w-full py-2.5 rounded-xl bg-slate-700/30 text-slate-500 border border-slate-600/30 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
+        Connect Gmail
+        <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full">Pro</span>
+    </button>
+</div>
                         </div>
 
                         <!-- Danger Zone Card -->
@@ -2485,7 +2536,7 @@
                     </svg>
                     Generate Email
                 </button>
-                <button onclick="generateInvoice()"
+                <button id="invoiceBtn" onclick="generateInvoice()"
                     class="w-full mt-3 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all border border-emerald-500/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2494,6 +2545,15 @@
                     </svg>
                     Generate Invoice
                 </button>
+                <!-- Locked Generate Invoice (Free users) -->
+<button id="invoiceBtnLocked" onclick="showUpgradeModal('invoices')"
+    class="w-full mt-3 bg-slate-700/30 text-slate-500 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-60 border border-slate-600/30">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+    </svg>
+    Generate Invoice
+    <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full ml-1">Pro</span>
+</button>
             </div>
         </div>
 
@@ -2809,6 +2869,15 @@
         </svg>
         Connect Gmail to Send
     </button>
+    <!-- Locked Send Now (Free users) -->
+    <button id="sendNowLockedBtn" onclick="showUpgradeModal('gmail')"
+        class="hidden flex-1 bg-slate-700/30 text-slate-500 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 min-w-[140px] cursor-not-allowed opacity-60">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+        Send Now
+        <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full ml-1">Pro</span>
+    </button>
 </div>
 
                         <button onclick="resetEmailModal()"
@@ -3084,30 +3153,54 @@
         </div>
 
         <!-- Welcome Modal (first‑time only) -->
-<div id="welcomeModal" class="fixed inset-0 z-50 hidden">
-    <div class="modal-overlay absolute inset-0" onclick="closeWelcomeModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
-        <div class="glass-card rounded-3xl p-6 text-center">
-            <div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+        <div id="welcomeModal" class="fixed inset-0 z-50 hidden">
+            <div class="modal-overlay absolute inset-0" onclick="closeWelcomeModal()"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
+                <div class="glass-card rounded-3xl p-6 text-center">
+                    <div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">Your clients are waiting</h2>
+                    <p class="text-slate-400 text-sm mb-2">
+                        These demo clients need attention right now.
+                    </p>
+                    <p class="text-slate-500 text-xs mb-6">
+                        Click any <span class="text-amber-400 font-bold">“Write them”</span> button to see how
+                        CloseDraft helps you follow up in seconds.
+                    </p>
+                    <button onclick="closeWelcomeModal()"
+                        class="w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold">
+                        Got it, let’s go
+                    </button>
+                    <button onclick="closeWelcomeModal()"
+                        class="text-slate-500 text-xs mt-3 hover:text-slate-400 transition-colors">
+                        Skip
+                    </button>
+                </div>
             </div>
-            <h2 class="text-xl font-bold text-white mb-2">Your clients are waiting</h2>
-            <p class="text-slate-400 text-sm mb-2">
-                These demo clients need attention right now.
-            </p>
-            <p class="text-slate-500 text-xs mb-6">
-                Click any <span class="text-amber-400 font-bold">“Write them”</span> button to see how CloseDraft helps you follow up in seconds.
-            </p>
-            <button onclick="closeWelcomeModal()"
-                class="w-full gradient-primary text-white py-3 rounded-xl text-sm font-bold">
-                Got it, let’s go
-            </button>
-            <button onclick="closeWelcomeModal()" class="text-slate-500 text-xs mt-3 hover:text-slate-400 transition-colors">
-                Skip
-            </button>
+        </div>
+
+        <!-- Follow Up All Results Modal -->
+<div id="followUpAllModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" onclick="closeFollowUpAllModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl px-4 max-h-[90vh] overflow-y-auto">
+        <div class="glass-card rounded-3xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Follow Up All – Drafts</h2>
+                <button onclick="closeFollowUpAllModal()" class="p-2 text-slate-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="followUpAllList" class="space-y-4 max-h-[60vh] overflow-y-auto"></div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeFollowUpAllModal()" class="flex-1 bg-slate-700/50 hover:bg-slate-700 text-white py-3 rounded-xl text-sm font-medium transition-all">Close</button>
+                <button id="sendAllDraftsBtn" onclick="sendAllDrafts()" class="flex-1 gradient-primary text-white py-3 rounded-xl text-sm font-bold hidden">Send All</button>
+            </div>
         </div>
     </div>
 </div>
