@@ -25,6 +25,7 @@ let templateToDelete = null;
 let generatedSubjectA = '';
 let generatedSubjectB = '';
 let currentSubjectChoice = 'A';
+let confirmCallback = null;
 
 // --- New global declarations for page & nav elements ---
 let dashboardPage, clientsPage, emailsPage, templatesPage, analyticsPage, settingsPage, sequencesPage, campaignsPage;
@@ -89,16 +90,47 @@ function checkClientLimit() {
 }
 
 function showUpgradeModal(type) {
-    const message = type === 'clients'
-        ? "You've reached the free limit of 10 clients."
-        : "You've reached the free limit of 20 AI emails this month.";
+    const modal = document.getElementById('upgradeModal');
+    const messageEl = document.getElementById('upgradeMessage');
+    if (!modal || !messageEl) return;
 
-    // Store the upgrade type for later
-    window.upgradeType = type;
+    const messages = {
+        'clients': "You've reached the free limit of 10 clients.",
+        'emails': "You've reached the free limit of 15 AI emails this month.",
+        'campaigns': "AutoDraft campaigns are available on the Pro plan.",
+        'gmail': "Gmail integration is available on the Pro plan.",
+        'discord': "Discord notifications are available on the Pro plan.",
+        'telegram': "Telegram notifications are available on the Pro plan.",
+        'invoices': "Invoice generator is available on the Pro plan."
+    };
+    messageEl.textContent = messages[type] || "You've reached the free limit.";
+    modal.classList.remove('hidden');
+}
 
-    // Show the modal (we'll create this in Step 2)
-    document.getElementById('upgradeMessage').textContent = message;
-    document.getElementById('upgradeModal').classList.remove('hidden');
+function showConfirmModal(message, callback, title = 'Confirm Action', btnText = 'Delete') {
+    const modal = document.getElementById('confirmModal');
+    const msgEl = document.getElementById('confirmMessage');
+    const titleEl = document.getElementById('confirmTitle');
+    const btnEl = document.getElementById('confirmBtn');
+    if (!modal || !msgEl || !titleEl || !btnEl) return;
+
+    msgEl.textContent = message;
+    titleEl.textContent = title;
+    btnEl.textContent = btnText;
+    confirmCallback = callback;
+    modal.classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.add('hidden');
+    confirmCallback = null;
+}
+
+function confirmAction() {
+    if (typeof confirmCallback === 'function') {
+        confirmCallback();
+    }
+    closeConfirmModal();
 }
 
 // ==================== AUTH TOKEN HELPER ====================
@@ -2199,7 +2231,7 @@ function updateEmailLimitDisplay() {
 
     if (plan === 'free' && statsContainer) {
         const used = getEmailsThisMonth();
-        const limit = 20;
+        const limit = 15;
         const remaining = limit - used;
 
         // Add a small indicator
@@ -2320,45 +2352,54 @@ function renderEmailHistoryList() {
         }
     }
 
-    container.innerHTML = filteredEmails.map(email => `
-        <tr class="hover:bg-white/[0.02] transition-colors group relative cursor-pointer"
-            onclick="viewEmailDetail('${email.id}')">
-            <td class="py-4 px-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs shrink-0">
-                        ${email.clients?.name?.charAt(0) || '?'}
-                    </div>
-                    <div>
-                        <p class="text-white font-medium text-sm">${email.clients?.name || 'Unknown'}</p>
-                        <p class="text-slate-500 text-[11px]">${email.clients?.business || ''}</p>
-                    </div>
+   container.innerHTML = filteredEmails.map(email => `
+    <tr class="hover:bg-white/[0.02] transition-colors group relative cursor-pointer"
+        onclick="viewEmailDetail('${email.id}')">
+        <td class="py-4 px-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs shrink-0">
+                    ${email.clients?.name?.charAt(0) || '?'}
                 </div>
-            </td>
-            <td class="py-4 px-6">
-                <p class="text-white text-sm">${email.subject || 'No subject'}</p>
-                <p class="text-slate-500 text-[11px] truncate max-w-[220px]">${email.body?.substring(0, 60) || ''}...</p>
-            </td>
-            <td class="py-4 px-6">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                    ${email.type}
-                </span>
-            </td>
-            <td class="py-4 px-6 text-slate-400 text-sm">${formatDate(email.created_at)}</td>
-            <td class="py-4 px-6">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${getToneBadge(email.tone)}">
-                    ${email.tone}
-                </span>
-            </td>
-            <td class="py-4 px-6 text-right">
-                <button class="text-slate-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-                        onclick="event.stopPropagation(); viewEmailDetail('${email.id}')">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                <div>
+                    <p class="text-white font-medium text-sm">${email.clients?.name || 'Unknown'}</p>
+                    <p class="text-slate-500 text-[11px]">${email.clients?.business || ''}</p>
+                </div>
+            </div>
+        </td>
+        <td class="py-4 px-6">
+            <p class="text-white text-sm">${email.subject || 'No subject'}</p>
+            <p class="text-slate-500 text-[11px] truncate max-w-[220px]">${email.body?.substring(0, 60) || ''}...</p>
+        </td>
+        <td class="py-4 px-6">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                ${email.type}
+            </span>
+        </td>
+        <td class="py-4 px-6 text-slate-400 text-sm">${formatDate(email.created_at)}</td>
+        <td class="py-4 px-6">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${getToneBadge(email.tone)}">
+                ${email.tone}
+            </span>
+        </td>
+        <td class="py-4 px-6 text-right" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onclick="viewEmailDetail('${email.id}')" 
+                    class="text-slate-500 hover:text-white transition-colors p-1" title="View">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                     </svg>
                 </button>
-            </td>
-        </tr>
-    `).join('');
+                <button onclick="deleteEmailById('${email.id}')" 
+                    class="text-slate-500 hover:text-red-400 transition-colors p-1" title="Delete">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </td>
+    </tr>
+`).join('');
 }
 
 // Current selected email for detail view
@@ -2472,6 +2513,28 @@ function handleEmailSearch(e) {
         </div>
     `).join('');
 }
+
+async function deleteEmailById(emailId) {
+    showConfirmModal('Delete this email? This cannot be undone.', async () => {
+        try {
+            const res = await authFetch(`/api/emails/${emailId}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to delete');
+            showToast('Email deleted', 'success');
+
+            // Clear search inputs to avoid confusion
+            const searchInput = document.getElementById('emailSearch');
+            const searchMobile = document.getElementById('emailSearchMobile');
+            if (searchInput) searchInput.value = '';
+            if (searchMobile) searchMobile.value = '';
+
+            // Reload email history (respects current filter)
+            await loadEmailHistory();
+        } catch (e) {
+            showToast('Failed to delete email', 'error');
+        }
+    }, 'Delete Email', 'Delete');
+}
+
 
 function updateDetailPanelActions(client) {
     const actionsContainer = document.getElementById('detailPanelActions');
@@ -2678,7 +2741,7 @@ function checkEmailLimit() {
         return true;
     }
 
-    const limit = 20;
+    const limit = 15;
     const currentCount = getEmailsThisMonth();
 
     if (currentCount >= limit) {
@@ -3395,14 +3458,15 @@ async function sendNextInSequence(seqId) {
 }
 
 async function deleteSequence(seqId) {
-    if (!confirm('Delete this sequence?')) return;
-    try {
-        await authFetch(`/api/sequences/${seqId}`, { method: 'DELETE' });
-        showToast('Sequence deleted', 'success');
-        loadSequences();
-    } catch (e) {
-        showToast('Failed to delete', 'error');
-    }
+    showConfirmModal('Delete this sequence? This cannot be undone.', async () => {
+        try {
+            await authFetch(`/api/sequences/${seqId}`, { method: 'DELETE' });
+            showToast('Sequence deleted', 'success');
+            loadSequences();
+        } catch (e) {
+            showToast('Failed to delete', 'error');
+        }
+    }, 'Delete Sequence', 'Delete');
 }
 
 // ============================================
@@ -3468,6 +3532,11 @@ function renderTimeline(activities) {
 }
 
 function generateInvoice() {
+    if (getUserPlan() === 'free') {
+        showUpgradeModal('invoices');
+        return;
+    }
+
     if (!selectedClientId) {
         showToast('No client selected', 'error');
         return;
@@ -3678,6 +3747,11 @@ function escapeHtml(str) {
 
 // ==================== DISCORD OAUTH ====================
 function connectDiscord() {
+    if (getUserPlan() === 'free') {
+        showUpgradeModal('discord');
+        return;
+    }
+
     authFetch('/api/discord/auth-url')
         .then(r => r.json())
         .then(data => { window.location.href = data.url; });
@@ -3731,10 +3805,11 @@ async function saveDiscordPrefs() {
 }
 
 async function disconnectDiscordOAuth() {
-    if (!confirm('Disconnect Discord? You will stop receiving notifications.')) return;
-    await authFetch('/api/discord/disconnect', { method: 'POST' });
-    showToast('Discord disconnected', 'success');
-    loadDiscordStatus();
+    showConfirmModal('Disconnect Discord? You will stop receiving notifications.', async () => {
+        await authFetch('/api/discord/disconnect', { method: 'POST' });
+        showToast('Discord disconnected', 'success');
+        loadDiscordStatus();
+    }, 'Disconnect Discord', 'Disconnect');
 }
 
 async function loadTelegramStatus() {
@@ -3766,6 +3841,11 @@ async function loadTelegramStatus() {
 }
 
 async function connectTelegram() {
+     if (getUserPlan() === 'free') {
+        showUpgradeModal('telegram');
+        return;
+    }
+
     const res = await authFetch('/api/user/telegram-link');
     const data = await res.json();
     window.open(data.link, '_blank');
@@ -3775,10 +3855,11 @@ async function connectTelegram() {
 }
 
 async function disconnectTelegram() {
-    if (!confirm('Disconnect Telegram? You will stop receiving notifications.')) return;
-    await authFetch('/api/user/telegram-disconnect', { method: 'POST' });
-    showToast('Telegram disconnected', 'success');
-    loadTelegramStatus();
+    showConfirmModal('Disconnect Telegram? You will stop receiving notifications.', async () => {
+        await authFetch('/api/user/telegram-disconnect', { method: 'POST' });
+        showToast('Telegram disconnected', 'success');
+        loadTelegramStatus();
+    }, 'Disconnect Telegram', 'Disconnect');
 }
 
 async function saveTelegramPrefs() {
@@ -3796,20 +3877,21 @@ async function saveTelegramPrefs() {
 
 // Gmail connection ------------------------------------------------------------
 function connectGmail() {
+    if (getUserPlan() === 'free') {
+        showUpgradeModal('gmail');
+        return;
+    }
     authFetch('/api/gmail/auth-url')
         .then(r => r.json())
         .then(data => { window.location.href = data.url; });
 }
 
 async function disconnectGmail() {
-    if (!confirm('Disconnect Gmail? You will stop sending campaigns.')) return;
-    try {
+    showConfirmModal('Disconnect Gmail? You will stop sending campaigns.', async () => {
         const res = await authFetch('/api/gmail/disconnect', { method: 'POST' });
         if (res.ok) {
             showToast('Gmail disconnected', 'success');
-            // Refresh settings UI if we're on the settings page
             if (typeof loadGmailStatus === 'function') await loadGmailStatus();
-            // Also update campaigns page if visible
             const campaignsPage = document.getElementById('campaignsPage');
             if (campaignsPage && !campaignsPage.classList.contains('hidden')) {
                 loadCampaigns();
@@ -3817,9 +3899,7 @@ async function disconnectGmail() {
         } else {
             showToast('Failed to disconnect', 'error');
         }
-    } catch (e) {
-        showToast('Error disconnecting Gmail', 'error');
-    }
+    }, 'Disconnect Gmail', 'Disconnect');
 }
 
 async function loadGmailStatus() {
@@ -4044,20 +4124,25 @@ async function launchCampaign(id) {
 }
 
 async function deleteCampaign(id) {
-    if (!confirm('Delete this campaign? This cannot be undone.')) return;
-
-    try {
-        const res = await authFetch(`/api/campaigns/${id}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error('Failed to delete');
-        showToast('Campaign deleted', 'success');
-        loadCampaigns();  // refresh the list
-    } catch (err) {
-        showToast('Failed to delete campaign', 'error');
-    }
+    showConfirmModal('Delete this campaign? This cannot be undone.', async () => {
+        try {
+            const res = await authFetch(`/api/campaigns/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to delete');
+            showToast('Campaign deleted', 'success');
+            loadCampaigns();
+        } catch (err) {
+            showToast('Failed to delete campaign', 'error');
+        }
+    }, 'Delete Campaign', 'Delete');
 }
 
 // Populate client checkboxes when opening the campaign modal
 async function openCreateCampaignModal() {
+    if (getUserPlan() === 'free') {
+        showUpgradeModal('campaigns');
+        return;
+    }
+
     // Check Gmail connection first
     try {
         const res = await authFetch('/api/gmail/status');
@@ -4243,6 +4328,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function openSingleSequenceModal() {
+
+    if (getUserPlan() === 'free') {
+        showUpgradeModal('campaigns');
+        return;
+    }
+
     // Check if Gmail is connected before allowing single sequence
     try {
         const res = await authFetch('/api/gmail/status');

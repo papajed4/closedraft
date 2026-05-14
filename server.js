@@ -169,7 +169,13 @@ app.post('/api/clients', async (req, res) => {
             .single();
 
         if (error) throw error;
+
+        // ... after successful insert and before res.status(201)
+        await sendDiscordNotification(user.id, `➕ Client "${name}" added`, 'client_added');
+        await sendTelegramNotification(user.id, `➕ Client "${name}" added`, 'client_added');
         res.status(201).json({ client: data });
+
+
     } catch (error) {
         console.error('Error adding client:', error);
         res.status(500).json({ error: 'Failed to add client' });
@@ -218,7 +224,11 @@ app.patch('/api/clients/:id', async (req, res) => {
                 });
         }
 
+        // ... after successful update
+        await sendDiscordNotification(user.id, `✏️ Client "${data.name}" updated`, 'client_updated');
+        await sendTelegramNotification(user.id, `✏️ Client "${data.name}" updated`, 'client_updated');
         res.status(200).json({ client: data });
+
     } catch (error) {
         console.error('Error updating client:', error);
         res.status(500).json({ error: 'Failed to update client' });
@@ -237,6 +247,9 @@ app.delete('/api/clients/:id', async (req, res) => {
             .eq('id', id)
             .eq('user_id', user.id);
         if (error) throw error;
+        // ... after successful delete
+        await sendDiscordNotification(user.id, `🗑️ Client deleted`, 'client_deleted');
+        await sendTelegramNotification(user.id, `🗑️ Client deleted`, 'client_deleted');
         res.status(200).json({ success: true });
     } catch (error) {
         console.error('Error deleting client:', error);
@@ -258,6 +271,9 @@ app.patch('/api/clients/:id/archive', async (req, res) => {
             .select()
             .single();
         if (error) throw error;
+        // ... after successful archive
+        await sendDiscordNotification(user.id, `📦 Client "${data.name}" archived`, 'client_archived');
+        await sendTelegramNotification(user.id, `📦 Client "${data.name}" archived`, 'client_archived');
         res.status(200).json({ client: data });
     } catch (error) {
         console.error('Error archiving client:', error);
@@ -279,6 +295,10 @@ app.patch('/api/clients/:id/restore', async (req, res) => {
             .select()
             .single();
         if (error) throw error;
+        // ... after successful restore
+        // ... after successful restore
+        await sendDiscordNotification(user.id, `📤 Client "${data.name}" restored`, 'client_archived');
+        await sendTelegramNotification(user.id, `📤 Client "${data.name}" restored`, 'client_archived');
         res.status(200).json({ client: data });
     } catch (error) {
         console.error('Error restoring client:', error);
@@ -426,6 +446,29 @@ app.get('/api/emails', async (req, res) => {
     }
 });
 
+app.delete('/api/emails/:id', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { id } = req.params;
+    try {
+        const { error } = await supabaseAdmin
+            .from('emails')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (error) throw error;
+
+        await sendDiscordNotification(user.id, `🗑️ Email deleted`, 'email_deleted');
+        await sendTelegramNotification(user.id, `🗑️ Email deleted`, 'email_deleted');
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error deleting email:', error);
+        res.status(500).json({ error: 'Failed to delete email' });
+    }
+});
+
 // ==================== TEMPLATES API ====================
 app.get('/api/templates', async (req, res) => {
     const user = await getUserFromToken(req);
@@ -459,6 +502,9 @@ app.post('/api/templates', async (req, res) => {
             .select()
             .single();
         if (error) throw error;
+
+        await sendDiscordNotification(user.id, `📄 Template "${data.name}" created`, 'template_created');
+        await sendTelegramNotification(user.id, `📄 Template "${data.name}" created`, 'template_created');
         res.status(201).json({ template: data });
     } catch (error) {
         console.error('Error adding template:', error);
@@ -481,6 +527,8 @@ app.patch('/api/templates/:id', async (req, res) => {
             .select()
             .single();
         if (error) throw error;
+        await sendDiscordNotification(user.id, `✏️ Template "${data.name}" updated`, 'template_updated');
+        await sendTelegramNotification(user.id, `✏️ Template "${data.name}" updated`, 'template_updated');
         res.status(200).json({ template: data });
     } catch (error) {
         console.error('Error updating template:', error);
@@ -500,6 +548,9 @@ app.delete('/api/templates/:id', async (req, res) => {
             .eq('id', id)
             .eq('user_id', user.id);
         if (error) throw error;
+
+        await sendDiscordNotification(user.id, `🗑️ Template deleted`, 'template_deleted');
+        await sendTelegramNotification(user.id, `🗑️ Template deleted`, 'template_deleted');
         res.status(200).json({ success: true });
     } catch (error) {
         console.error('Error deleting template:', error);
@@ -564,6 +615,10 @@ app.post('/api/polar-webhook', async (req, res) => {
                     else if (payment.product_id === '5d5c4dd0-6a3b-4b76-bcec-fbd7bd22cd1b') plan = 'pro_monthly';
                     await supabaseAdmin.from('profiles').update({ plan, updated_at: new Date().toISOString() }).eq('id', payment.user_id);
                 }
+
+                // inside if (checkout.status === 'succeeded') block, after updating plan
+                await sendDiscordNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
             }
         }
         if (event.type === 'subscription.created') {
@@ -575,6 +630,10 @@ app.post('/api/polar-webhook', async (req, res) => {
             const { data: payment } = await supabase.from('payments').select('user_id').eq('subscription_id', subscription.id).single();
             if (payment) {
                 await supabaseAdmin.from('profiles').update({ plan: 'free', updated_at: new Date().toISOString() }).eq('id', payment.user_id);
+
+                // ✅ INSERT HERE
+                await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free`, 'plan_changed');
             }
         }
         res.status(200).json({ received: true });
@@ -665,6 +724,8 @@ app.post('/api/sequences', async (req, res) => {
         const { error: stepsError } = await supabaseAdmin.from('sequence_steps').insert(stepData);
         if (stepsError) throw stepsError;
 
+        await sendDiscordNotification(user.id, `📬 Sequence "${name}" created`, 'sequence_created');
+        await sendTelegramNotification(user.id, `📬 Sequence "${name}" created`, 'sequence_created');
         res.status(201).json({ sequence });
     } catch (error) {
         console.error('Error creating sequence:', error);
@@ -742,7 +803,7 @@ app.post('/api/sequences/:id/send-next', async (req, res) => {
         const sentStepsCount = sequence.steps.filter(s => s.sent_at).length + 1;
         await supabaseAdmin.from('sequences').update({ current_step: sentStepsCount, updated_at: new Date().toISOString() }).eq('id', id);
 
-                await sendDiscordNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`);
+        await sendDiscordNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`);
 
         await sendTelegramNotification(user.id, `📧 Sequence email sent to ${sequence.clients?.name} (${sequence.type}) – Hope they answer!`, 'new_email');
 
@@ -768,6 +829,9 @@ app.delete('/api/sequences/:id', async (req, res) => {
     try {
         const { error } = await supabaseAdmin.from('sequences').delete().eq('id', id).eq('user_id', user.id);
         if (error) throw error;
+
+        await sendDiscordNotification(user.id, `🗑️ Sequence deleted`, 'sequence_deleted');
+        await sendTelegramNotification(user.id, `🗑️ Sequence deleted`, 'sequence_deleted');
         res.status(200).json({ success: true });
     } catch (error) {
         console.error('Error deleting sequence:', error);
@@ -818,178 +882,187 @@ const { oauth2Client: discordOAuth2 } = new (require('google-auth-library').OAut
 
 // Generate Discord OAuth URL
 app.get('/api/discord/auth-url', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    
+    const { data: profile } = await supabaseAdmin.from('profiles').select('plan').eq('id', user.id).single();
+    if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
+    
+    const params = new URLSearchParams({
+        client_id: process.env.DISCORD_CLIENT_ID,
+        redirect_uri: process.env.DISCORD_REDIRECT_URI,
+        response_type: 'code',
+        scope: 'identify',
+        state: JSON.stringify({ userId: user.id }),
+    });
 
-  const params = new URLSearchParams({
-    client_id: process.env.DISCORD_CLIENT_ID,
-    redirect_uri: process.env.DISCORD_REDIRECT_URI,
-    response_type: 'code',
-    scope: 'identify',
-    state: JSON.stringify({ userId: user.id }),
-  });
-
-  res.json({ url: `https://discord.com/api/oauth2/authorize?${params}` });
+    res.json({ url: `https://discord.com/api/oauth2/authorize?${params}` });
 });
 
 // Discord OAuth callback
 app.get('/api/discord/callback', async (req, res) => {
-  const { code, state } = req.query;
-  if (!code || !state) return res.status(400).send('Missing parameters');
+    const { code, state } = req.query;
+    if (!code || !state) return res.status(400).send('Missing parameters');
 
-  let userId;
-  try { userId = JSON.parse(state).userId; } catch { return res.status(400).send('Invalid state'); }
+    let userId;
+    try { userId = JSON.parse(state).userId; } catch { return res.status(400).send('Invalid state'); }
 
-  try {
-    // Exchange code for token
-    const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: process.env.DISCORD_REDIRECT_URI,
-      }),
-    });
-    const tokenData = await tokenRes.json();
-    if (!tokenData.access_token) throw new Error('Failed to get token');
+    try {
+        // Exchange code for token
+        const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                client_id: process.env.DISCORD_CLIENT_ID,
+                client_secret: process.env.DISCORD_CLIENT_SECRET,
+                grant_type: 'authorization_code',
+                code,
+                redirect_uri: process.env.DISCORD_REDIRECT_URI,
+            }),
+        });
+        const tokenData = await tokenRes.json();
+        if (!tokenData.access_token) throw new Error('Failed to get token');
 
-    // Fetch user info
-    const userRes = await fetch('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
-    });
-    const userData = await userRes.json();
+        // Fetch user info
+        const userRes = await fetch('https://discord.com/api/users/@me', {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+        });
+        const userData = await userRes.json();
 
-    // Store Discord ID and username
-    await supabaseAdmin
-      .from('profiles')
-      .update({
-        discord_id: userData.id,
-        discord_username: userData.username,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
+        // Store Discord ID and username
+        await supabaseAdmin
+            .from('profiles')
+            .update({
+                discord_id: userData.id,
+                discord_username: userData.username,
+                updated_at: new Date().toISOString(),
+            })
+            .eq('id', userId);
 
-    // Redirect to app with success
-    res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?discord_connected=1`);
-  } catch (error) {
-    console.error('Discord OAuth error:', error);
-    res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?discord_error=1`);
-  }
+        // Redirect to app with success
+        res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?discord_connected=1`);
+
+        await sendDiscordNotification(userId, `💬 Discord connected`, 'discord_connected');
+        await sendTelegramNotification(userId, `💬 Discord connected`, 'discord_connected');
+
+    } catch (error) {
+        console.error('Discord OAuth error:', error);
+        res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?discord_error=1`);
+    }
 });
 
 // Get Discord connection status
 app.get('/api/discord/status', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { data } = await supabaseAdmin
-    .from('profiles')
-    .select('discord_id, discord_username, discord_channel_id, discord_notification_prefs')
-    .eq('id', user.id)
-    .single();
+    const { data } = await supabaseAdmin
+        .from('profiles')
+        .select('discord_id, discord_username, discord_channel_id, discord_notification_prefs')
+        .eq('id', user.id)
+        .single();
 
-  res.json({
-    connected: !!data?.discord_channel_id,
-    username: data?.discord_username || null,
-    prefs: data?.discord_notification_prefs || {},
-  });
+    res.json({
+        connected: !!data?.discord_channel_id,
+        username: data?.discord_username || null,
+        prefs: data?.discord_notification_prefs || {},
+    });
 });
 
 // Disconnect Discord
 app.post('/api/discord/disconnect', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  await supabaseAdmin
-    .from('profiles')
-    .update({ discord_id: null, discord_username: null, discord_channel_id: null })
-    .eq('id', user.id);
+    await supabaseAdmin
+        .from('profiles')
+        .update({ discord_id: null, discord_username: null, discord_channel_id: null })
+        .eq('id', user.id);
 
-  res.json({ success: true });
+    await sendDiscordNotification(user.id, `🔌 Discord disconnected`, 'discord_disconnected');
+    await sendTelegramNotification(user.id, `🔌 Discord disconnected`, 'discord_disconnected');
+    res.json({ success: true });
 });
 
 // Update Discord notification preferences
 app.post('/api/discord/prefs', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { prefs } = req.body;
-  await supabaseAdmin
-    .from('profiles')
-    .update({ discord_notification_prefs: prefs })
-    .eq('id', user.id);
+    const { prefs } = req.body;
+    await supabaseAdmin
+        .from('profiles')
+        .update({ discord_notification_prefs: prefs })
+        .eq('id', user.id);
 
-  res.json({ success: true });
+    res.json({ success: true });
 });
 
 // Manual channel creation for existing server members
 app.post('/api/discord/create-channel', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('discord_id, discord_username, discord_channel_id')
-    .eq('id', user.id)
-    .single();
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('discord_id, discord_username, discord_channel_id')
+        .eq('id', user.id)
+        .single();
 
-  if (!profile?.discord_id) return res.status(400).json({ error: 'Discord not connected' });
-  if (profile.discord_channel_id) return res.status(200).json({ message: 'Channel already exists' });
+    if (!profile?.discord_id) return res.status(400).json({ error: 'Discord not connected' });
+    if (profile.discord_channel_id) return res.status(200).json({ message: 'Channel already exists' });
 
-  try {
-    const guild = discordClient.guilds.cache.first(); // your CloseDraft server
-    if (!guild) throw new Error('Bot not in server');
+    try {
+        const guild = discordClient.guilds.cache.first(); // your CloseDraft server
+        if (!guild) throw new Error('Bot not in server');
 
-    const member = await guild.members.fetch(profile.discord_id);
-    if (!member) throw new Error('Member not found in server');
+        const member = await guild.members.fetch(profile.discord_id);
+        if (!member) throw new Error('Member not found in server');
 
-    const channel = await guild.channels.create({
-      name: notificationChannelName(profile.discord_username || 'user'),
-      type: 0, // text channel
-      permissionOverwrites: [
-        { id: guild.roles.everyone, deny: [PermissionsBitField.Flags.ViewChannel] },
-        { id: member.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory] },
-        { id: discordClient.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory] },
-      ],
-    });
+        const channel = await guild.channels.create({
+            name: notificationChannelName(profile.discord_username || 'user'),
+            type: 0, // text channel
+            permissionOverwrites: [
+                { id: guild.roles.everyone, deny: [PermissionsBitField.Flags.ViewChannel] },
+                { id: member.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.ReadMessageHistory] },
+                { id: discordClient.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory] },
+            ],
+        });
 
-    await supabaseAdmin
-      .from('profiles')
-      .update({ discord_channel_id: channel.id })
-      .eq('id', user.id);
+        await supabaseAdmin
+            .from('profiles')
+            .update({ discord_channel_id: channel.id })
+            .eq('id', user.id);
 
-    channel.send('✅ Welcome to CloseDraft Notifications!\nYou‘ll now receive client alerts and reminders here.');
-    res.status(201).json({ channelId: channel.id });
-  } catch (err) {
-    console.error('Manual channel creation failed:', err);
-    res.status(500).json({ error: 'Failed to create channel' });
-  }
+        channel.send('✅ Welcome to CloseDraft Notifications!\nYou‘ll now receive client alerts and reminders here.');
+        res.status(201).json({ channelId: channel.id });
+    } catch (err) {
+        console.error('Manual channel creation failed:', err);
+        res.status(500).json({ error: 'Failed to create channel' });
+    }
 });
 
 // Helper to send notification to user's Discord webhook
 async function sendDiscordNotification(userId, message, type = 'new_email') {
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('discord_id, discord_channel_id, discord_notification_prefs')
-    .eq('id', userId)
-    .single();
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('discord_id, discord_channel_id, discord_notification_prefs')
+        .eq('id', userId)
+        .single();
 
-  if (!profile?.discord_channel_id) return;
-  if (profile.discord_notification_prefs && profile.discord_notification_prefs[type] === false) return;
+    if (!profile?.discord_channel_id) return;
+    if (profile.discord_notification_prefs && profile.discord_notification_prefs[type] === false) return;
 
-  try {
-    const channel = await discordClient.channels.fetch(profile.discord_channel_id);
-    if (channel) {
-      // Add a direct mention so the user gets a ping/phone notification
-      const mention = profile.discord_id ? `<@${profile.discord_id}>` : '';
-      await channel.send(`${mention} ${message}`);
+    try {
+        const channel = await discordClient.channels.fetch(profile.discord_channel_id);
+        if (channel) {
+            // Add a direct mention so the user gets a ping/phone notification
+            const mention = profile.discord_id ? `<@${profile.discord_id}>` : '';
+            await channel.send(`${mention} ${message}`);
+        }
+    } catch (e) {
+        console.error('Discord notification failed:', e.message);
     }
-  } catch (e) {
-    console.error('Discord notification failed:', e.message);
-  }
 }
 
 async function sendTelegramNotification(userId, message, type = 'new_email') {
@@ -1022,7 +1095,6 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const token = match[1].trim();
 
-    // Find user by telegram_link_token
     const { data: profile } = await supabaseAdmin
         .from('profiles')
         .select('id, email')
@@ -1030,7 +1102,6 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
         .single();
 
     if (profile) {
-        // Store the chat ID and clear the link token (one-time use)
         await supabaseAdmin
             .from('profiles')
             .update({
@@ -1039,13 +1110,16 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
             })
             .eq('id', profile.id);
 
+        // ✅ INSERT HERE
+        await sendDiscordNotification(profile.id, `💬 Telegram connected`, 'telegram_connected');
+        await sendTelegramNotification(profile.id, `💬 Telegram connected`, 'telegram_connected');
+
         bot.sendMessage(chatId, '🎉 Welcome to CloseDraft Notifications! You’ll now receive client updates and reminders here.');
         console.log(`✅ Telegram linked for user ${profile.email}`);
     } else {
         bot.sendMessage(chatId, '❌ Invalid or expired link. Please try again from the Settings page.');
     }
 });
-
 // If user just types /start without token, prompt them
 bot.onText(/^\/start$/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Hi! Please connect your CloseDraft account from the Settings page to receive notifications.');
@@ -1057,7 +1131,10 @@ bot.onText(/^\/start$/, (msg) => {
 app.get('/api/user/telegram-link', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-
+    
+    const { data: profile } = await supabaseAdmin.from('profiles').select('plan').eq('id', user.id).single();
+    if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
+    
     // Generate a fresh random token
     const crypto = require('crypto');
     const token = crypto.randomBytes(16).toString('hex');
@@ -1114,6 +1191,8 @@ app.post('/api/user/telegram-disconnect', async (req, res) => {
         .update({ telegram_chat_id: null })
         .eq('id', user.id);
 
+    await sendDiscordNotification(user.id, `🔌 Telegram disconnected`, 'telegram_disconnected');
+    await sendTelegramNotification(user.id, `🔌 Telegram disconnected`, 'telegram_disconnected');
     res.json({ success: true });
 });
 
@@ -1158,6 +1237,8 @@ app.post('/api/campaigns', checkPro, async (req, res) => {
         const { error: stepErr } = await supabaseAdmin.from('campaign_steps').insert(stepsInserts);
         if (stepErr) throw stepErr;
 
+        await sendDiscordNotification(user.id, `📬 Campaign "${name}" created`, 'campaign_created');
+        await sendTelegramNotification(user.id, `📬 Campaign "${name}" created`, 'campaign_created');
         res.status(201).json({ campaign });
     } catch (error) {
         console.error('Create campaign error:', error);
@@ -1205,6 +1286,9 @@ app.post('/api/campaigns/:id/launch', checkPro, async (req, res) => {
         if (sendInserts.length > 0) {
             await supabaseAdmin.from('campaign_sends').insert(sendInserts);
         }
+
+        await sendDiscordNotification(user.id, `🚀 Campaign launched`, 'campaign_launched');
+        await sendTelegramNotification(user.id, `🚀 Campaign launched`, 'campaign_launched');
         res.json({ success: true });
     } catch (error) {
         console.error('Launch campaign error:', error);
@@ -1300,6 +1384,8 @@ app.delete('/api/campaigns/:id', checkPro, async (req, res) => {
         await supabaseAdmin.from('campaign_leads').delete().eq('campaign_id', id);
         await supabaseAdmin.from('campaigns').delete().eq('id', id).eq('user_id', user.id);
 
+        await sendDiscordNotification(user.id, `🗑️ Campaign deleted`, 'campaign_deleted');
+        await sendTelegramNotification(user.id, `🗑️ Campaign deleted`, 'campaign_deleted');
         res.status(200).json({ success: true });
     } catch (error) {
         console.error('Delete campaign error:', error);
@@ -1335,6 +1421,9 @@ app.post('/api/campaigns/generate-steps', checkPro, async (req, res) => {
 app.get('/api/gmail/auth-url', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { data: profile } = await supabaseAdmin.from('profiles').select('plan').eq('id', user.id).single();
+    if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
 
     const authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
@@ -1375,6 +1464,10 @@ app.get('/api/gmail/callback', async (req, res) => {
                 updated_at: new Date().toISOString(),
             }, { onConflict: 'user_id' });
 
+        // after upsert
+        await sendDiscordNotification(userId, `📧 Gmail connected`, 'gmail_connected');
+        await sendTelegramNotification(userId, `📧 Gmail connected`, 'gmail_connected');
+
         if (error) {
             console.error('❌ Upsert error:', error);
             return res.redirect(`${process.env.FRONTEND_URL || CLOSEDRAFT_URL}/app.html?gmail_error=db_error`);
@@ -1402,6 +1495,9 @@ app.post('/api/gmail/disconnect', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
     await supabaseAdmin.from('user_gmail_tokens').delete().eq('user_id', user.id);
+
+    await sendDiscordNotification(user.id, `🔌 Gmail disconnected`, 'gmail_disconnected');
+    await sendTelegramNotification(user.id, `🔌 Gmail disconnected`, 'gmail_disconnected');
     res.json({ success: true });
 });
 
