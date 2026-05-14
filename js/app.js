@@ -742,7 +742,6 @@ function renderClientList() {
     const noSearchResults = document.getElementById('noSearchResults');
 
     if (!container) return;
-
     container.innerHTML = '';
 
     // Apply status filter
@@ -762,11 +761,9 @@ function renderClientList() {
     if (noSearchResults) noSearchResults.classList.add('hidden');
 
     if (filteredClients.length === 0) {
-        // Check if there's an active search or filter
         const hasSearchOrFilter = currentSearchQuery ||
             (currentFilter !== 'all' && currentFilter !== 'attention') ||
             showArchived;
-
         if (hasSearchOrFilter) {
             if (noSearchResults) noSearchResults.classList.remove('hidden');
         } else {
@@ -775,81 +772,111 @@ function renderClientList() {
         return;
     }
 
-    emptyState.classList.add('hidden');
+    // Helper function for status badge
+    function getStatusBadge(status) {
+        switch (status) {
+            case 'active': return '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-green-400 text-[11px] font-semibold border border-green-500/20"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>Active</span>';
+            case 'waiting': return '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 text-[11px] font-semibold border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Waiting</span>';
+            case 'payment_due': return '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 text-[11px] font-semibold border border-red-500/20"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>Payment Due</span>';
+            default: return '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-500/10 text-slate-400 text-[11px] font-semibold border border-slate-500/20"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>' + status + '</span>';
+        }
+    }
 
-    let html = '';
-    filteredClients.forEach(client => {
+    container.innerHTML = filteredClients.map(client => {
         const isStale = needsAttention(client);
-        html += `
-        <div class="glass-card p-5 flex items-center justify-between transition-all ${isStale ? 'border-l-2 border-amber-500' : ''}">
-            <div class="flex items-center gap-4">
-                <!-- Checkbox -->
-                <input type="checkbox" 
-                       class="client-checkbox w-4 h-4 rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
-                       data-client-id="${client.id}"
-                       onclick="event.stopPropagation()">
-                
-                <!-- Avatar -->
-                <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm cursor-pointer" 
-                     onclick="selectClient('${client.id}')">
-                    ${client.name.charAt(0)}
-                </div>
-                
-                <!-- Client Info -->
-                <div class="cursor-pointer" onclick="selectClient('${client.id}')">
-                    <h3 class="font-semibold text-white flex items-center gap-2">
-                        ${client.name}
-                        ${isStale ? `
-                            <span class="text-amber-400" title="Needs follow-up (${getDaysStale(client.last_contacted)} days)">
-                                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </span>
-                        ` : ''}
-                        ${client.archived ? `
-                            <span class="status-badge bg-slate-700/50 text-slate-400 border border-white/10">Archived</span>
-                        ` : ''}
-                    </h3>
-                    <p class="text-sm text-slate-400">${client.business || 'No business'}</p>
-                    ${client.tags && client.tags.length > 0 ? `
-    <div class="flex flex-wrap gap-1 mt-1">
-        ${client.tags.map(tag => `
-            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">${tag}</span>
-        `).join('')}
-    </div>
-` : ''}
-                </div>
-            </div>
-            
-            <!-- Right Side Info -->
-            <div class="flex items-center gap-6 cursor-pointer" onclick="selectClient('${client.id}')">
-                ${client.project ? `
-                    <div class="text-right hidden md:block">
-                        <p class="text-xs text-slate-500 uppercase tracking-wider">Project</p>
-                        <p class="text-sm text-white">${client.project}</p>
-                    </div>
-                ` : ''}
-                ${client.amount ? `
-                    <div class="text-right hidden lg:block">
-                        <p class="text-xs text-slate-500 uppercase tracking-wider">Value</p>
-                        <p class="text-sm text-white font-medium">$${client.amount.toLocaleString()}</p>
-                    </div>
-                ` : ''}
-               <div class="text-right hidden md:block">
-    <p class="text-xs text-slate-500 uppercase tracking-wider">Deadline</p>
-    <p class="text-sm ${getDeadlineUrgency(client.deadline)}">${client.deadline ? formatDate(client.deadline) : '—'}</p>
-</div>
-<div class="text-right">
-    <p class="text-xs text-slate-500 uppercase tracking-wider">Last Contact</p>
-    <p class="text-sm ${isStale ? 'text-amber-400 font-medium' : 'text-white'}">${formatDate(client.last_contacted)}</p>
-</div>
-${getStatusBadge(client.status)}
-            </div>
-        </div>
-    `;
-    });
+        const deadlineClass = getDeadlineUrgency(client.deadline);
 
-    container.innerHTML = html;
+        return `
+        <tr class="hover:bg-white/[0.02] transition-colors group relative cursor-pointer"
+            onclick="selectClient('${client.id}')">
+            <td class="py-4 px-6" onclick="event.stopPropagation()">
+                <input type="checkbox" class="client-checkbox w-4 h-4 rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0 cursor-pointer" data-client-id="${client.id}">
+            </td>
+            <td class="py-4 px-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs shrink-0">
+                        ${client.name.charAt(0)}
+                    </div>
+                    <div>
+                        <p class="text-white font-medium text-sm flex items-center gap-2">
+                            ${client.name}
+                            ${isStale ? `<span class="text-amber-400" title="Needs follow-up (${getDaysStale(client.last_contacted)} days)"><svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>` : ''}
+                            ${client.archived ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-400 border border-white/10">Archived</span>' : ''}
+                        </p>
+                        <p class="text-slate-500 text-[11px]">${client.business || 'No business'}</p>
+                        ${client.tags && client.tags.length > 0 ? `
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            ${client.tags.map(tag => `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">${tag}</span>`).join('')}
+                        </div>` : ''}
+                    </div>
+                </div>
+            </td>
+            <td class="py-4 px-6 hidden md:table-cell text-sm text-white">${client.project || '—'}</td>
+            <td class="py-4 px-6 hidden lg:table-cell text-sm text-white font-medium">${client.amount ? '$' + client.amount.toLocaleString() : '—'}</td>
+            <td class="py-4 px-6 hidden md:table-cell">
+                <span class="text-sm ${deadlineClass}">${client.deadline ? formatDate(client.deadline) : '—'}</span>
+            </td>
+            <td class="py-4 px-6">
+                <span class="text-sm ${isStale ? 'text-amber-400 font-medium' : 'text-slate-300'}">${formatDate(client.last_contacted)}</span>
+            </td>
+            <td class="py-4 px-6">${getStatusBadge(client.status)}</td>
+            <td class="py-4 px-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="flex items-center gap-2">
+                    <button onclick="event.stopPropagation(); openEditModalForClient('${client.id}')" class="text-slate-400 hover:text-indigo-400 transition-colors" title="Edit">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="event.stopPropagation(); archiveOrDeleteClient('${client.id}', ${client.archived})" class="text-slate-400 hover:text-amber-400 transition-colors" title="${client.archived ? 'Restore' : 'Archive'}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                    </button>
+                    <button onclick="event.stopPropagation(); deleteCurrentClient('${client.id}')" class="text-slate-400 hover:text-red-400 transition-colors" title="Delete">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function openEditModalForClient(clientId) {
+    const client = clients.find(c => c.id === clientId);
+    if (!client) return;
+    document.getElementById('editClientId').value = client.id;
+    document.getElementById('editClientName').value = client.name;
+    document.getElementById('editClientBusiness').value = client.business || '';
+    document.getElementById('editClientEmail').value = client.email || '';
+    document.getElementById('editClientProject').value = client.project || '';
+    document.getElementById('editClientAmount').value = client.amount || '';
+    document.getElementById('editClientDeadline').value = client.deadline ? client.deadline.split('T')[0] : '';
+    document.getElementById('editClientStatus').value = client.status;
+    document.getElementById('editModal').classList.remove('hidden');
+}
+
+function toggleSelectAll(checkbox) {
+    const isChecked = checkbox.checked;
+    // Sync all select-all checkboxes
+    document.querySelectorAll('#selectAllClients, #selectAllClientsTop').forEach(el => el.checked = isChecked);
+    // Toggle all client checkboxes
+    document.querySelectorAll('.client-checkbox').forEach(cb => cb.checked = isChecked);
+    updateBulkDeleteButton();
+}
+
+function archiveOrDeleteClient(clientId, isArchived) {
+    if (isArchived) {
+        restoreClient(clientId);
+    } else {
+        archiveCurrentClient(clientId);
+    }
+}
+
+function deleteCurrentClient(clientId) {
+    clientToDelete = clientId;
+    document.getElementById('deleteModal').classList.remove('hidden');
 }
 
 function updateStats() {
@@ -2671,7 +2698,6 @@ async function loadSettings() {
     if (window.userSettings) {
         document.getElementById('settingsName').value = window.userSettings.name || '';
         document.getElementById('settingsEmail').value = window.userSettings.email || '';
-        document.getElementById('settingsEmailDisplay').textContent = window.userSettings.email || '';
 
         const initial = (window.userSettings.name || 'U').charAt(0).toUpperCase();
         // Update both header avatar and card avatar
@@ -2682,9 +2708,7 @@ async function loadSettings() {
     }
 
     if (typeof loadDiscordStatus === 'function') await loadDiscordStatus();
-
     if (typeof loadTelegramStatus === 'function') await loadTelegramStatus();
-
     if (typeof loadGmailStatus === 'function') await loadGmailStatus();
 
     // Load plan info
@@ -2712,21 +2736,30 @@ async function loadUserPlanInfo() {
     const upgradeBtn = document.getElementById('upgradeSettingsBtn');
     const proFeatures = document.getElementById('proFeaturesList');
     const subscriptionNote = document.getElementById('subscriptionNote');
+    const planBadge = document.getElementById('planActiveBadge'); // new ID
 
     if (plan === 'free') {
-        planDisplay.textContent = 'Free Plan';
-        planDescription.textContent = '10 clients • 20 AI emails/month';
+        if (planDisplay) planDisplay.textContent = 'Free Plan';
+        if (planDescription) planDescription.textContent = '10 clients · 20 AI emails/month';
         if (upgradeBtn) upgradeBtn.classList.remove('hidden');
         if (proFeatures) proFeatures.classList.add('hidden');
         if (subscriptionNote) subscriptionNote.classList.add('hidden');
+        if (planBadge) {
+            planBadge.textContent = 'Free';
+            planBadge.className = 'px-2.5 py-1 rounded-full bg-slate-500/20 text-slate-300 text-xs font-semibold';
+        }
     } else {
         const planName = plan === 'pro_monthly' ? 'Pro Monthly' :
-            plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
-        planDisplay.textContent = planName;
-        planDescription.textContent = 'Unlimited clients • Unlimited AI emails • Chrome Extension';
+                         plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
+        if (planDisplay) planDisplay.textContent = planName;
+        if (planDescription) planDescription.textContent = 'Unlimited clients · Unlimited AI emails · Chrome Extension';
         if (upgradeBtn) upgradeBtn.classList.add('hidden');
         if (proFeatures) proFeatures.classList.remove('hidden');
         if (subscriptionNote) subscriptionNote.classList.remove('hidden');
+        if (planBadge) {
+            planBadge.textContent = 'Active';
+            planBadge.className = 'px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold';
+        }
     }
 }
 
@@ -3662,8 +3695,9 @@ async function loadDiscordStatus() {
         if (data.connected) {
             disconnectedDiv.classList.add('hidden');
             connectedDiv.classList.remove('hidden');
-            if (statusText && data.username) {
-                statusText.textContent = `✅ Connected as ${data.username} – You‘re receiving notifications in your private channel.`;
+            if (statusText) {
+                statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-connected"></span>Connected as ${data.username || 'User'}</span>`;
+                statusText.className = 'text-xs text-green-400 mt-0.5 font-medium';
             }
             // Set checkboxes according to prefs
             document.querySelectorAll('.discord-pref-checkbox').forEach(cb => {
@@ -3673,6 +3707,10 @@ async function loadDiscordStatus() {
         } else {
             disconnectedDiv.classList.remove('hidden');
             connectedDiv.classList.add('hidden');
+            if (statusText) {
+                statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-disconnected"></span>Not connected</span>`;
+                statusText.className = 'text-xs text-slate-400 mt-0.5';
+            }
         }
     } catch (e) {
         console.error('Failed to load Discord status', e);
@@ -3704,11 +3742,15 @@ async function loadTelegramStatus() {
     const data = await res.json();
     const disconnectedDiv = document.getElementById('telegramDisconnected');
     const connectedDiv = document.getElementById('telegramConnected');
+    const statusText = document.getElementById('telegramStatusText');
 
     if (data.connected) {
         disconnectedDiv.classList.add('hidden');
         connectedDiv.classList.remove('hidden');
-        // Set checkboxes according to prefs
+        if (statusText) {
+            statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-connected"></span>Connected</span>`;
+            statusText.className = 'text-xs text-green-400 mt-0.5 font-medium';
+        }
         document.querySelectorAll('.telegram-pref-checkbox').forEach(cb => {
             const type = cb.getAttribute('data-notif-type');
             cb.checked = data.prefs[type] !== false;
@@ -3716,6 +3758,10 @@ async function loadTelegramStatus() {
     } else {
         disconnectedDiv.classList.remove('hidden');
         connectedDiv.classList.add('hidden');
+        if (statusText) {
+            statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-disconnected"></span>Not connected</span>`;
+            statusText.className = 'text-xs text-slate-400 mt-0.5';
+        }
     }
 }
 
@@ -3784,6 +3830,15 @@ async function loadGmailStatus() {
 
         document.getElementById('gmailSettingsDisconnected').classList.toggle('hidden', connected);
         document.getElementById('gmailSettingsConnected').classList.toggle('hidden', !connected);
+        
+        const statusText = document.getElementById('gmailSettingsStatus');
+        if (connected) {
+            statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-connected"></span>Connected as ${data.email || 'user@example.com'}</span>`;
+            statusText.className = 'text-xs text-green-400 mt-0.5 font-medium';
+        } else {
+            statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-disconnected"></span>Not connected</span>`;
+            statusText.className = 'text-xs text-slate-400 mt-0.5';
+        }
     } catch (e) {
         console.error('Failed to load Gmail status in settings', e);
     }

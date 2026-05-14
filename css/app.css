@@ -526,7 +526,7 @@ body {
 .loader {
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: white;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
@@ -535,7 +535,9 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Ensure scrolling works on all devices */
@@ -679,10 +681,13 @@ main {
 
 /* Pulsing green dot for Gmail connected state */
 @keyframes pulse-green {
-    0%, 100% {
+
+    0%,
+    100% {
         background-color: #34d399;
         box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5);
     }
+
     50% {
         background-color: #6ee7b7;
         box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
@@ -695,4 +700,41 @@ main {
 
 .status-dot-disconnected {
     background-color: #f87171;
+}
+
+/* Custom Toggle Switch */
+.toggle-switch {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 44px;
+    height: 24px;
+    background: #334155;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toggle-switch:checked {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch:checked::after {
+    transform: translateX(20px);
 }

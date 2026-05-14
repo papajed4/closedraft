@@ -79,20 +79,56 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 z-[100] bg-background flex items-center justify-center">
+    <!-- Premium Loading Overlay -->
+    <div id="loadingOverlay"
+        class="fixed inset-0 z-[100] bg-background flex items-center justify-center transition-opacity duration-500">
         <div class="text-center">
-            <div
-                class="w-12 h-12 rounded-full gradient-primary flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
-                <svg class="w-6 h-6 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                    </path>
-                </svg>
+            <!-- Pulsing Logo -->
+            <div class="relative w-24 h-24 mx-auto mb-8">
+                <!-- Outer shimmer ring (slightly larger, centered with transform) -->
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-indigo-500/30 animate-ping">
+                </div>
+                <!-- Inner gradient circle -->
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full gradient-primary flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                </div>
             </div>
-            <p class="text-indigo-400 font-medium">Loading CloseDraft...</p>
+
+            <!-- Loading text -->
+            <h2 class="text-white font-bold text-lg mb-1">CloseDraft</h2>
+            <p class="text-slate-400 text-sm" id="loadingMessage">Waking up your workspace…</p>
+
+            <!-- Subtle progress bar -->
+            <div class="mt-6 w-48 mx-auto h-1 bg-slate-700/50 rounded-full overflow-hidden">
+                <div class="h-full gradient-primary rounded-full animate-loading-progress"></div>
+            </div>
         </div>
     </div>
+
+    <style>
+        @keyframes loading-progress {
+            0% {
+                width: 0%;
+            }
+
+            50% {
+                width: 70%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        .animate-loading-progress {
+            animation: loading-progress 2.5s ease-in-out infinite;
+        }
+    </style>
 
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="glass-sidebar fixed left-0 top-0 h-full w-[260px] flex flex-col py-8 z-40">
@@ -267,15 +303,14 @@
     <!-- Main Content -->
     <main class="flex-1 ml-[260px] h-screen overflow-y-auto pb-8">
 
-        <!-- ==================== DASHBOARD PAGE ==================== -->
+        <!-- ==================== DASHBOARD PAGE (PREMIUM DESIGN) ==================== -->
         <div id="dashboardPage">
 
             <!-- Top Bar -->
             <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
                 <div class="flex items-center justify-between gap-3">
                     <div class="min-w-0 flex-1">
-                        <h2
-                            class="text-lg md:text-2xl font-bold text-white tracking-tight flex items-center gap-2 truncate">
+                        <h2 class="text-lg md:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
                             <span id="dashboardUserName">Freelancer</span>
                             <span id="dashboardGreetingIcon" class="text-indigo-400 flex-shrink-0">☀️</span>
                         </h2>
@@ -283,7 +318,8 @@
                     </div>
                     <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
                         <button onclick="openActivityModal()"
-                            class="p-2 text-slate-400 hover:text-indigo-400 transition-colors" title="Recent Activity">
+                            class="p-2 text-slate-400 hover:text-indigo-400 transition-colors relative w-10 h-10 rounded-full glass-card flex items-center justify-center"
+                            title="Recent Activity">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -321,10 +357,10 @@
                         demo data</button>
                 </div>
 
-                <!-- ============ TOP ROW: Quick Stats + 2x2 Stat Cards ============ -->
+                <!-- ============ TOP ROW: Quick Stats + 4 Stat Cards ============ -->
                 <div class="grid grid-cols-12 gap-4 mb-6">
 
-                    <!-- Quick Stats (4 cols wide) -->
+                    <!-- Quick Stats (4 cols wide) — KEPT FROM YOUR CURRENT DASHBOARD -->
                     <div class="col-span-12 md:col-span-4">
                         <div class="glass-card rounded-2xl p-5 h-full">
                             <h3 class="font-semibold text-white text-xs uppercase tracking-wider mb-4">Quick Stats</h3>
@@ -363,12 +399,13 @@
                         </div>
                     </div>
 
-                    <!-- 2x2 Stat Cards (8 cols wide) -->
+                    <!-- 4 Premium Stat Cards (8 cols wide) -->
                     <div class="col-span-12 md:col-span-8">
                         <div class="grid grid-cols-2 gap-4 h-full">
                             <!-- Total Clients -->
-                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
-                                <div class="flex items-center justify-between mb-1">
+                            <div
+                                class="glass-card rounded-2xl p-4 flex flex-col justify-center relative overflow-hidden group">
+                                <div class="flex items-center justify-between mb-1 relative z-10">
                                     <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Total
                                         Clients</span>
                                     <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor"
@@ -378,11 +415,18 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <p class="text-2xl font-bold text-white" id="dashTotalClients">0</p>
+                                <p class="text-2xl font-bold text-white relative z-10" id="dashTotalClients">0</p>
+                                <div class="absolute -right-3 -bottom-3 opacity-5 pointer-events-none">
+                                    <svg class="w-20 h-20 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
                             </div>
                             <!-- Needs Attention -->
-                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
-                                <div class="flex items-center justify-between mb-1">
+                            <div
+                                class="glass-card rounded-2xl p-4 flex flex-col justify-center relative overflow-hidden group">
+                                <div class="flex items-center justify-between mb-1 relative z-10">
                                     <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Needs
                                         Attention</span>
                                     <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor"
@@ -391,11 +435,17 @@
                                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
-                                <p class="text-2xl font-bold text-white" id="dashNeedsAttention">0</p>
+                                <p class="text-2xl font-bold text-white relative z-10" id="dashNeedsAttention">0</p>
+                                <div class="absolute -right-3 -bottom-3 opacity-5 pointer-events-none">
+                                    <svg class="w-20 h-20 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
                             </div>
                             <!-- Emails Sent -->
-                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
-                                <div class="flex items-center justify-between mb-1">
+                            <div
+                                class="glass-card rounded-2xl p-4 flex flex-col justify-center relative overflow-hidden group">
+                                <div class="flex items-center justify-between mb-1 relative z-10">
                                     <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Emails
                                         Sent</span>
                                     <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
@@ -405,11 +455,18 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <p class="text-2xl font-bold text-white" id="dashEmailsSent">0</p>
+                                <p class="text-2xl font-bold text-white relative z-10" id="dashEmailsSent">0</p>
+                                <div class="absolute -right-3 -bottom-3 opacity-5 pointer-events-none">
+                                    <svg class="w-20 h-20 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
                             </div>
                             <!-- Pending Payments -->
-                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-center">
-                                <div class="flex items-center justify-between mb-1">
+                            <div
+                                class="glass-card rounded-2xl p-4 flex flex-col justify-center relative overflow-hidden group">
+                                <div class="flex items-center justify-between mb-1 relative z-10">
                                     <span class="text-slate-400 text-[11px] uppercase tracking-wider font-bold">Pending
                                         Payments</span>
                                     <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor"
@@ -419,7 +476,13 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <p class="text-2xl font-bold text-white" id="dashPendingPayments">$0</p>
+                                <p class="text-2xl font-bold text-white relative z-10" id="dashPendingPayments">$0</p>
+                                <div class="absolute -right-3 -bottom-3 opacity-5 pointer-events-none">
+                                    <svg class="w-20 h-20 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -434,7 +497,14 @@
                         <!-- Needs Attention -->
                         <div class="glass-card rounded-2xl overflow-hidden">
                             <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                                <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Needs Attention
+                                <h3
+                                    class="font-semibold text-white text-sm uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Needs Attention
                                 </h3>
                                 <a href="#" onclick="switchPage('clients'); filterAttentionClients(); return false;"
                                     class="text-xs text-indigo-400 hover:text-indigo-300">View All →</a>
@@ -449,7 +519,16 @@
                         <!-- Quick Notes -->
                         <div class="glass-card rounded-2xl p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-semibold text-white text-sm uppercase tracking-wider">Quick Notes</h3>
+                                <h3
+                                    class="font-semibold text-white text-sm uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                        </path>
+                                    </svg>
+                                    Quick Notes
+                                </h3>
                                 <span id="notesCount" class="text-xs text-slate-500"></span>
                             </div>
                             <div class="flex gap-2 mb-4">
@@ -469,7 +548,10 @@
 
                     <!-- Right Column: Quick Email -->
                     <div class="col-span-12 lg:col-span-5">
-                        <div class="glass-card rounded-2xl p-6">
+                        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500">
+                            </div>
                             <div class="flex items-center gap-2 mb-4">
                                 <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -515,7 +597,7 @@
             </div>
         </div>
 
-        <!-- ==================== CLIENTS PAGE ==================== -->
+        <!-- ==================== CLIENTS PAGE (PREMIUM DESIGN) ==================== -->
         <div id="clientsPage" class="hidden">
 
             <!-- Clients Page Header -->
@@ -636,10 +718,10 @@
                 </div>
             </header>
 
-            <!-- Stats Cards -->
-            <div class="px-8 py-6 pb-25">
+            <!-- Stats Cards (with watermark icons) -->
+            <div class="px-4 md:px-8 py-6 pb-25">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <div class="glass-card rounded-2xl p-5">
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Total Clients</span>
                             <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -649,9 +731,16 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-bold text-white mt-2" id="totalClients">0</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5">
+                            <svg class="w-24 h-24 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                            </svg>
+                        </div>
                     </div>
 
-                    <div class="glass-card rounded-2xl p-5">
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Active</span>
                             <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -660,9 +749,14 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-bold text-white mt-2" id="activeClients">0</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5">
+                            <svg class="w-24 h-24 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
                     </div>
 
-                    <div class="glass-card rounded-2xl p-5">
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Needs
                                 Attention</span>
@@ -672,9 +766,14 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-bold text-white mt-2" id="needsAttention">0</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5">
+                            <svg class="w-24 h-24 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
                     </div>
 
-                    <div class="glass-card rounded-2xl p-5">
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Payment Due</span>
                             <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -684,6 +783,13 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-bold text-white mt-2" id="paymentDue">0</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5">
+                            <svg class="w-24 h-24 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -703,30 +809,31 @@
                     </div>
                 </div>
 
-                <!-- Client List -->
+                <!-- Client Table -->
                 <div class="glass-card rounded-2xl overflow-hidden mb-8">
-                    <div class="px-6 py-4 border-b border-white/5">
-                        <h3 class="font-semibold text-white text-sm uppercase tracking-wider">All Clients</h3>
-
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr
+                                    class="border-b border-white/5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    <th class="py-4 px-6 w-12"><input type="checkbox" id="selectAllClientsTop"
+                                            class="rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
+                                            onchange="toggleSelectAll(this)"></th>
+                                    <th class="py-4 px-6">Client</th>
+                                    <th class="py-4 px-6 hidden md:table-cell">Project</th>
+                                    <th class="py-4 px-6 hidden lg:table-cell">Value</th>
+                                    <th class="py-4 px-6 hidden md:table-cell">Deadline</th>
+                                    <th class="py-4 px-6">Last Contact</th>
+                                    <th class="py-4 px-6">Status</th>
+                                    <th class="py-4 px-6 w-24">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientListContainer" class="divide-y divide-white/5">
+                                <!-- Clients rendered here -->
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div id="clientListContainer" class="divide-y divide-white/5">
-                        <!-- Template for skeleton - always hidden -->
-                        <template id="clientListSkeletonTemplate">
-                            <div class="flex items-center gap-4">
-                                <div class="skeleton skeleton-avatar"></div>
-                                <div class="flex-1">
-                                    <div class="skeleton skeleton-text" style="width: 150px;"></div>
-                                    <div class="skeleton skeleton-text-sm"></div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between mt-4">
-                                <div class="skeleton skeleton-text" style="width: 100px;"></div>
-                                <div class="skeleton skeleton-badge"></div>
-                            </div>
-                        </template>
-                        <!-- Clients loaded here -->
-                    </div>
                     <!-- No Search Results State -->
                     <div id="noSearchResults" class="p-12 text-center hidden">
                         <div class="max-w-xs mx-auto">
@@ -750,7 +857,6 @@
                     <!-- Empty State -->
                     <div id="emptyState" class="p-12 text-center hidden">
                         <div class="max-w-xs mx-auto">
-                            <!-- Illustration: Person with magnifying glass looking at empty list -->
                             <div
                                 class="w-32 h-32 mx-auto mb-6 bg-indigo-500/5 rounded-full flex items-center justify-center">
                                 <svg class="w-20 h-20 text-indigo-400/60" fill="none" stroke="currentColor"
@@ -762,7 +868,7 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mb-2">No clients yet</h3>
                             <p class="text-slate-400 text-sm mb-6">Start tracking your freelance clients and never miss
-                                a follow-up again.</p>
+                                a follow‑up again.</p>
                             <div class="flex flex-col gap-3">
                                 <button onclick="openAddModal()"
                                     class="gradient-primary text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20">
@@ -787,7 +893,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- ==================== EMAILS PAGE (PREMIUM DESIGN) ==================== -->
@@ -1861,7 +1966,9 @@
             </div>
         </div>
 
-        <!-- ==================== SETTINGS PAGE ==================== -->
+
+
+        <!-- ==================== SETTINGS PAGE (PREMIUM DESIGN) ==================== -->
         <div id="settingsPage" class="hidden">
             <!-- Header -->
             <header class="sticky top-0 z-30 glass-card border-b border-white/5 px-4 md:px-8 py-4">
@@ -1874,48 +1981,46 @@
                 </div>
             </header>
 
-            <!-- Content: Two‑column grid on desktop -->
+            <!-- Content: Two-column grid on desktop -->
             <div class="px-4 md:px-8 py-6 max-w-6xl mx-auto">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                     <!-- ===== LEFT COLUMN: Profile + Plan ===== -->
-                    <div class="space-y-6">
+                    <div class="lg:col-span-5 space-y-6">
 
                         <!-- Profile Card -->
                         <div class="glass-card rounded-2xl p-6">
+                            <h3 class="text-lg font-bold text-white mb-5">Profile</h3>
                             <div class="flex items-center gap-4 mb-6">
-                                <!-- Larger avatar inside the card -->
-                                <div class="w-14 h-14 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20"
+                                <div class="w-16 h-16 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20"
                                     id="settingsAvatarLarge">
                                     JD
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-bold text-white">Profile</h3>
-                                    <p class="text-slate-400 text-sm" id="settingsEmailDisplay">papajed4@gmail.com</p>
+                                    <p class="text-white font-semibold text-sm">Your Avatar</p>
+                                    <button
+                                        class="text-indigo-400 text-xs hover:text-indigo-300 transition-colors mt-1">Change
+                                        Avatar</button>
                                 </div>
                             </div>
                             <div class="space-y-4">
                                 <div>
                                     <label
-                                        class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
-                                        Name
-                                    </label>
+                                        class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Name</label>
                                     <input type="text" id="settingsName"
-                                        class="w-full px-4 py-3 rounded-xl input-glass text-white"
+                                        class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
                                         placeholder="Your name">
                                 </div>
                                 <div>
                                     <label
-                                        class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
-                                        Email
-                                    </label>
+                                        class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Email</label>
                                     <input type="email" id="settingsEmail"
-                                        class="w-full px-4 py-3 rounded-xl input-glass text-white"
+                                        class="w-full px-4 py-3 rounded-xl input-glass text-white placeholder-slate-500"
                                         placeholder="Your email" disabled>
                                     <p class="text-xs text-slate-500 mt-1">Email cannot be changed</p>
                                 </div>
                                 <button onclick="saveSettings()"
-                                    class="gradient-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold">
+                                    class="w-full gradient-primary text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20 hover:opacity-90 transition-opacity">
                                     Save Changes
                                 </button>
                             </div>
@@ -1923,90 +2028,129 @@
 
                         <!-- Plan Card -->
                         <div class="glass-card rounded-2xl p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Your Plan</h3>
-                                    <p id="planDescription" class="text-sm text-slate-400">Unlimited clients • Unlimited
-                                        AI emails</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-white mb-4">Your Plan</h3>
+                            <div class="flex items-center justify-between mb-3">
                                 <span id="currentPlanDisplay" class="text-xl font-bold text-white">Pro Monthly</span>
-                                <button id="upgradeSettingsBtn" onclick="window.location.href='/pricing.html'"
-                                    class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold hidden">
-                                    Upgrade to Pro
-                                </button>
+                                <span id="planActiveBadge"
+                                    class="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold">Active</span>
                             </div>
+                            <p id="planDescription" class="text-sm text-slate-400 mb-4">Unlimited clients · Unlimited AI
+                                emails</p>
 
-                            <!-- Pro features (shown only for Pro users) -->
-                            <div id="proFeaturesList" class="mt-4 grid grid-cols-2 gap-2">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                            <ul id="proFeaturesList" class="space-y-2 mb-4">
+                                <li class="flex items-center gap-2 text-sm text-slate-300">
+                                    <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span class="text-sm text-slate-300">Unlimited clients</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    Unlimited clients
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-slate-300">
+                                    <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span class="text-sm text-slate-300">Unlimited AI emails</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    Unlimited AI emails
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-slate-300">
+                                    <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span class="text-sm text-slate-300">Gmail Chrome Extension</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    Gmail Chrome Extension
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-slate-300">
+                                    <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span class="text-sm text-slate-300">Priority support</span>
-                                </div>
-                            </div>
+                                    Priority support
+                                </li>
+                            </ul>
 
-                            <!-- Subscription note (Pro users only) -->
+                            <button id="upgradeSettingsBtn" onclick="window.location.href='/pricing.html'"
+                                class="w-full gradient-primary text-white py-2.5 rounded-xl text-sm font-bold hidden">
+                                Upgrade to Pro
+                            </button>
                             <div id="subscriptionNote"
                                 class="mt-4 pt-4 border-t border-white/5 text-xs text-slate-500 hidden">
-                                💡 Manage your subscription via the Polar customer portal (link in your email receipt).
+                                Manage your subscription via the Polar customer portal.
                             </div>
                         </div>
                     </div>
 
                     <!-- ===== RIGHT COLUMN: Discord + Telegram + Gmail + Danger ===== -->
-                    <div class="space-y-6">
+                    <div class="lg:col-span-7 space-y-6">
 
-                        <!-- Discord Notifications (OAuth) -->
+                        <!-- Discord Notifications Card -->
                         <div class="glass-card rounded-2xl p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.037c-.21.375-.444.864-.608 1.25-1.844-.28-3.7-.28-5.505 0-.164-.386-.4-.875-.61-1.25a.075.075 0 0 0-.079-.037c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.022C1.523 7.184 1.015 11.817 1.575 16.383a.08.08 0 0 0 .031.052c1.828 1.343 3.86 2.4 6.05 3.02a.08.08 0 0 0 .086-.028c.465-.632.88-1.3 1.198-2.005a.076.076 0 0 0-.043-.102c-.635-.24-1.237-.53-1.8-.86a.076.076 0 0 1-.008-.127c.12-.09.24-.18.353-.27a.076.076 0 0 1 .08-.012c3.734 1.706 7.778 1.706 11.456 0a.076.076 0 0 1 .082.012c.113.09.233.18.353.27a.076.076 0 0 1-.008.127c-.563.33-1.165.62-1.8.86a.076.076 0 0 0-.043.102c.318.705.733 1.373 1.198 2.005a.08.08 0 0 0 .086.028c2.19-.62 4.222-1.677 6.05-3.02a.08.08 0 0 0 .032-.052c.672-5.457-1.07-10.198-4.525-11.869a.07.07 0 0 0-.033-.022zm-10.44 9.52c-.87 0-1.59-.78-1.59-1.74 0-.96.7-1.74 1.59-1.74.88 0 1.6.78 1.59 1.74 0 .96-.71 1.74-1.59 1.74zm6.246 0c-.87 0-1.59-.78-1.59-1.74 0-.96.7-1.74 1.59-1.74.88 0 1.6.78 1.59 1.74 0 .96-.71 1.74-1.59 1.74z" />
-                                    </svg>
+                            <div class="flex items-center justify-between mb-5 pb-4 border-b border-white/5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-[#5865F2]/20 flex items-center justify-center">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M20.317 4.3698C18.792 3.6708 17.152 3.1558 15.424 2.8278C15.405 2.8248 15.385 2.8338 15.375 2.8518C15.166 3.2248 14.935 3.7148 14.773 4.1048C12.923 3.8278 11.093 3.8278 9.263 4.1048C9.091 3.7048 8.85 3.2248 8.641 2.8518C8.631 2.8338 8.611 2.8248 8.592 2.8278C6.864 3.1558 5.224 3.6708 3.699 4.3698C3.689 4.3738 3.682 4.3808 3.677 4.3898C0.584 9.0198 -0.316 13.5358 0.099 17.9898C0.101 18.0108 0.113 18.0308 0.129 18.0428C2.186 19.5598 4.167 20.4858 6.108 21.0998C6.128 21.1058 6.15 21.0978 6.162 21.0808C6.626 20.4498 7.049 19.7848 7.422 19.0888C7.435 19.0648 7.423 19.0348 7.397 19.0248C6.757 18.7848 6.147 18.4948 5.558 18.1638C5.529 18.1468 5.526 18.1048 5.553 18.0848C5.682 17.9878 5.811 17.8868 5.934 17.7858C5.948 17.7748 5.967 17.7718 5.983 17.7788C9.897 19.5668 14.148 19.5668 18.016 17.7788C18.034 17.7708 18.053 17.7748 18.066 17.7858C18.19 17.8878 18.318 17.9878 18.448 18.0848C18.475 18.1058 18.472 18.1478 18.442 18.1638C17.854 18.4998 17.243 18.7898 16.604 19.0238C16.577 19.0338 16.565 19.0648 16.578 19.0888C16.956 19.7898 17.384 20.4488 17.842 21.0798C17.854 21.0968 17.876 21.1048 17.896 21.0988C19.843 20.4858 21.829 19.5598 23.881 18.0428C23.898 18.0308 23.909 18.0108 23.911 17.9898C24.408 12.8718 23.013 8.3748 20.339 4.3898C20.334 4.3808 20.327 4.3738 20.317 4.3698Z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-white text-sm">Discord Notifications</h4>
+                                        <p id="discordStatusText" class="text-xs text-slate-400 mt-0.5">Not connected
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Discord Notifications</h3>
-                                    <p class="text-sm text-slate-400">Get real-time client alerts in your private
-                                        Discord channel</p>
+                            </div>
+
+                            <!-- Connected state -->
+                            <div id="discordConnected" class="hidden">
+                                <div class="space-y-3 mb-5">
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notify me about
+                                    </p>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">New emails sent</span>
+                                        <input type="checkbox" data-notif-type="new_email"
+                                            class="discord-pref-checkbox toggle-switch" checked
+                                            onchange="saveDiscordPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Proposal viewed</span>
+                                        <input type="checkbox" data-notif-type="proposal_viewed"
+                                            class="discord-pref-checkbox toggle-switch" onchange="saveDiscordPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Follow‑up reminders</span>
+                                        <input type="checkbox" data-notif-type="follow_up_reminder"
+                                            class="discord-pref-checkbox toggle-switch" checked
+                                            onchange="saveDiscordPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Meeting reminders</span>
+                                        <input type="checkbox" data-notif-type="meeting_reminder"
+                                            class="discord-pref-checkbox toggle-switch" onchange="saveDiscordPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Lead inactive 7+ days</span>
+                                        <input type="checkbox" data-notif-type="lead_inactive"
+                                            class="discord-pref-checkbox toggle-switch" onchange="saveDiscordPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Client accepted proposal</span>
+                                        <input type="checkbox" data-notif-type="client_accepted"
+                                            class="discord-pref-checkbox toggle-switch" checked
+                                            onchange="saveDiscordPrefs()">
+                                    </label>
                                 </div>
+                                <a href="https://discord.gg/JbBeQW8MP5" target="_blank"
+                                    class="inline-block mb-3 text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                                    Join the CloseDraft Discord server →
+                                </a>
+                                <button onclick="disconnectDiscordOAuth()"
+                                    class="text-sm text-red-400 hover:text-red-300 transition-colors">
+                                    Disconnect Discord
+                                </button>
                             </div>
 
                             <!-- Disconnected state -->
@@ -2016,205 +2160,150 @@
                                     Connect Discord
                                 </button>
                             </div>
-
-                            <!-- Connected state -->
-                            <div id="discordConnected" class="hidden">
-                                <p class="text-green-400 text-sm font-medium mb-3" id="discordStatusText">✅ Connected –
-                                    You’re receiving notifications in your private channel.</p>
-                                <!-- Add this line below -->
-                                <a href="https://discord.gg/JbBeQW8MP5" target="_blank"
-                                    class="inline-block mt-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
-                                    🔗 Join the CloseDraft Discord server →
-                                </a>
-                                <!-- Notification preference toggles -->
-                                <div class="space-y-2 mb-4">
-                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notify me about
-                                    </p>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="new_email"
-                                            class="discord-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            checked onchange="saveDiscordPrefs()">
-                                        New emails sent
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="proposal_viewed"
-                                            class="discord-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveDiscordPrefs()">
-                                        Proposal viewed
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="follow_up_reminder"
-                                            class="discord-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveDiscordPrefs()">
-                                        Follow-up reminders
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="meeting_reminder"
-                                            class="discord-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveDiscordPrefs()">
-                                        Meeting reminders
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="lead_inactive"
-                                            class="discord-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveDiscordPrefs()">
-                                        Lead inactive for 7+ days
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="client_accepted"
-                                            class="discord-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveDiscordPrefs()">
-                                        Client accepted proposal
-                                    </label>
-                                </div>
-
-                                <button onclick="disconnectDiscordOAuth()"
-                                    class="text-red-400 text-sm hover:text-red-300 transition-colors">
-                                    Disconnect Discord
-                                </button>
-                            </div>
                         </div>
 
-                        <!-- Telegram Notifications -->
+                        <!-- Telegram Notifications Card -->
                         <div class="glass-card rounded-2xl p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.938z" />
-                                    </svg>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-[#229ED9]/20 flex items-center justify-center">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 0C5.373 0 0 5.373 0 12C0 18.627 5.373 24 12 24C18.627 24 24 18.627 24 12C24 5.373 18.627 0 12 0ZM17.432 7.822L15.352 17.618C15.197 18.293 14.802 18.455 14.237 18.136L11.155 15.867L9.67 17.297C9.505 17.462 9.367 17.6 9.037 17.6L9.258 14.457L14.978 9.294C15.227 9.072 14.924 8.948 14.594 9.17L7.525 13.619L4.475 12.663C3.81 12.455 3.795 12 4.615 11.68L16.593 7.065C17.147 6.857 17.632 7.185 17.432 7.822Z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-white text-sm">Telegram Notifications</h4>
+                                        <p id="telegramStatusText" class="text-xs text-slate-400 mt-0.5">Not connected
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Telegram Notifications</h3>
-                                    <p class="text-sm text-slate-400">Get real-time client alerts via our bot</p>
+                            </div>
+
+                            <!-- Connected state -->
+                            <div id="telegramConnected" class="hidden">
+                                <div class="space-y-3 mb-5">
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notify me about
+                                    </p>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">New emails sent</span>
+                                        <input type="checkbox" data-notif-type="new_email"
+                                            class="telegram-pref-checkbox toggle-switch" checked
+                                            onchange="saveTelegramPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Proposal viewed</span>
+                                        <input type="checkbox" data-notif-type="proposal_viewed"
+                                            class="telegram-pref-checkbox toggle-switch" onchange="saveTelegramPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Follow‑up reminders</span>
+                                        <input type="checkbox" data-notif-type="follow_up_reminder"
+                                            class="telegram-pref-checkbox toggle-switch" checked
+                                            onchange="saveTelegramPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Meeting reminders</span>
+                                        <input type="checkbox" data-notif-type="meeting_reminder"
+                                            class="telegram-pref-checkbox toggle-switch" onchange="saveTelegramPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Lead inactive 7+ days</span>
+                                        <input type="checkbox" data-notif-type="lead_inactive"
+                                            class="telegram-pref-checkbox toggle-switch" onchange="saveTelegramPrefs()">
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer">
+                                        <span class="text-sm text-slate-300">Client accepted proposal</span>
+                                        <input type="checkbox" data-notif-type="client_accepted"
+                                            class="telegram-pref-checkbox toggle-switch" checked
+                                            onchange="saveTelegramPrefs()">
+                                    </label>
                                 </div>
+                                <button onclick="disconnectTelegram()"
+                                    class="text-sm text-red-400 hover:text-red-300 transition-colors">
+                                    Disconnect Telegram
+                                </button>
                             </div>
 
                             <!-- Disconnected state -->
-                            <div id="telegramDisconnected" class="hidden">
-                                <p class="text-slate-400 text-sm mb-4">Link your Telegram to receive updates directly.
+                            <div id="telegramDisconnected">
+                                <p class="text-slate-400 text-xs mb-4">Link your Telegram to receive updates directly.
                                 </p>
                                 <button onclick="connectTelegram()"
                                     class="w-full py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold text-sm transition-all">
                                     Connect Telegram
                                 </button>
                             </div>
-
-                            <!-- Connected state -->
-                            <div id="telegramConnected" class="hidden">
-                                <p class="text-green-400 text-sm font-medium mb-3">✅ Connected – You’re receiving
-                                    notifications.</p>
-
-                                <!-- Notification preference toggles -->
-                                <div class="space-y-2 mb-4">
-                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notify me about
-                                    </p>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="new_email"
-                                            class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            checked onchange="saveTelegramPrefs()">
-                                        New emails sent
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="proposal_viewed"
-                                            class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveTelegramPrefs()">
-                                        Proposal viewed
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="follow_up_reminder"
-                                            class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveTelegramPrefs()">
-                                        Follow-up reminders
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="meeting_reminder"
-                                            class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveTelegramPrefs()">
-                                        Meeting reminders
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="lead_inactive"
-                                            class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveTelegramPrefs()">
-                                        Lead inactive for 7+ days
-                                    </label>
-                                    <label class="flex items-center gap-2 text-sm text-slate-300">
-                                        <input type="checkbox" data-notif-type="client_accepted"
-                                            class="telegram-pref-checkbox rounded bg-slate-700 border-white/10 text-indigo-500 focus:ring-0"
-                                            onchange="saveTelegramPrefs()">
-                                        Client accepted proposal
-                                    </label>
-                                </div>
-
-                                <button onclick="disconnectTelegram()"
-                                    class="text-red-400 text-sm hover:text-red-300 transition-colors">
-                                    Disconnect Telegram
-                                </button>
-                            </div>
                         </div>
 
-                        <!-- Gmail Integration -->
+                        <!-- Gmail Integration Card -->
                         <div class="glass-card rounded-2xl p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                                    <!-- Gmail icon (simple envelope) -->
-                                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-[#EA4335]/20 flex items-center justify-center">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.728L12 16.636l-6.545-4.908v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 8.411l8.073-4.918c1.618-1.214 3.927-.059 3.927 1.964Z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-white text-sm">Gmail</h4>
+                                        <p id="gmailSettingsStatus" class="text-xs text-slate-400 mt-0.5">Not connected
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Gmail</h3>
-                                    <p class="text-sm text-slate-400">Send automated follow‑ups and sequences from your
-                                        Gmail.</p>
+                            </div>
+
+                            <!-- Connected state -->
+                            <div id="gmailSettingsConnected" class="hidden">
+                                <div class="space-y-3 mb-5">
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Permissions</p>
+                                    <p class="text-xs text-slate-400">CloseDraft can send emails and detect replies on
+                                        your behalf.</p>
                                 </div>
+                                <button onclick="disconnectGmail()"
+                                    class="text-sm text-red-400 hover:text-red-300 transition-colors">
+                                    Disconnect Gmail
+                                </button>
                             </div>
 
                             <!-- Disconnected state -->
                             <div id="gmailSettingsDisconnected">
+                                <p class="text-slate-400 text-xs mb-4">Send automated follow‑ups and sequences from your
+                                    Gmail.</p>
                                 <button onclick="connectGmail()"
                                     class="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold text-sm transition-all">
                                     Connect Gmail
                                 </button>
                             </div>
-
-                            <!-- Connected state -->
-                            <div id="gmailSettingsConnected" class="hidden">
-                                <p class="text-green-400 text-sm font-medium mb-3">✅ Connected – you can send automated
-                                    campaigns & sequences.</p>
-                                <button onclick="disconnectGmail()"
-                                    class="text-red-400 text-sm hover:text-red-300 transition-colors">
-                                    Disconnect Gmail
-                                </button>
-                            </div>
                         </div>
 
-                        <!-- Danger Zone -->
+                        <!-- Danger Zone Card -->
                         <div class="glass-card rounded-2xl p-6 border border-red-500/20">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
                                     <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                        </path>
                                     </svg>
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-bold text-red-400">Danger Zone</h3>
-                                    <p class="text-sm text-slate-400">Permanently delete your account and all data</p>
+                                    <p class="text-xs text-slate-400">Irreversible actions for your account.</p>
                                 </div>
                             </div>
-                            <button onclick="logout()"
-                                class="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold border border-red-500/30 transition-all mb-3">
-                                Log Out
-                            </button>
-                            <button onclick="confirmDeleteAccount()"
-                                class="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold border border-red-500/30 transition-all">
-                                Delete Account
-                            </button>
+                            <div class="flex gap-3">
+                                <button onclick="logout()"
+                                    class="flex-1 py-2.5 rounded-xl bg-slate-700/50 hover:bg-slate-700 text-white font-bold text-sm transition-all">
+                                    Log Out
+                                </button>
+                                <button onclick="confirmDeleteAccount()"
+                                    class="flex-1 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold border border-red-500/30 transition-all text-sm">
+                                    Delete Account
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3148,14 +3237,27 @@
 
                 // Hide loading overlay after scripts load
                 appScript.onload = () => {
-                    setTimeout(() => {
-                        const overlay = document.getElementById('loadingOverlay');
-                        if (overlay) {
+                    const overlay = document.getElementById('loadingOverlay');
+                    const message = document.getElementById('loadingMessage');
+                    if (overlay && message) {
+                        // Change text after a moment to feel dynamic
+                        setTimeout(() => { message.textContent = 'Almost ready…'; }, 800);
+                        setTimeout(() => { message.textContent = 'Loading your clients…'; }, 1600);
+
+                        // Fade out after 2.5s (matching progress bar)
+                        setTimeout(() => {
                             overlay.style.opacity = '0';
-                            overlay.style.transition = 'opacity 0.3s ease';
-                            setTimeout(() => overlay.remove(), 300);
-                        }
-                    }, 200); // Small delay for smooth transition
+                            overlay.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => overlay.remove(), 500);
+                        }, 2500);
+                    } else if (overlay) {
+                        // Fallback if message element missing
+                        setTimeout(() => {
+                            overlay.style.opacity = '0';
+                            overlay.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => overlay.remove(), 500);
+                        }, 1500);
+                    }
                 };
             }
         });
