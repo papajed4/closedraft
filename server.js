@@ -407,6 +407,63 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
     }
 }
 
+// ==================== SEND NOW (In-App Sending) ====================
+app.post('/api/send-now', async (req, res) => {
+  const user = await getUserFromToken(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { clientId, subject, body, type, tone, freelancerName } = req.body;
+  if (!clientId || !subject || !body) return res.status(400).json({ error: 'Missing fields' });
+
+  // Verify client belongs to user
+  const { data: client } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('id', clientId)
+    .eq('user_id', user.id)
+    .single();
+  if (!client || !client.email) return res.status(400).json({ error: 'Invalid client or no email' });
+
+  try {
+    const { sendGmailEmail } = require('./lib/sendEmail');
+    const result = await sendGmailEmail(user.id, client.email, subject, body);
+
+    // Save to email history
+    const { data: savedEmail } = await supabaseAdmin
+      .from('emails')
+      .insert([{
+        user_id: user.id,
+        client_id: clientId,
+        subject,
+        body,
+        type: type || 'Follow-up',
+        tone: tone || 'Professional'
+      }])
+      .select()
+      .single();
+
+    // Record activity
+    await supabaseAdmin
+      .from('client_activities')
+      .insert({
+        client_id: clientId,
+        user_id: user.id,
+        activity_type: 'email_sent',
+        metadata: { subject, type, tone },
+        created_at: new Date().toISOString()
+      });
+
+    // Send notifications
+    await sendDiscordNotification(user.id, `📧 Email sent to ${client.name} (${type})`, 'new_email');
+    await sendTelegramNotification(user.id, `📧 Email sent to ${client.name} (${type})`, 'new_email');
+
+    res.json({ success: true, emailId: savedEmail?.id });
+  } catch (error) {
+    console.error('Send now error:', error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+});
+
 // ==================== EMAIL HISTORY ====================
 app.get('/api/emails/:clientId', async (req, res) => {
     const user = await getUserFromToken(req);

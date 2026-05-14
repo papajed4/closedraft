@@ -426,25 +426,51 @@
             document.querySelectorAll('#step1Options .option-card').forEach(c => c.classList.remove('selected'));
             element.classList.add('selected');
             selectedPainPoint = value;
-            document.getElementById('step1Insight').className = 'insight-box mt-4';
-            document.getElementById('step1Insight').innerHTML = `
-                <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
-                <p class="text-slate-300 text-sm leading-relaxed">${insight}</p>
-                <p class="text-slate-500 text-xs mt-3">Your dashboard will be pre-configured to prioritize this.</p>`;
-            document.getElementById('step1Insight').classList.remove('hidden');
-            const btn = document.getElementById('step1Btn'); btn.disabled = false; btn.classList.remove('opacity-40', 'cursor-not-allowed'); btn.classList.add('opacity-100');
+            const insightDiv = document.getElementById('step1Insight');
+            insightDiv.className = 'insight-box mt-4';
+            if (value === 'forgetting-followups') {
+                insightDiv.innerHTML = `
+            <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
+            <p class="text-slate-300 text-sm leading-relaxed">Your dashboard will <strong class="text-white">proactively show you every client who hasn’t been contacted in 7+ days</strong>. One click writes a personalised follow‑up. You’ll never wonder “who am I forgetting?” again.</p>
+            <p class="text-slate-500 text-xs mt-3">After you sign up, you’ll see demo clients that need attention immediately.</p>`;
+            } else if (value === 'chasing-invoices') {
+                insightDiv.innerHTML = `
+            <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
+            <p class="text-slate-300 text-sm leading-relaxed">CloseDraft <strong class="text-white">drafts polite but firm payment reminders</strong> using your actual project details. You can set them to go out automatically via Gmail. No more awkward payment chases.</p>
+            <p class="text-slate-500 text-xs mt-3">Your dashboard will highlight clients with “Payment Due” status right at the top.</p>`;
+            } else if (value === 'getting-ghosted') {
+                insightDiv.innerHTML = `
+            <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
+            <p class="text-slate-300 text-sm leading-relaxed">CloseDraft’s AI writes <strong class="text-white">personal, non‑pushy follow‑ups</strong> that double your reply rate. It remembers the context of your last conversation so every email feels human.</p>
+            <p class="text-slate-500 text-xs mt-3">You’ll also see which clients have gone silent so you can act before they ghost.</p>`;
+            }
+            insightDiv.classList.remove('hidden');
+            document.getElementById('step1Btn').disabled = false;
+            document.getElementById('step1Btn').classList.remove('opacity-40', 'cursor-not-allowed');
+            document.getElementById('step1Btn').classList.add('opacity-100');
         }
 
         function selectScale(element, value, insight) {
+            // ... existing code, but replace the insightDiv.innerHTML with more value‑focused text
             document.querySelectorAll('#step2Options .option-card').forEach(c => c.classList.remove('selected'));
             element.classList.add('selected');
             selectedScale = value;
-            document.getElementById('step2Insight').className = 'insight-box mt-4';
-            document.getElementById('step2Insight').innerHTML = `
-                <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Your setup</p>
-                <p class="text-slate-300 text-sm leading-relaxed">${insight}</p>`;
-            document.getElementById('step2Insight').classList.remove('hidden');
-            const btn = document.getElementById('step2Btn'); btn.disabled = false; btn.classList.remove('opacity-40', 'cursor-not-allowed'); btn.classList.add('opacity-100');
+            const insightDiv = document.getElementById('step2Insight');
+            insightDiv.className = 'insight-box mt-4';
+            if (value === '1-5') {
+                insightDiv.innerHTML = `<p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Your setup</p>
+            <p class="text-slate-300 text-sm leading-relaxed">We’ll start you with <strong class="text-white">2 sample clients</strong> that need attention right away. You’ll see exactly how CloseDraft prevents forgotten follow‑ups from day one.</p>`;
+            } else if (value === '6-15') {
+                insightDiv.innerHTML = `<p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Your setup</p>
+            <p class="text-slate-300 text-sm leading-relaxed">We’ll load <strong class="text-white">5 sample clients</strong> across different statuses. Your dashboard will immediately show you who needs a follow‑up, who hasn’t paid, and let you write them with one click.</p>`;
+            } else if (value === '15-plus') {
+                insightDiv.innerHTML = `<p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Your setup</p>
+            <p class="text-slate-300 text-sm leading-relaxed">We’ll load <strong class="text-white">8 sample clients</strong> and show you the batch workflow — bulk emails, bulk status updates. You’ll see how CloseDraft scales with your business.</p>`;
+            }
+            insightDiv.classList.remove('hidden');
+            document.getElementById('step2Btn').disabled = false;
+            document.getElementById('step2Btn').classList.remove('opacity-40', 'cursor-not-allowed');
+            document.getElementById('step2Btn').classList.add('opacity-100');
         }
 
         function goToStep2() {

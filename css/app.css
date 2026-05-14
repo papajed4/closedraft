@@ -738,3 +738,11 @@ main {
 .toggle-switch:checked::after {
     transform: translateX(20px);
 }
+
+.tooltip-bounce {
+    animation: bounceTooltip 2s infinite;
+}
+@keyframes bounceTooltip {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}

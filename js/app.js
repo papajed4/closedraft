@@ -568,6 +568,19 @@ async function loadDashboard() {
     populateQuickEmailClients();
     initOnboardingChecklist();
     loadQuickNotes();
+
+    // Show tooltip once per session
+    if (!sessionStorage.getItem('needsAttentionTooltipShown')) {
+        const tooltip = document.getElementById('needsAttentionTooltip');
+        if (tooltip) {
+            tooltip.classList.remove('hidden');
+            sessionStorage.setItem('needsAttentionTooltipShown', 'true');
+            setTimeout(() => tooltip.classList.add('hidden'), 8000);
+        }
+    }
+    function dismissTooltip() {
+        document.getElementById('needsAttentionTooltip')?.classList.add('hidden');
+    }
 }
 
 function updateDashboardGreeting() {
@@ -619,8 +632,15 @@ function updateDashboardStats() {
 function renderDashboardAttentionList() {
     const container = document.getElementById('dashboardAttentionList');
     const emptyState = document.getElementById('dashboardAttentionEmpty');
+    const quickEmailSelect = document.getElementById('dashboardQuickEmailClient');
 
-    const attentionClients = getAttentionClients().slice(0, 3);
+    const attentionClients = getAttentionClients().slice(0, 5); // show up to 5
+
+    // Populate Quick Email dropdown with ONLY attention clients
+    if (quickEmailSelect) {
+        quickEmailSelect.innerHTML = '<option value="">-- Select a client --</option>' +
+            attentionClients.map(c => `<option value="${c.id}">${c.name} (${c.business || 'No business'})</option>`).join('');
+    }
 
     if (attentionClients.length === 0) {
         container.innerHTML = '';
@@ -631,7 +651,7 @@ function renderDashboardAttentionList() {
     emptyState.classList.add('hidden');
 
     container.innerHTML = attentionClients.map(client => `
-        <div class="p-4 flex items-center justify-between hover:bg-white/5 cursor-pointer" onclick="switchPage('clients'); setTimeout(() => selectClient('${client.id}'), 100);">
+        <div class="p-4 flex items-center justify-between hover:bg-white/5 transition-colors">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-300 font-bold">
                     ${client.name.charAt(0)}
@@ -641,9 +661,28 @@ function renderDashboardAttentionList() {
                     <p class="text-xs text-slate-400">Last contact: ${formatDate(client.last_contacted)}</p>
                 </div>
             </div>
-            <span class="text-xs text-amber-400">${getDaysStale(client.last_contacted)} days</span>
+            <button onclick="event.stopPropagation(); writeAttentionEmail('${client.id}')"
+                class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                Write them
+            </button>
         </div>
     `).join('');
+}
+
+function writeAttentionEmail(clientId) {
+    const client = clients.find(c => c.id === clientId);
+    if (!client) return;
+    currentEmailClient = client;
+    document.getElementById('emailClientName').textContent = client.name;
+    document.getElementById('emailConfig').classList.remove('hidden');
+    document.getElementById('emailResult').classList.add('hidden');
+    document.getElementById('emailType').value = 'Follow-up';
+    document.getElementById('emailTone').value = 'Friendly';
+    document.getElementById('emailModal').classList.remove('hidden');
 }
 
 function renderDashboardActivity() {
@@ -699,11 +738,14 @@ async function generateQuickEmail() {
         document.getElementById('subjectTabB').className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
 
         document.getElementById('emailClientName').textContent = currentEmailClient.name;
-        document.getElementById('generatedBody').textContent = generatedBody;
-        document.getElementById('emailConfig').classList.add('hidden');
-        document.getElementById('emailResult').classList.remove('hidden');
-        document.getElementById('emailModal').classList.remove('hidden');
+       // ✅ CHANGE
+document.getElementById('generatedBody').value = generatedBody;
+document.getElementById('emailConfig').classList.add('hidden');
+document.getElementById('emailResult').classList.remove('hidden');
+document.getElementById('emailModal').classList.remove('hidden');
 
+        updateSendButtons();
+        
         // Refresh email list so checklist can detect the new email
         await loadEmailHistory();
         checkOnboardingProgress();
@@ -1082,7 +1124,7 @@ function renderTemplatesGrid() {
 function openAddTemplateModal() {
     document.getElementById('addTemplateModal').classList.remove('hidden');
     document.getElementById('addTemplateForm').reset();
-    
+
     // Reset type pills to default (first one active)
     document.querySelectorAll('.add-type-pill').forEach((b, i) => {
         if (i === 0) {
@@ -1094,7 +1136,7 @@ function openAddTemplateModal() {
         }
     });
     document.getElementById('templateType').value = 'Follow-up';
-    
+
     // Reset tone pills to default (first one active)
     document.querySelectorAll('.add-tone-pill').forEach((b, i) => {
         if (i === 0) {
@@ -1106,7 +1148,7 @@ function openAddTemplateModal() {
         }
     });
     document.getElementById('templateTone').value = 'Friendly';
-    
+
     // Initialize click handlers for the pills
     initAddTemplatePills();
 }
@@ -1177,7 +1219,7 @@ function editTemplate(templateId) {
     document.getElementById('editTemplateTone').value = template.tone;
 
     document.getElementById('editTemplateModal').classList.remove('hidden');
-    
+
     initEditTemplatePills();
 }
 
@@ -1264,7 +1306,7 @@ function useTemplate(templateId) {
 function initAddTemplatePills() {
     // Type pills
     document.querySelectorAll('.add-type-pill').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             // Remove active from all type pills
             document.querySelectorAll('.add-type-pill').forEach(b => {
                 b.classList.remove('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
@@ -1279,7 +1321,7 @@ function initAddTemplatePills() {
 
     // Tone pills
     document.querySelectorAll('.add-tone-pill').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('.add-tone-pill').forEach(b => {
                 b.classList.remove('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
                 b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
@@ -1294,7 +1336,7 @@ function initAddTemplatePills() {
 function initEditTemplatePills() {
     // Type pills
     document.querySelectorAll('.edit-type-pill').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('.edit-type-pill').forEach(b => {
                 b.classList.remove('bg-indigo-500/20', 'border-indigo-400', 'text-indigo-300');
                 b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
@@ -1307,7 +1349,7 @@ function initEditTemplatePills() {
 
     // Tone pills
     document.querySelectorAll('.edit-tone-pill').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('.edit-tone-pill').forEach(b => {
                 b.classList.remove('bg-purple-500/20', 'border-purple-400', 'text-purple-300');
                 b.classList.add('bg-slate-500/10', 'border-slate-500/30', 'text-slate-400');
@@ -1782,7 +1824,6 @@ function resetEmailModal() {
 
 async function generateEmail() {
     if (!currentEmailClient) return;
-    // 🔥 CHECK EMAIL LIMIT
     if (!checkEmailLimit()) {
         return false;
     }
@@ -1818,14 +1859,17 @@ async function generateEmail() {
         document.getElementById('generatedSubject').textContent = generatedSubjectA;
         document.getElementById('subjectTabA').className = 'px-3 py-1 rounded-md text-xs font-medium bg-indigo-500 text-white transition-all';
         document.getElementById('subjectTabB').className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
-        document.getElementById('generatedBody').textContent = generatedBody;
+        
+        // ✅ CHANGE: use .value for textarea
+        document.getElementById('generatedBody').value = generatedBody;
         document.getElementById('emailConfig').classList.add('hidden');
         document.getElementById('emailResult').classList.remove('hidden');
 
-        // Refresh email list so checklist can detect the new email
+        // ✅ ADD: check which buttons to show
+        updateSendButtons();
+
         await loadEmailHistory();
         checkOnboardingProgress();
-
     } catch (error) {
         showToast(error.message, 'error');
     } finally {
@@ -1858,13 +1902,16 @@ function copyCurrentSubject() {
 }
 
 function copyBody() {
-    navigator.clipboard.writeText(generatedBody);
+    const body = document.getElementById('generatedBody').value;
+    navigator.clipboard.writeText(body);
     showToast('Body copied!', 'success');
 }
 
+
 function copyFullEmail() {
     const subject = currentSubjectChoice === 'A' ? generatedSubjectA : generatedSubjectB;
-    const fullEmail = `Subject: ${subject}\n\n${generatedBody}`;
+    const body = document.getElementById('generatedBody').value;
+    const fullEmail = `Subject: ${subject}\n\n${body}`;
     navigator.clipboard.writeText(fullEmail);
     showToast('Full email copied!', 'success');
 }
@@ -1880,7 +1927,8 @@ function openInGmail() {
         return;
     }
     const subject = currentSubjectChoice === 'A' ? generatedSubjectA : generatedSubjectB;
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(generatedBody)}`;
+    const body = document.getElementById('generatedBody').value;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(gmailUrl, '_blank');
     showToast(`Opening Gmail for ${currentEmailClient.name}...`, 'success');
 }
@@ -2352,7 +2400,7 @@ function renderEmailHistoryList() {
         }
     }
 
-   container.innerHTML = filteredEmails.map(email => `
+    container.innerHTML = filteredEmails.map(email => `
     <tr class="hover:bg-white/[0.02] transition-colors group relative cursor-pointer"
         onclick="viewEmailDetail('${email.id}')">
         <td class="py-4 px-6">
@@ -2460,6 +2508,75 @@ function openDetailInGmail() {
 
     window.open(gmailUrl, '_blank');
     showToast('Opening in Gmail...', 'success');
+}
+
+async function updateSendButtons() {
+    const sendBtn = document.getElementById('sendNowBtn');
+    const connectBtn = document.getElementById('connectGmailToSendBtn');
+    if (!sendBtn || !connectBtn) return;
+
+    const plan = getUserPlan();
+    if (plan === 'free') {
+        sendBtn.classList.add('hidden');
+        connectBtn.classList.add('hidden');
+        return;
+    }
+
+    try {
+        const res = await authFetch('/api/gmail/status');
+        const data = await res.json();
+        if (data.connected) {
+            sendBtn.classList.remove('hidden');
+            connectBtn.classList.add('hidden');
+        } else {
+            sendBtn.classList.add('hidden');
+            connectBtn.classList.remove('hidden');
+        }
+    } catch (e) {
+        sendBtn.classList.add('hidden');
+        connectBtn.classList.add('hidden');
+    }
+}
+
+async function sendNow() {
+    if (!currentEmailClient) return;
+    const subject = currentSubjectChoice === 'A' ? generatedSubjectA : generatedSubjectB;
+    const body = document.getElementById('generatedBody').value.trim();
+    if (!body) {
+        showToast('Email body cannot be empty', 'error');
+        return;
+    }
+    const btn = document.getElementById('sendNowBtn');
+    const origHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Sending…';
+
+    try {
+        const res = await authFetch('/api/send-now', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                clientId: currentEmailClient.id,
+                subject,
+                body,
+                type: document.getElementById('emailType').value,
+                tone: document.getElementById('emailTone').value,
+                freelancerName: window.userSettings?.name || 'Freelancer'
+            })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to send');
+        }
+        showToast('Email sent!', 'success');
+        await loadEmailHistory();
+        closeEmailModal();
+    } catch (e) {
+        showToast(e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+    }
 }
 
 function handleEmailSearch(e) {
@@ -2813,7 +2930,7 @@ async function loadUserPlanInfo() {
         }
     } else {
         const planName = plan === 'pro_monthly' ? 'Pro Monthly' :
-                         plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
+            plan === 'pro_yearly' ? 'Pro Yearly' : 'Pro Lifetime';
         if (planDisplay) planDisplay.textContent = planName;
         if (planDescription) planDescription.textContent = 'Unlimited clients · Unlimited AI emails · Chrome Extension';
         if (upgradeBtn) upgradeBtn.classList.add('hidden');
@@ -3436,10 +3553,12 @@ async function sendNextInSequence(seqId) {
             tabB.className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition-all';
         }
 
-        document.getElementById('generatedBody').textContent = generatedBody;
+        document.getElementById('generatedBody').value = generatedBody;   
         document.getElementById('emailConfig').classList.add('hidden');
         document.getElementById('emailResult').classList.remove('hidden');
         document.getElementById('emailModal').classList.remove('hidden');
+
+        updateSendButtons();
 
         showToast(`Step ${data.step}/${data.total} generated`, 'success');
 
@@ -3841,7 +3960,7 @@ async function loadTelegramStatus() {
 }
 
 async function connectTelegram() {
-     if (getUserPlan() === 'free') {
+    if (getUserPlan() === 'free') {
         showUpgradeModal('telegram');
         return;
     }
@@ -3910,7 +4029,7 @@ async function loadGmailStatus() {
 
         document.getElementById('gmailSettingsDisconnected').classList.toggle('hidden', connected);
         document.getElementById('gmailSettingsConnected').classList.toggle('hidden', !connected);
-        
+
         const statusText = document.getElementById('gmailSettingsStatus');
         if (connected) {
             statusText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full status-dot-connected"></span>Connected as ${data.email || 'user@example.com'}</span>`;
