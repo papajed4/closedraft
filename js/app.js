@@ -577,10 +577,25 @@ async function loadDashboard() {
             sessionStorage.setItem('needsAttentionTooltipShown', 'true');
             setTimeout(() => tooltip.classList.add('hidden'), 8000);
         }
+         // ✅ Show welcome modal only if there are clients (demo scenario)
+        if (clients.length > 0) {
+            showWelcomeModal();
+        }
     }
     function dismissTooltip() {
         document.getElementById('needsAttentionTooltip')?.classList.add('hidden');
     }
+}
+
+
+function showWelcomeModal() {
+    const modal = document.getElementById('welcomeModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeWelcomeModal() {
+    const modal = document.getElementById('welcomeModal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function updateDashboardGreeting() {
