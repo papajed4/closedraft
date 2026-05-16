@@ -1,111 +1,254 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HBF8V0GJPL');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Security | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet" />
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: { primary: '#6366f1', background: '#0b1326', surface: '#131b2e' }
+                    colors: {
+                        primary: '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                        accent: '#059669',
+                        'accent-dark': '#047857',
+                        navy: '#0F172A',
+                        'navy-light': '#1E293B',
+                        'text-primary': '#0F172A',
+                        'text-secondary': '#475569',
+                        'text-muted': '#64748B',
+                    }
                 }
             }
         }
     </script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b1326;
-            color: #dae2fd;
-            animation: fadeIn 0.3s ease-out;
+        :root {
+            --bg-start: #F8FAFC;
+            --bg-mid: #EFF6FF;
+            --bg-end: #ECFDF5;
+            --text-main: #0F172A;
+            --text-soft: #475569;
+            --text-dim: #64748B;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(37, 99, 235, 0.08);
+            --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --card-border: rgba(37, 99, 235, 0.08);
+            --blob1: rgba(59, 130, 246, 0.3);
+            --blob2: rgba(5, 150, 105, 0.2);
+            --logo-text: #0F172A;
+            --logo-accent: #2563EB;
+            --toggle-bg: #E2E8F0;
+            --nav-bg: rgba(255, 255, 255, 0.75);
+            --nav-border: rgba(37, 99, 235, 0.08);
+            --footer-bg: rgba(255, 255, 255, 0.5);
+            --footer-border: rgba(0, 0, 0, 0.06);
+            --link-color: #2563EB;
+            --highlight-bg: rgba(37, 99, 235, 0.04);
+            --highlight-border: rgba(37, 99, 235, 0.12);
         }
 
-        .glass {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        html.dark {
+            --bg-start: #0B1326;
+            --bg-mid: #0F172A;
+            --bg-end: #0B1326;
+            --text-main: #E2E8F0;
+            --text-soft: #94A3B8;
+            --text-dim: #64748B;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --blob1: rgba(37, 99, 235, 0.12);
+            --blob2: rgba(5, 150, 105, 0.08);
+            --logo-text: #E2E8F0;
+            --logo-accent: #3B82F6;
+            --toggle-bg: #334155;
+            --nav-bg: rgba(15, 23, 42, 0.85);
+            --nav-border: rgba(255, 255, 255, 0.06);
+            --footer-bg: rgba(15, 23, 42, 0.8);
+            --footer-border: rgba(255, 255, 255, 0.06);
+            --link-color: #3B82F6;
+            --highlight-bg: rgba(37, 99, 235, 0.08);
+            --highlight-border: rgba(37, 99, 235, 0.2);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.02);
+            transition: all 0.25s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
         }
 
         .gradient-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
         }
 
-        .bento-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.2s;
+        .text-gradient {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .bento-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(99, 102, 241, 0.3);
+        .nav-glass {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--nav-border);
         }
 
-        .icon-circle {
+        .btn-primary {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background: var(--card-bg);
+        }
+
+        .theme-toggle .switch {
+            width: 40px;
+            height: 22px;
+            background: var(--toggle-bg);
+            border-radius: 11px;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle .switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        html.dark .theme-toggle .switch {
+            background: #2563EB;
+        }
+
+        html.dark .theme-toggle .switch::after {
+            transform: translateX(18px);
         }
 
         .highlight-box {
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: var(--highlight-bg);
+            border: 1px solid var(--highlight-border);
             border-radius: 1rem;
             padding: 1.25rem;
         }
     </style>
 </head>
 
-<body class="bg-background">
+<body>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+    <nav class="fixed top-0 w-full z-50 nav-glass">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <div
-                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
                         </path>
                     </svg>
                 </div>
-                <a href="/" class="text-xl font-bold text-white tracking-tight">Close<span
-                        class="text-indigo-400">Draft</span></a>
+                <a href="/" class="text-xl font-bold tracking-tight" style="color: var(--logo-text)">Close<span
+                        class="text-gradient">Draft</span></a>
             </div>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="/features.html"
-                    class="text-slate-400 hover:text-white transition-colors font-medium">Features</a>
-                <a href="/pricing.html"
-                    class="text-slate-400 hover:text-white transition-colors font-medium">Pricing</a>
-                <a href="/resources.html"
-                    class="text-slate-400 hover:text-white transition-colors font-medium">Resources</a>
+                <a href="/features.html" class="font-medium transition-colors"
+                    style="color: var(--text-soft)">Features</a>
+                <a href="/pricing.html" class="font-medium transition-colors"
+                    style="color: var(--text-soft)">Pricing</a>
+                <a href="/resources.html" class="font-medium transition-colors"
+                    style="color: var(--text-soft)">Resources</a>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="hidden md:flex items-center space-x-4" id="navAuth">
-                    <a href="/login.html" class="text-slate-400 hover:text-white font-medium transition-colors">Sign
+                    <a href="/login.html" class="font-medium transition-colors" style="color: var(--text-soft)">Sign
                         In</a>
                     <a href="/signup.html"
-                        class="px-5 py-2.5 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-opacity">Get
+                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">Get
                         Started</a>
                 </div>
-                <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-400 hover:text-white">
+                <button id="mobileMenuBtn" class="md:hidden p-2" style="color: var(--text-soft)">
                     <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16"></path>
@@ -118,15 +261,16 @@
                 </button>
             </div>
         </div>
-        <div id="mobileMenu" class="md:hidden hidden glass border-t border-white/5">
+        <div id="mobileMenu" class="md:hidden hidden"
+            style="background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border);">
             <div class="px-6 py-4 space-y-3">
-                <a href="/features.html" class="block text-slate-400 hover:text-white font-medium py-2">Features</a>
-                <a href="/pricing.html" class="block text-slate-400 hover:text-white font-medium py-2">Pricing</a>
-                <a href="/resources.html" class="block text-slate-400 hover:text-white font-medium py-2">Resources</a>
-                <div class="pt-3 border-t border-white/10 space-y-3" id="mobileNavAuth">
-                    <a href="/login.html" class="block text-slate-400 hover:text-white font-medium py-2">Sign In</a>
+                <a href="/features.html" class="block py-2 font-medium" style="color: var(--text-soft)">Features</a>
+                <a href="/pricing.html" class="block py-2 font-medium" style="color: var(--text-soft)">Pricing</a>
+                <a href="/resources.html" class="block py-2 font-medium" style="color: var(--text-soft)">Resources</a>
+                <div class="pt-3 space-y-3" style="border-top: 1px solid var(--glass-border);" id="mobileNavAuth">
+                    <a href="/login.html" class="block py-2 font-medium" style="color: var(--text-soft)">Sign In</a>
                     <a href="/signup.html"
-                        class="block text-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold">Get
+                        class="block text-center px-5 py-2.5 rounded-xl btn-primary text-white font-bold">Get
                         Started</a>
                 </div>
             </div>
@@ -135,300 +279,253 @@
 
     <main class="pt-32 px-6 pb-20">
         <div class="max-w-5xl mx-auto">
-
-            <!-- Hero -->
             <div class="text-center mb-16">
-                <span class="text-indigo-400 font-bold tracking-[0.2em] uppercase text-xs">Trust & Safety</span>
-                <h1 class="text-4xl md:text-6xl font-bold text-white mt-4 mb-4">Security at CloseDraft</h1>
-                <p class="text-slate-400 text-lg max-w-2xl mx-auto">We protect your data with the same vigilance you
-                    protect your client relationships. Every layer is designed with encryption, isolation, and
-                    integrity.</p>
+                <span class="text-accent font-bold tracking-[0.2em] uppercase text-xs">Trust & Safety</span>
+                <h1 class="text-4xl md:text-6xl font-bold mt-4 mb-4" style="color: var(--logo-text)">Security at <span
+                        class="text-gradient">CloseDraft</span></h1>
+                <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-soft)">We protect your data with the same
+                    vigilance you protect your client relationships. Every layer is designed with encryption, isolation,
+                    and integrity.</p>
             </div>
 
-            <!-- Bento Highlight Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
-                <div class="bento-card flex flex-col items-start">
-                    <div class="icon-circle bg-indigo-500/20 text-indigo-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                            </path>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="flex justify-center mb-3">
+                        <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
                     </div>
-                    <h3 class="text-white font-semibold mb-1">Strong Encryption</h3>
-                    <p class="text-slate-400 text-sm">AES‑256 at rest, TLS 1.3 in transit. Gmail refresh tokens are
-                        individually encrypted with a unique key.</p>
+                    <h3 class="font-semibold mb-1" style="color: var(--text-main)">Strong Encryption</h3>
+                    <p class="text-sm" style="color: var(--text-soft)">AES‑256 at rest, TLS 1.3 in transit. Gmail
+                        refresh tokens are individually encrypted with a unique key.</p>
                 </div>
-                <div class="bento-card flex flex-col items-start">
-                    <div class="icon-circle bg-green-500/20 text-green-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
-                            </path>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="flex justify-center mb-3">
+                        <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="m9 12 2 2 4-4" />
                         </svg>
                     </div>
-                    <h3 class="text-white font-semibold mb-1">Data Isolation</h3>
-                    <p class="text-slate-400 text-sm">Every database query is scoped to your user ID via Supabase Row
-                        Level Security. No cross‑user data access possible.</p>
+                    <h3 class="font-semibold mb-1" style="color: var(--text-main)">Encrypted & Isolated</h3>
+                    <p class="text-sm" style="color: var(--text-soft)">All data encrypted at rest and in transit. Each
+                        user's data is isolated with Row Level Security.</p>
                 </div>
-                <div class="bento-card flex flex-col items-start">
-                    <div class="icon-circle bg-amber-500/20 text-amber-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                            </path>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="flex justify-center mb-3">
+                        <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                         </svg>
                     </div>
-                    <h3 class="text-white font-semibold mb-1">Resilient Backups</h3>
-                    <p class="text-slate-400 text-sm">Daily encrypted snapshots retained for 90 days, with point‑in‑time
-                        recovery. Backups are stored in separate regions.</p>
+                    <h3 class="font-semibold mb-1" style="color: var(--text-main)">Full Control</h3>
+                    <p class="text-sm" style="color: var(--text-soft)">Export your data anytime, delete your account,
+                        and revoke integrations with one click.</p>
                 </div>
             </div>
 
-            <!-- Detailed Security Content -->
-            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 12h14M12 5l7 7-7 7"></path>
-                        </svg>
-                    </span>
-                    Infrastructure & Network
-                </h2>
+            <div class="glass-panel rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg></span>Infrastructure & Network</h2>
                 <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">Hosted on Render with built‑in DDoS
-                                mitigation</span></div>
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">Cloudflare DNS & CDN for global
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">Hosted on Render with built‑in
+                                DDoS mitigation</span></div>
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">Cloudflare DNS & CDN for global
                                 availability</span></div>
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">All traffic encrypted via HTTPS (TLS 1.3)</span>
-                        </div>
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">Automatic OS & dependency security patches</span>
-                        </div>
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">All traffic encrypted via HTTPS
+                                (TLS 1.3)</span></div>
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">Automatic OS & dependency
+                                security patches</span></div>
                     </div>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">Supabase PostgreSQL with Row Level
-                                Security</span></div>
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">SSL‑enforced database connections with connection
-                                pooling</span></div>
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">Point‑in‑time recovery enabled up to 7
-                                days</span></div>
-                        <div class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg><span class="text-slate-300 text-sm">Database backups encrypted at rest and
-                                transmitted securely</span></div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">Supabase PostgreSQL with Row
+                                Level Security</span></div>
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">SSL‑enforced database
+                                connections with connection pooling</span></div>
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">Point‑in‑time recovery enabled
+                                up to 7 days</span></div>
+                        <div class="flex items-center gap-3"><svg class="w-4 h-4 text-accent flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                            </svg><span class="text-sm" style="color: var(--text-soft)">Database backups encrypted at
+                                rest and transmitted securely</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- API & Auth Security -->
-            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-purple-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
-                            </path>
-                        </svg>
-                    </span>
-                    API & Authentication Security
-                </h2>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bento-card">
-                        <h3 class="text-white font-semibold mb-2">Bearer Token Authentication</h3>
-                        <p class="text-slate-400 text-sm">Every API endpoint is gated. Only valid Supabase‑issued JWTs
-                            can access resources, and they are always scoped to your user ID.</p>
+            <div class="glass-panel rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg></span>API & Authentication Security</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Bearer Token Authentication</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">Every API endpoint is gated. Only valid
+                            Supabase‑issued JWTs can access resources, and they are always scoped to your user ID.</p>
                     </div>
-                    <div class="bento-card">
-                        <h3 class="text-white font-semibold mb-2">Rate Limiting</h3>
-                        <p class="text-slate-400 text-sm">Auth endpoints (login, password reset) are rate‑limited to
-                            prevent brute‑force attacks. General API rate limits ensure fair use.</p>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Rate Limiting</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">Auth endpoints (login, password reset) are
+                            rate‑limited to prevent brute‑force attacks. General API rate limits ensure fair use.</p>
                     </div>
-                    <div class="bento-card">
-                        <h3 class="text-white font-semibold mb-2">CORS Policy</h3>
-                        <p class="text-slate-400 text-sm">Cross‑origin requests are restricted to our official domains,
-                            preventing unauthorized websites from making API calls on your behalf.</p>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">CORS Policy</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">Cross‑origin requests are restricted to our
+                            official domains, preventing unauthorized websites from making API calls on your behalf.</p>
                     </div>
-                    <div class="bento-card">
-                        <h3 class="text-white font-semibold mb-2">Input Validation & Sanitization</h3>
-                        <p class="text-slate-400 text-sm">All user inputs are validated and sanitized to prevent
-                            injection attacks (SQL, NoSQL, XSS).</p>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Input Validation & Sanitization
+                        </h3>
+                        <p class="text-sm" style="color: var(--text-soft)">All user inputs are validated and sanitized
+                            to prevent injection attacks (SQL, NoSQL, XSS).</p>
                     </div>
                 </div>
             </div>
 
-            <!-- AI & Email Security -->
-            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-amber-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
-                            </path>
-                        </svg>
-                    </span>
-                    AI & Email Integration Security
-                </h2>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bento-card">
-                        <div class="icon-circle bg-amber-500/20 text-amber-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-white font-semibold mb-2">Google Gemini Integration</h3>
-                        <p class="text-slate-400 text-sm">Only context (client name, business, project, type, tone) is
-                            transmitted. No sensitive payment or auth data. Google does not use your prompts for model
-                            training. Responses are cached locally to reduce exposure.</p>
-                    </div>
-                    <div class="bento-card">
-                        <div class="icon-circle bg-red-500/20 text-red-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-white font-semibold mb-2">Gmail OAuth & Token Storage</h3>
-                        <p class="text-slate-400 text-sm">We request only send + inbox read (for reply detection).
-                            Refresh tokens are encrypted with AES‑256‑CBC using a secure key unique to your environment.
-                            Tokens are deleted immediately upon disconnection.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notification Channels Security -->
-            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-cyan-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </span>
-                    Discord & Telegram Notifications
-                </h2>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bento-card">
-                        <div class="icon-circle bg-indigo-500/20 text-indigo-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <div class="glass-panel rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg></span>AI & Email Integration Security</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="flex justify-center mb-3"><svg class="w-6 h-6 text-primary" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path
-                                    d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.037c-.21.375-.444.864-.608 1.25-1.844-.28-3.7-.28-5.505 0-.164-.386-.4-.875-.61-1.25a.075.075 0 0 0-.079-.037c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.022C1.523 7.184 1.015 11.817 1.575 16.383a.08.08 0 0 0 .031.052c1.828 1.343 3.86 2.4 6.05 3.02a.08.08 0 0 0 .086-.028c.465-.632.88-1.3 1.198-2.005a.076.076 0 0 0-.043-.102c-.635-.24-1.237-.53-1.8-.86a.076.076 0 0 1-.008-.127c.12-.09.24-.18.353-.27a.076.076 0 0 1 .08-.012c3.734 1.706 7.778 1.706 11.456 0a.076.076 0 0 1 .082.012c.113.09.233.18.353.27a.076.076 0 0 1-.008.127c-.563.33-1.165.62-1.8.86a.076.076 0 0 0-.043.102c.318.705.733 1.373 1.198 2.005a.08.08 0 0 0 .086.028c2.19-.62 4.222-1.677 6.05-3.02a.08.08 0 0 0 .032-.052c.672-5.457-1.07-10.198-4.525-11.869a.07.07 0 0 0-.033-.022z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-white font-semibold mb-2">Discord Bot</h3>
-                        <p class="text-slate-400 text-sm">Only your Discord ID, username, and a private channel ID are
-                            stored to deliver notifications. The bot cannot read or access any server messages. Channel
-                            creation uses restricted permissions visible only to you and the bot.</p>
+                                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg></div>
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Google Gemini Integration</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">Only context (client name, business, project,
+                            type, tone) is transmitted. No sensitive payment or auth data. Google does not use your
+                            prompts for model training. Responses are cached locally to reduce exposure.</p>
                     </div>
-                    <div class="bento-card">
-                        <div class="icon-circle bg-blue-500/20 text-blue-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.938z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-white font-semibold mb-2">Telegram Bot</h3>
-                        <p class="text-slate-400 text-sm">A one‑time link token connects your account. Only your Chat ID
-                            is stored. The bot cannot send messages unless you initiate the connection, and all
-                            identifiers are deleted when you disconnect.</p>
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/gmail/default.svg"
+                                alt="Gmail" width="28" height="28" /></div>
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Gmail OAuth & Token Storage</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">We request only send + inbox read (for reply
+                            detection). Refresh tokens are encrypted with AES‑256‑CBC using a secure key unique to your
+                            environment. Tokens are deleted immediately upon disconnection.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Chrome Extension Security -->
-            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-orange-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                    </span>
-                    Chrome Extension
-                </h2>
+            <div class="glass-panel rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg></span>Discord & Telegram Notifications</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/discord/default.svg"
+                                alt="Discord" width="28" height="28" /></div>
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Discord Bot</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">Only your Discord ID, username, and a private
+                            channel ID are stored to deliver notifications. The bot cannot read or access any server
+                            messages. Channel creation uses restricted permissions visible only to you and the bot.</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/telegram/default.svg"
+                                alt="Telegram" width="28" height="28" /></div>
+                        <h3 class="font-semibold mb-2" style="color: var(--text-main)">Telegram Bot</h3>
+                        <p class="text-sm" style="color: var(--text-soft)">A one‑time link token connects your account.
+                            Only your Chat ID is stored. The bot cannot send messages unless you initiate the
+                            connection, and all identifiers are deleted when you disconnect.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg></span>Chrome Extension</h2>
                 <div class="highlight-box">
-                    <p class="text-slate-300 text-sm">The CloseDraft Chrome Extension injects a “Generate” button into
-                        Gmail’s compose window. It only accesses the recipient’s email address to match it with your
-                        CloseDraft client list. <strong>No email content is read, stored, or transmitted.</strong> The
-                        extension requires minimal permissions and uses Manifest V3.</p>
+                    <p class="text-sm" style="color: var(--text-soft)">The CloseDraft Chrome Extension injects a
+                        “Generate” button into Gmail’s compose window. It only accesses the recipient’s email address to
+                        match it with your CloseDraft client list. <strong>No email content is read, stored, or
+                            transmitted.</strong> The extension requires minimal permissions and uses Manifest V3.</p>
                 </div>
             </div>
 
-            <!-- Payment Security -->
-            <div class="glass rounded-3xl p-8 md:p-10 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-green-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
-                            </path>
-                        </svg>
-                    </span>
-                    Payment Security
-                </h2>
-                <p class="text-slate-400 text-sm mb-4">All payments are processed by <strong>Polar.sh</strong>, a
-                    PCI‑DSS Level 1 compliant payment processor. CloseDraft never receives, stores, or transmits your
-                    full credit card number. We only store a payment status reference and subscription ID.</p>
+            <div class="glass-panel rounded-3xl p-8 md:p-10 mb-12">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg></span>Payment Security</h2>
+                <p class="text-sm mb-4" style="color: var(--text-soft)">All payments are processed by <strong
+                        style="color: var(--text-main)">Polar.sh</strong>, a PCI‑DSS Level 1 compliant payment
+                    processor. CloseDraft never receives, stores, or transmits your full credit card number. We only
+                    store a payment status reference and subscription ID.</p>
             </div>
 
-            <!-- Vulnerability Reporting -->
-            <div class="glass rounded-3xl p-8 md:p-10">
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-red-500/20 inline-flex items-center justify-center">
-                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z">
-                            </path>
-                        </svg>
-                    </span>
-                    Report a Security Vulnerability
-                </h2>
-                <p class="text-slate-400 text-sm mb-4">We take security reports seriously. If you discover a potential
-                    vulnerability, please contact us immediately at:</p>
-                <a href="mailto:closedraft@gmail.com"
-                    class="text-indigo-400 text-lg font-medium hover:text-indigo-300">closedraft@gmail.com</a>
-                <p class="text-slate-500 text-xs mt-3">We aim to respond within 48 hours. Please allow us a reasonable
-                    period to investigate and address the issue before disclosing it publicly.</p>
+            <div class="glass-panel rounded-3xl p-8 md:p-10">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-3" style="color: var(--text-main)"><span
+                        class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><svg
+                            class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg></span>Report a Security Vulnerability</h2>
+                <p class="text-sm mb-4" style="color: var(--text-soft)">We take security reports seriously. If you
+                    discover a potential vulnerability, please contact us immediately at:</p>
+                <a href="mailto:closedraft@gmail.com" class="text-lg font-medium transition-colors"
+                    style="color: var(--link-color)">closedraft@gmail.com</a>
+                <p class="text-xs mt-3" style="color: var(--text-dim)">We aim to respond within 48 hours. Please allow
+                    us a reasonable period to investigate and address the issue before disclosing it publicly.</p>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="pt-20 pb-10 bg-slate-950/50">
+    <footer class="pt-20 pb-10 border-t" style="background: var(--footer-bg); border-color: var(--footer-border);">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <div>
@@ -436,55 +533,94 @@
                         <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
                             <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M5 13l4 4L19 7"></path>
+                                    d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <span class="text-lg font-bold text-white">Close<span
-                                class="text-indigo-400">Draft</span></span>
+                        <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
+                                class="text-gradient">Draft</span></span>
                     </div>
-                    <p class="text-slate-500 text-sm">The client memory freelancers love.</p>
+                    <p class="text-sm" style="color: var(--text-dim)">The client memory freelancers love.</p>
                 </div>
                 <div>
-                    <div class="text-white font-bold mb-4">Product</div>
+                    <div class="font-bold mb-4" style="color: var(--logo-text)">Product</div>
                     <ul class="space-y-2">
-                        <li><a href="/features.html" class="text-slate-500 hover:text-slate-300 text-sm">Features</a>
-                        </li>
-                        <li><a href="/pricing.html" class="text-slate-500 hover:text-slate-300 text-sm">Pricing</a></li>
-                        <li><a href="#" class="text-slate-500 hover:text-slate-300 text-sm">Chrome Extension</a></li>
+                        <li><a href="/features.html" class="text-sm transition-colors"
+                                style="color: var(--text-dim)">Features</a></li>
+                        <li><a href="/pricing.html" class="text-sm transition-colors"
+                                style="color: var(--text-dim)">Pricing</a></li>
+                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Chrome
+                                Extension</a></li>
                     </ul>
                 </div>
                 <div>
-                    <div class="text-white font-bold mb-4">Resources</div>
+                    <div class="font-bold mb-4" style="color: var(--logo-text)">Resources</div>
                     <ul class="space-y-2">
-                        <li><a href="/resources.html" class="text-slate-500 hover:text-slate-300 text-sm">Blog</a></li>
-                        <li><a href="/resources.html" class="text-slate-500 hover:text-slate-300 text-sm">Help
-                                Center</a></li>
-                        <li><a href="/resources.html" class="text-slate-500 hover:text-slate-300 text-sm">Templates</a>
+                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Blog</a></li>
+                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Help Center</a>
+                        </li>
+                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Templates</a>
                         </li>
                     </ul>
                 </div>
                 <div>
-                    <div class="text-white font-bold mb-4">Legal</div>
+                    <div class="font-bold mb-4" style="color: var(--logo-text)">Legal</div>
                     <ul class="space-y-2">
-                        <li><a href="/privacy.html" class="text-slate-500 hover:text-slate-300 text-sm">Privacy</a></li>
-                        <li><a href="/terms.html" class="text-slate-500 hover:text-slate-300 text-sm">Terms</a></li>
-                        <li><a href="/security.html" class="text-indigo-400 text-sm">Security</a></li>
+                        <li><a href="/privacy.html" class="text-sm transition-colors"
+                                style="color: var(--text-dim)">Privacy</a></li>
+                        <li><a href="/terms.html" class="text-sm transition-colors"
+                                style="color: var(--text-dim)">Terms</a></li>
+                        <li><a href="/security.html" class="text-sm font-medium"
+                                style="color: var(--link-color)">Security</a></li>
                     </ul>
                 </div>
             </div>
-            <div
-                class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+            <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
+                style="border-color: var(--footer-border); color: var(--text-dim)">
                 <span>© 2026 CloseDraft. All rights reserved.</span>
                 <div class="flex gap-6">
-                    <a href="#" class="hover:text-indigo-400">Twitter</a>
-                    <a href="#" class="hover:text-indigo-400">LinkedIn</a>
+                    <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
+                    <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
+                    <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            style="color: var(--text-soft)">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+        <div class="switch"></div>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            style="color: var(--text-soft)">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/nav.js"></script>
+    <script>
+            (function () {
+                const saved = localStorage.getItem('closeDraft_theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+            })();
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+        }
+    </script>
 </body>
 
 </html>

@@ -2,49 +2,163 @@
 <html lang="en">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HBF8V0GJPL');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: { primary: '#6366f1', background: '#0b1326', surface: '#131b2e' }
+                    colors: {
+                        primary: '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                        accent: '#059669',
+                        'accent-dark': '#047857',
+                        navy: '#0F172A',
+                        'navy-light': '#1E293B',
+                        'text-primary': '#0F172A',
+                        'text-secondary': '#475569',
+                        'text-muted': '#64748B',
+                    }
                 }
             }
         }
     </script>
-
     <style>
+        :root {
+            --bg-start: #F8FAFC;
+            --bg-mid: #EFF6FF;
+            --bg-end: #ECFDF5;
+            --text-main: #0F172A;
+            --text-soft: #475569;
+            --text-dim: #64748B;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(37, 99, 235, 0.08);
+            --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --card-border: rgba(37, 99, 235, 0.08);
+            --blob1: rgba(59, 130, 246, 0.3);
+            --blob2: rgba(5, 150, 105, 0.2);
+            --logo-text: #0F172A;
+            --logo-accent: #2563EB;
+            --toggle-bg: #E2E8F0;
+            --option-bg: rgba(255, 255, 255, 0.6);
+            --option-border: rgba(37, 99, 235, 0.1);
+            --option-hover-bg: rgba(255, 255, 255, 0.8);
+            --option-hover-border: rgba(37, 99, 235, 0.3);
+            --option-selected-bg: rgba(37, 99, 235, 0.08);
+            --option-selected-border: #2563EB;
+            --option-text: #0F172A;
+            --option-sub: #64748B;
+            --check-border: rgba(0, 0, 0, 0.15);
+            --check-selected-bg: #2563EB;
+            --insight-bg: rgba(37, 99, 235, 0.04);
+            --insight-border: rgba(37, 99, 235, 0.12);
+            --step-line-bg: #E2E8F0;
+            --step-line-done: #2563EB;
+            --step-label-active: #2563EB;
+            --step-label-inactive: #94A3B8;
+            --import-border: rgba(37, 99, 235, 0.15);
+            --import-hover-border: rgba(37, 99, 235, 0.4);
+            --import-hover-bg: rgba(37, 99, 235, 0.03);
+            --paste-bg: rgba(255, 255, 255, 0.8);
+            --paste-border: rgba(37, 99, 235, 0.1);
+            --tag-bg: rgba(37, 99, 235, 0.06);
+            --tag-text: #2563EB;
+            --tag-border: rgba(37, 99, 235, 0.15);
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --input-border: rgba(37, 99, 235, 0.15);
+            --preview-bg: rgba(255, 255, 255, 0.5);
+            --btn-disabled: rgba(37, 99, 235, 0.4);
+            --divider: rgba(0, 0, 0, 0.06);
+        }
+
+        html.dark {
+            --bg-start: #0B1326;
+            --bg-mid: #0F172A;
+            --bg-end: #0B1326;
+            --text-main: #E2E8F0;
+            --text-soft: #94A3B8;
+            --text-dim: #64748B;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --blob1: rgba(37, 99, 235, 0.12);
+            --blob2: rgba(5, 150, 105, 0.08);
+            --logo-text: #E2E8F0;
+            --logo-accent: #3B82F6;
+            --toggle-bg: #334155;
+            --option-bg: rgba(255, 255, 255, 0.05);
+            --option-border: rgba(255, 255, 255, 0.06);
+            --option-hover-bg: rgba(255, 255, 255, 0.08);
+            --option-hover-border: rgba(59, 130, 246, 0.3);
+            --option-selected-bg: rgba(37, 99, 235, 0.12);
+            --option-selected-border: #3B82F6;
+            --option-text: #E2E8F0;
+            --option-sub: #94A3B8;
+            --check-border: rgba(255, 255, 255, 0.2);
+            --check-selected-bg: #3B82F6;
+            --insight-bg: rgba(37, 99, 235, 0.08);
+            --insight-border: rgba(37, 99, 235, 0.2);
+            --step-line-bg: #334155;
+            --step-line-done: #3B82F6;
+            --step-label-active: #3B82F6;
+            --step-label-inactive: #64748B;
+            --import-border: rgba(255, 255, 255, 0.1);
+            --import-hover-border: rgba(59, 130, 246, 0.4);
+            --import-hover-bg: rgba(59, 130, 246, 0.05);
+            --paste-bg: rgba(255, 255, 255, 0.06);
+            --paste-border: rgba(255, 255, 255, 0.08);
+            --tag-bg: rgba(37, 99, 235, 0.12);
+            --tag-text: #3B82F6;
+            --tag-border: rgba(37, 99, 235, 0.2);
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --input-border: rgba(255, 255, 255, 0.08);
+            --preview-bg: rgba(255, 255, 255, 0.04);
+            --btn-disabled: rgba(37, 99, 235, 0.3);
+            --divider: rgba(255, 255, 255, 0.06);
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b1326;
-            color: #dae2fd;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
         }
 
         .glass {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
 
         .gradient-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
         }
 
         .option-card {
-            background: rgba(23, 31, 51, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--option-bg);
+            border: 1px solid var(--option-border);
             border-radius: 16px;
             padding: 20px 24px;
             cursor: pointer;
@@ -52,20 +166,20 @@
         }
 
         .option-card:hover {
-            border-color: rgba(99, 102, 241, 0.3);
-            background: rgba(30, 41, 59, 0.5);
+            border-color: var(--option-hover-border);
+            background: var(--option-hover-bg);
         }
 
         .option-card.selected {
-            border-color: #6366f1;
-            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--option-selected-border);
+            background: var(--option-selected-bg);
         }
 
         .option-card .check-indicator {
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid var(--check-border);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,8 +188,8 @@
         }
 
         .option-card.selected .check-indicator {
-            border-color: #6366f1;
-            background: #6366f1;
+            border-color: var(--check-selected-bg);
+            background: var(--check-selected-bg);
         }
 
         .option-card.selected .check-indicator svg {
@@ -83,8 +197,8 @@
         }
 
         .insight-box {
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: var(--insight-bg);
+            border: 1px solid var(--insight-border);
             border-radius: 12px;
             padding: 16px;
             animation: slideUp 0.3s ease;
@@ -102,28 +216,16 @@
             }
         }
 
-        @keyframes expandDown {
-            from {
-                opacity: 0;
-                max-height: 0;
-            }
-
-            to {
-                opacity: 1;
-                max-height: 600px;
-            }
-        }
-
         .step-line {
             height: 4px;
             border-radius: 2px;
-            background: #1e293b;
+            background: var(--step-line-bg);
             transition: all 0.4s ease;
             flex: 1;
         }
 
         .step-line.done {
-            background: #6366f1;
+            background: var(--step-line-done);
         }
 
         .step-label {
@@ -135,7 +237,7 @@
         }
 
         .import-area {
-            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border: 2px dashed var(--import-border);
             border-radius: 16px;
             padding: 32px;
             text-align: center;
@@ -144,8 +246,8 @@
         }
 
         .import-area:hover {
-            border-color: rgba(99, 102, 241, 0.4);
-            background: rgba(99, 102, 241, 0.05);
+            border-color: var(--import-hover-border);
+            background: var(--import-hover-bg);
         }
 
         .tag {
@@ -156,9 +258,9 @@
             border-radius: 100px;
             font-size: 12px;
             font-weight: 500;
-            background: rgba(99, 102, 241, 0.1);
-            color: #a5b4fc;
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            border: 1px solid var(--tag-border);
         }
 
         .tag.error-tag {
@@ -166,15 +268,71 @@
             color: #fca5a5;
             border-color: rgba(239, 68, 68, 0.2);
         }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background: var(--card-bg);
+        }
+
+        .theme-toggle .switch {
+            width: 40px;
+            height: 22px;
+            background: var(--toggle-bg);
+            border-radius: 11px;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle .switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        html.dark .theme-toggle .switch {
+            background: #2563EB;
+        }
+
+        html.dark .theme-toggle .switch::after {
+            transform: translateX(18px);
+        }
     </style>
 </head>
 
 <body class="min-h-screen flex items-center justify-center p-5 relative">
 
     <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
-        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-indigo-600/15 rounded-full blur-[150px]"></div>
-        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-600/10 rounded-full blur-[150px]">
-        </div>
+        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-500"
+            style="background: var(--blob1)"></div>
+        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-500"
+            style="background: var(--blob2)"></div>
     </div>
 
     <div class="w-full max-w-xl">
@@ -182,31 +340,32 @@
         <!-- Logo -->
         <div class="flex items-center justify-center gap-2 mb-10">
             <div
-                class="w-9 h-9 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                class="w-9 h-9 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
-            <span class="text-xl font-bold text-white tracking-tight">Close<span
-                    class="text-indigo-400">Draft</span></span>
+            <span class="text-xl font-bold tracking-tight" style="color: var(--logo-text)">Close<span
+                    style="color: var(--logo-accent)">Draft</span></span>
         </div>
 
         <!-- Progress -->
         <div class="flex items-center gap-2 mb-10 px-4">
-            <span class="step-label text-indigo-400" id="stepLabel1">Pain Point</span>
+            <span class="step-label" style="color: var(--step-label-active)" id="stepLabel1">Pain Point</span>
             <div class="step-line done" id="stepLine1"></div>
-            <span class="step-label text-slate-600" id="stepLabel2">Scale</span>
+            <span class="step-label" style="color: var(--step-label-inactive)" id="stepLabel2">Scale</span>
             <div class="step-line" id="stepLine2"></div>
-            <span class="step-label text-slate-600" id="stepLabel3">Import</span>
+            <span class="step-label" style="color: var(--step-label-inactive)" id="stepLabel3">Import</span>
             <div class="step-line" id="stepLine3"></div>
-            <span class="step-label text-slate-600" id="stepLabel4">Result</span>
+            <span class="step-label" style="color: var(--step-label-inactive)" id="stepLabel4">Result</span>
         </div>
 
         <!-- ============ STEP 1: Pain Point ============ -->
         <div id="step1">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-white mb-2">What slows you down most with clients?</h1>
-                <p class="text-slate-400 text-sm">We'll tailor CloseDraft to solve exactly this.</p>
+                <h1 class="text-2xl font-bold mb-2" style="color: var(--text-main)">What slows you down most with
+                    clients?</h1>
+                <p class="text-sm" style="color: var(--text-soft)">We'll tailor CloseDraft to solve exactly this.</p>
             </div>
 
             <div class="space-y-3" id="step1Options">
@@ -214,36 +373,36 @@
                     onclick="selectPainPoint(this, 'forgetting-followups', 'You lose deals because follow-ups slip your mind. CloseDraft flags every client who needs attention — before they go cold.')">
                     <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg></div>
                     <div>
-                        <p class="font-semibold text-white">I forget to follow up</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Days pass, then weeks, and the conversation dies</p>
+                        <p class="font-semibold" style="color: var(--option-text)">I forget to follow up</p>
+                        <p class="text-xs mt-0.5" style="color: var(--option-sub)">Days pass, then weeks, and the
+                            conversation dies</p>
                     </div>
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectPainPoint(this, 'chasing-invoices', 'You do the work but payments drag on. CloseDraft drafts polite but firm payment reminders using your actual project details.')">
                     <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg></div>
                     <div>
-                        <p class="font-semibold text-white">I'm always chasing payments</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Invoicing is fine, collecting is the nightmare</p>
+                        <p class="font-semibold" style="color: var(--option-text)">I'm always chasing payments</p>
+                        <p class="text-xs mt-0.5" style="color: var(--option-sub)">Invoicing is fine, collecting is the
+                            nightmare</p>
                     </div>
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectPainPoint(this, 'getting-ghosted', 'You send proposals and hear nothing back. CloseDraft writes follow-ups that feel personal, not pushy — doubling your reply rate.')">
                     <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg></div>
                     <div>
-                        <p class="font-semibold text-white">Clients ghost me after proposals</p>
-                        <p class="text-xs text-slate-500 mt-0.5">I pitch, they vanish, I never know why</p>
+                        <p class="font-semibold" style="color: var(--option-text)">Clients ghost me after proposals</p>
+                        <p class="text-xs mt-0.5" style="color: var(--option-sub)">I pitch, they vanish, I never know
+                            why</p>
                     </div>
                 </div>
             </div>
@@ -257,8 +416,9 @@
         <!-- ============ STEP 2: Scale ============ -->
         <div id="step2" class="hidden">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-white mb-2">How many active clients do you manage?</h1>
-                <p class="text-slate-400 text-sm">This determines your starting setup.</p>
+                <h1 class="text-2xl font-bold mb-2" style="color: var(--text-main)">How many active clients do you
+                    manage?</h1>
+                <p class="text-sm" style="color: var(--text-soft)">This determines your starting setup.</p>
             </div>
 
             <div class="space-y-3" id="step2Options">
@@ -266,36 +426,33 @@
                     onclick="selectScale(this, '1-5', 'Perfect. We\'ll start you with a clean slate and 2 sample clients so you can see how tracking works immediately.')">
                     <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg></div>
                     <div>
-                        <p class="font-semibold text-white">1 to 5 clients</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Selective and intentional</p>
+                        <p class="font-semibold" style="color: var(--option-text)">1 to 5 clients</p>
+                        <p class="text-xs mt-0.5" style="color: var(--option-sub)">Selective and intentional</p>
                     </div>
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectScale(this, '6-15', 'You\'re busy. We\'ll pre-load 5 sample clients across different statuses so the dashboard feels real from day one.')">
                     <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg></div>
                     <div>
-                        <p class="font-semibold text-white">6 to 15 clients</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Growing steadily, staying busy</p>
+                        <p class="font-semibold" style="color: var(--option-text)">6 to 15 clients</p>
+                        <p class="text-xs mt-0.5" style="color: var(--option-sub)">Growing steadily, staying busy</p>
                     </div>
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectScale(this, '15-plus', 'You need scale. We\'ll load 8 sample clients and show you the batch workflow — bulk emails, bulk status updates, the works.')">
                     <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                         </svg></div>
                     <div>
-                        <p class="font-semibold text-white">15 or more clients</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Running a full operation</p>
+                        <p class="font-semibold" style="color: var(--option-text)">15 or more clients</p>
+                        <p class="text-xs mt-0.5" style="color: var(--option-sub)">Running a full operation</p>
                     </div>
                 </div>
             </div>
@@ -309,58 +466,57 @@
         <!-- ============ STEP 3: Import Clients (Optional) ============ -->
         <div id="importStep" class="hidden">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-white mb-2">Bring your clients with you</h1>
-                <p class="text-slate-400 text-sm">Upload a CSV, paste from a spreadsheet, or skip — we'll handle the
-                    formatting.</p>
+                <h1 class="text-2xl font-bold mb-2" style="color: var(--text-main)">Bring your clients with you</h1>
+                <p class="text-sm" style="color: var(--text-soft)">Upload a CSV, paste from a spreadsheet, or skip —
+                    we'll handle the formatting.</p>
             </div>
 
-            <!-- Upload Area -->
             <div class="import-area mb-4" onclick="document.getElementById('csvFileInput').click()">
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
-                <svg class="w-10 h-10 text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor"
+                <svg class="w-10 h-10 mx-auto mb-3" style="color: var(--text-dim)" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
                     </path>
                 </svg>
-                <p class="text-white font-medium text-sm">Click to upload a CSV file</p>
-                <p class="text-slate-500 text-xs mt-1">We expect columns: Name, Business, Email, Project, Amount</p>
+                <p class="font-medium text-sm" style="color: var(--text-main)">Click to upload a CSV file</p>
+                <p class="text-xs mt-1" style="color: var(--text-dim)">We expect columns: Name, Business, Email,
+                    Project, Amount</p>
             </div>
 
-            <!-- Or paste text -->
             <div class="relative mb-4">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-white/5"></div>
+                    <div class="w-full border-t" style="border-color: var(--divider)"></div>
                 </div>
-                <div class="relative flex justify-center text-xs"><span class="px-3 bg-background text-slate-600">or
-                        paste raw data</span></div>
+                <div class="relative flex justify-center text-xs"><span class="px-3"
+                        style="color: var(--text-dim); background: var(--bg-start)">or paste raw data</span></div>
             </div>
 
             <textarea id="pasteInput" rows="4"
                 placeholder="Sarah Chen, Bright Analytics, sarah@bright.com, Dashboard Redesign, 3500&#10;Marcus Lee, DesignCo, marcus@designco.io, Brand Identity, 2200&#10;..."
-                class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 text-sm resize-none focus:border-indigo-500 focus:outline-none transition-all"></textarea>
+                class="w-full px-4 py-3 rounded-xl border text-sm resize-none transition-all"
+                style="background: var(--paste-bg); border-color: var(--paste-border); color: var(--text-main);"></textarea>
             <button onclick="parsePastedData()"
-                class="w-full bg-slate-800/50 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-sm font-medium border border-white/10 transition-all mb-4">
-                Parse pasted data
-            </button>
+                class="w-full py-2.5 rounded-xl text-sm font-medium border transition-all mb-4"
+                style="background: var(--card-bg); border-color: var(--card-border); color: var(--text-soft);">Parse
+                pasted data</button>
 
-            <!-- Preview -->
             <div id="importPreview" class="hidden">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Preview</p>
+                    <p class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-dim)">Preview</p>
                     <span id="importCount" class="tag">0 clients detected</span>
                 </div>
-                <div class="bg-slate-800/30 rounded-xl p-4 max-h-48 overflow-y-auto mb-4">
-                    <table class="w-full text-xs text-slate-300">
+                <div class="rounded-xl p-4 max-h-48 overflow-y-auto mb-4" style="background: var(--preview-bg)">
+                    <table class="w-full text-xs">
                         <thead>
-                            <tr class="text-slate-500 uppercase">
+                            <tr class="uppercase" style="color: var(--text-dim)">
                                 <th class="text-left py-1 pr-2">Name</th>
                                 <th class="text-left py-1 pr-2">Business</th>
                                 <th class="text-left py-1 pr-2">Email</th>
                                 <th class="text-left py-1">Project</th>
                             </tr>
                         </thead>
-                        <tbody id="importPreviewBody"></tbody>
+                        <tbody id="importPreviewBody" style="color: var(--text-soft)"></tbody>
                     </table>
                 </div>
             </div>
@@ -370,39 +526,75 @@
                 Continue to dashboard
             </button>
             <p class="text-center mt-3">
-                <a href="#" onclick="finishOnboarding()"
-                    class="text-slate-500 text-xs hover:text-slate-400 transition-colors">Skip — I'll add clients
-                    later</a>
+                <a href="#" onclick="finishOnboarding()" class="text-xs transition-colors"
+                    style="color: var(--text-dim)">Skip — I'll add clients later</a>
             </p>
         </div>
 
         <!-- ============ STEP 4: Processing ============ -->
         <div id="processingStep" class="hidden text-center py-10">
             <div
-                class="w-12 h-12 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/20">
+                class="w-12 h-12 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20">
                 <svg class="w-6 h-6 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
                     </path>
                 </svg>
             </div>
-            <h2 class="text-xl font-bold text-white mb-2" id="processingTitle">Building your workspace...</h2>
-            <p class="text-slate-400 text-sm" id="processingSubtitle">Creating clients and setting things up</p>
+            <h2 class="text-xl font-bold mb-2" style="color: var(--text-main)" id="processingTitle">Building your
+                workspace...</h2>
+            <p class="text-sm" style="color: var(--text-soft)" id="processingSubtitle">Creating clients and setting
+                things up</p>
             <div class="flex items-center justify-center gap-2 mt-6">
-                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                <div class="w-2 h-2 rounded-full animate-pulse" style="background: var(--logo-accent)"></div>
+                <div class="w-2 h-2 rounded-full animate-pulse"
+                    style="background: var(--logo-accent); animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 rounded-full animate-pulse"
+                    style="background: var(--logo-accent); animation-delay: 0.4s"></div>
             </div>
         </div>
 
         <p class="text-center mt-8">
-            <a href="/app.html" class="text-slate-600 text-xs hover:text-slate-500 transition-colors">Skip everything —
-                go to dashboard</a>
+            <a href="/app.html" class="text-xs transition-colors" style="color: var(--text-dim)">Skip everything — go to
+                dashboard</a>
         </p>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            style="color: var(--text-soft)">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+        <div class="switch"></div>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            style="color: var(--text-soft)">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+            // Theme toggle
+            (function () {
+                const saved = localStorage.getItem('closeDraft_theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+            })();
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+        }
+
         const supabaseClient = window.supabase.createClient(
             'https://txibbsaodcpaturobeok.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24'
@@ -430,19 +622,19 @@
             insightDiv.className = 'insight-box mt-4';
             if (value === 'forgetting-followups') {
                 insightDiv.innerHTML = `
-            <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
-            <p class="text-slate-300 text-sm leading-relaxed">Your dashboard will <strong class="text-white">proactively show you every client who hasn’t been contacted in 7+ days</strong>. One click writes a personalised follow‑up. You’ll never wonder “who am I forgetting?” again.</p>
-            <p class="text-slate-500 text-xs mt-3">After you sign up, you’ll see demo clients that need attention immediately.</p>`;
+            <p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p>
+            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">Your dashboard will <strong style="color: var(--text-main)">proactively show you every client who hasn't been contacted in 7+ days</strong>. One click writes a personalised follow‑up. You'll never wonder "who am I forgetting?" again.</p>
+            <p class="text-xs mt-3" style="color: var(--text-dim)">After you sign up, you'll see demo clients that need attention immediately.</p>`;
             } else if (value === 'chasing-invoices') {
                 insightDiv.innerHTML = `
-            <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
-            <p class="text-slate-300 text-sm leading-relaxed">CloseDraft <strong class="text-white">drafts polite but firm payment reminders</strong> using your actual project details. You can set them to go out automatically via Gmail. No more awkward payment chases.</p>
-            <p class="text-slate-500 text-xs mt-3">Your dashboard will highlight clients with “Payment Due” status right at the top.</p>`;
+            <p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p>
+            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">CloseDraft <strong style="color: var(--text-main)">drafts polite but firm payment reminders</strong> using your actual project details. You can set them to go out automatically via Gmail. No more awkward payment chases.</p>
+            <p class="text-xs mt-3" style="color: var(--text-dim)">Your dashboard will highlight clients with "Payment Due" status right at the top.</p>`;
             } else if (value === 'getting-ghosted') {
                 insightDiv.innerHTML = `
-            <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">How CloseDraft helps</p>
-            <p class="text-slate-300 text-sm leading-relaxed">CloseDraft’s AI writes <strong class="text-white">personal, non‑pushy follow‑ups</strong> that double your reply rate. It remembers the context of your last conversation so every email feels human.</p>
-            <p class="text-slate-500 text-xs mt-3">You’ll also see which clients have gone silent so you can act before they ghost.</p>`;
+            <p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p>
+            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">CloseDraft's AI writes <strong style="color: var(--text-main)">personal, non‑pushy follow‑ups</strong> that double your reply rate. It remembers the context of your last conversation so every email feels human.</p>
+            <p class="text-xs mt-3" style="color: var(--text-dim)">You'll also see which clients have gone silent so you can act before they ghost.</p>`;
             }
             insightDiv.classList.remove('hidden');
             document.getElementById('step1Btn').disabled = false;
@@ -451,21 +643,20 @@
         }
 
         function selectScale(element, value, insight) {
-            // ... existing code, but replace the insightDiv.innerHTML with more value‑focused text
             document.querySelectorAll('#step2Options .option-card').forEach(c => c.classList.remove('selected'));
             element.classList.add('selected');
             selectedScale = value;
             const insightDiv = document.getElementById('step2Insight');
             insightDiv.className = 'insight-box mt-4';
             if (value === '1-5') {
-                insightDiv.innerHTML = `<p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Your setup</p>
-            <p class="text-slate-300 text-sm leading-relaxed">We’ll start you with <strong class="text-white">2 sample clients</strong> that need attention right away. You’ll see exactly how CloseDraft prevents forgotten follow‑ups from day one.</p>`;
+                insightDiv.innerHTML = `<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p>
+            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">We'll start you with <strong style="color: var(--text-main)">2 sample clients</strong> that need attention right away. You'll see exactly how CloseDraft prevents forgotten follow‑ups from day one.</p>`;
             } else if (value === '6-15') {
-                insightDiv.innerHTML = `<p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Your setup</p>
-            <p class="text-slate-300 text-sm leading-relaxed">We’ll load <strong class="text-white">5 sample clients</strong> across different statuses. Your dashboard will immediately show you who needs a follow‑up, who hasn’t paid, and let you write them with one click.</p>`;
+                insightDiv.innerHTML = `<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p>
+            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">We'll load <strong style="color: var(--text-main)">5 sample clients</strong> across different statuses. Your dashboard will immediately show you who needs a follow‑up, who hasn't paid, and let you write them with one click.</p>`;
             } else if (value === '15-plus') {
-                insightDiv.innerHTML = `<p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Your setup</p>
-            <p class="text-slate-300 text-sm leading-relaxed">We’ll load <strong class="text-white">8 sample clients</strong> and show you the batch workflow — bulk emails, bulk status updates. You’ll see how CloseDraft scales with your business.</p>`;
+                insightDiv.innerHTML = `<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p>
+            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">We'll load <strong style="color: var(--text-main)">8 sample clients</strong> and show you the batch workflow — bulk emails, bulk status updates. You'll see how CloseDraft scales with your business.</p>`;
             }
             insightDiv.classList.remove('hidden');
             document.getElementById('step2Btn').disabled = false;
@@ -492,9 +683,9 @@
             const lines = ['stepLine1', 'stepLine2', 'stepLine3'];
             labels.forEach((id, i) => {
                 const el = document.getElementById(id);
-                if (i + 1 < step) { el.className = 'step-label text-slate-500'; }
-                else if (i + 1 === step) { el.className = 'step-label text-indigo-400'; }
-                else { el.className = 'step-label text-slate-600'; }
+                if (i + 1 < step) { el.style.color = 'var(--text-dim)'; }
+                else if (i + 1 === step) { el.style.color = 'var(--step-label-active)'; }
+                else { el.style.color = 'var(--step-label-inactive)'; }
             });
             lines.forEach((id, i) => {
                 const el = document.getElementById(id);
@@ -507,9 +698,7 @@
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function (e) {
-                parseCSV(e.target.result);
-            };
+            reader.onload = function (e) { parseCSV(e.target.result); };
             reader.readAsText(file);
         }
 
@@ -521,14 +710,7 @@
             for (let i = 1; i < lines.length; i++) {
                 const vals = lines[i].split(',').map(v => v.trim());
                 if (!vals[0]) continue;
-                parsedClients.push({
-                    name: vals[0] || '',
-                    business: vals[1] || '',
-                    email: vals[2] || '',
-                    project: vals[3] || '',
-                    amount: vals[4] ? parseFloat(vals[4]) : null,
-                    status: 'active'
-                });
+                parsedClients.push({ name: vals[0] || '', business: vals[1] || '', email: vals[2] || '', project: vals[3] || '', amount: vals[4] ? parseFloat(vals[4]) : null, status: 'active' });
             }
             renderPreview();
         }
@@ -541,14 +723,7 @@
             for (const line of lines) {
                 const vals = line.split(',').map(v => v.trim());
                 if (!vals[0]) continue;
-                parsedClients.push({
-                    name: vals[0] || '',
-                    business: vals[1] || '',
-                    email: vals[2] || '',
-                    project: vals[3] || '',
-                    amount: vals[4] ? parseFloat(vals[4]) : null,
-                    status: 'active'
-                });
+                parsedClients.push({ name: vals[0] || '', business: vals[1] || '', email: vals[2] || '', project: vals[3] || '', amount: vals[4] ? parseFloat(vals[4]) : null, status: 'active' });
             }
             renderPreview();
         }
@@ -560,43 +735,26 @@
             preview.classList.remove('hidden');
             count.textContent = `${parsedClients.length} clients detected`;
             body.innerHTML = parsedClients.slice(0, 5).map(c =>
-                `<tr><td class="py-1 pr-2 text-white">${c.name}</td><td class="py-1 pr-2 text-slate-400">${c.business || '—'}</td><td class="py-1 pr-2 text-slate-400">${c.email || '—'}</td><td class="py-1 text-slate-400">${c.project || '—'}</td></tr>`
+                `<tr><td class="py-1 pr-2" style="color: var(--text-main)">${c.name}</td><td class="py-1 pr-2" style="color: var(--text-soft)">${c.business || '—'}</td><td class="py-1 pr-2" style="color: var(--text-soft)">${c.email || '—'}</td><td class="py-1" style="color: var(--text-soft)">${c.project || '—'}</td></tr>`
             ).join('');
             if (parsedClients.length > 5) {
-                body.innerHTML += `<tr><td colspan="4" class="py-2 text-slate-500 text-xs">+${parsedClients.length - 5} more</td></tr>`;
+                body.innerHTML += `<tr><td colspan="4" class="py-2 text-xs" style="color: var(--text-dim)">+${parsedClients.length - 5} more</td></tr>`;
             }
         }
 
         async function finishOnboarding() {
             if (!currentUser) return;
-
             document.getElementById('importStep').classList.add('hidden');
             document.getElementById('processingStep').classList.remove('hidden');
             updateProgress(4);
-
             const token = (await supabaseClient.auth.getSession()).data.session?.access_token;
-
-            // Update profile
-            await supabaseClient.from('profiles').update({
-                headache: selectedPainPoint,
-                client_count: selectedScale,
-                onboarding_completed: true,
-                updated_at: new Date().toISOString()
-            }).eq('id', currentUser.id);
-
+            await supabaseClient.from('profiles').update({ headache: selectedPainPoint, client_count: selectedScale, onboarding_completed: true, updated_at: new Date().toISOString() }).eq('id', currentUser.id);
             const clientsToCreate = parsedClients.length > 0 ? parsedClients : generateDemoClients(selectedPainPoint, selectedScale);
-
             document.getElementById('processingTitle').textContent = parsedClients.length > 0 ? 'Importing your clients...' : 'Creating your demo workspace...';
             document.getElementById('processingSubtitle').textContent = `Setting up ${clientsToCreate.length} client${clientsToCreate.length !== 1 ? 's' : ''}`;
-
             for (const client of clientsToCreate) {
-                await fetch('/api/clients', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(client)
-                });
+                await fetch('/api/clients', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(client) });
             }
-
             document.getElementById('processingTitle').textContent = 'Everything is ready.';
             document.getElementById('processingSubtitle').textContent = 'Taking you to your dashboard...';
             setTimeout(() => { window.location.href = '/app.html'; }, 800);
