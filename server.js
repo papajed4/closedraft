@@ -746,9 +746,31 @@ app.post('/api/polar-webhook', async (req, res) => {
                 await sendTelegramNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
             }
         }
+        
         if (event.type === 'subscription.created') {
             const subscription = event.data;
             await supabase.from('payments').update({ subscription_id: subscription.id }).eq('checkout_id', subscription.checkoutId);
+        }
+                // ✅ NEW: Handle subscription updates (including expiration)
+        if (event.type === 'subscription.updated') {
+            const subscription = event.data;
+            const { data: payment } = await supabase
+                .from('payments')
+                .select('user_id')
+                .eq('subscription_id', subscription.id)
+                .single();
+
+            if (payment && subscription.status !== 'active') {
+                console.log(`⚠️ Subscription ${subscription.id} is no longer active (status: ${subscription.status}) – downgrading user ${payment.user_id} to free`);
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({ plan: 'free', updated_at: new Date().toISOString() })
+                    .eq('id', payment.user_id);
+
+                // Send notifications (optional)
+                await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
+            }
         }
         if (event.type === 'subscription.canceled') {
             const subscription = event.data;
@@ -1736,6 +1758,39 @@ setInterval(async () => {
         console.error('Reply detection error:', err);
     }
 }, 300000);
+
+const cron = require('node-cron');
+const { polarApi } = require('./lib/polar');
+
+// Run daily at 2 AM UTC
+cron.schedule('0 2 * * *', async () => {
+    console.log('🔄 Running subscription expiration check...');
+    try {
+        // Fetch all active subscriptions from Polar (paginate if needed)
+        const subscriptions = await polarApi.subscriptions.list({ status: 'active' });
+        for (const sub of subscriptions.items) {
+            // Get the associated user from your payments table
+            const { data: payment } = await supabase
+                .from('payments')
+                .select('user_id')
+                .eq('subscription_id', sub.id)
+                .single();
+
+            if (payment) {
+                // Check if the subscription is actually still active (Polar sometimes lags)
+                if (sub.current_period_end && new Date(sub.current_period_end) < new Date()) {
+                    console.log(`⏰ Subscription ${sub.id} expired – downgrading user ${payment.user_id}`);
+                    await supabaseAdmin
+                        .from('profiles')
+                        .update({ plan: 'free', updated_at: new Date().toISOString() })
+                        .eq('id', payment.user_id);
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Cron error:', err);
+    }
+});
 
 // ==================== SERVE PAGES ====================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
