@@ -225,18 +225,10 @@
             transform: translateX(18px);
         }
 
-        /* Open‑Launch badge theme switching */
-        .open-launch-dark {
-            display: none;
-        }
-
-        html.dark .open-launch-light {
-            display: none;
-        }
-
-        html.dark .open-launch-dark {
-            display: inline;
-        }
+      /* Launch badges: light/dark switching */
+.badge-dark { display: none; }
+html.dark .badge-light { display: none; }
+html.dark .badge-dark { display: inline; }
     </style>
 </head>
 
@@ -675,75 +667,79 @@
     </main>
 
     <!-- Footer -->
-    <footer class="pt-20 pb-10 border-t" style="background: var(--footer-bg); border-color: var(--footer-border);">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                        <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
-                                class="text-gradient">Draft</span></span>
+   <footer class="pt-20 pb-10 border-t" style="background: var(--footer-bg); border-color: var(--footer-border);">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
                     </div>
-                    <p class="text-sm mb-3" style="color: var(--text-dim)">The client memory freelancers love.</p>
-                    <!-- Open‑Launch Featured Badge -->
+                    <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
+                            class="text-gradient">Draft</span></span>
+                </div>
+                <p class="text-sm mb-3" style="color: var(--text-dim)">The client memory freelancers love.</p>
+                <!-- Badges -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Open‑Launch -->
                     <a href="https://open-launch.com/projects/closedraft" target="_blank" rel="noopener">
-                        <img class="open-launch-light"
-                            src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-light.svg"
-                            alt="Featured on Open‑Launch" width="180" height="45" />
-                        <img class="open-launch-dark"
-                            src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-dark.svg"
-                            alt="Featured on Open‑Launch" width="180" height="45" />
+                        <img class="badge-light" src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-light.svg" alt="Featured on Open‑Launch" width="180" height="45" />
+                        <img class="badge-dark" src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-dark.svg" alt="Featured on Open‑Launch" width="180" height="45" />
+                    </a>
+                    <!-- Fazier -->
+                    <a href="https://fazier.com/launches/closedraft.site" target="_blank" rel="noopener">
+                        <img class="badge-light" src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=light" alt="Fazier badge" width="180" height="45" />
+                        <img class="badge-dark" src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=dark" alt="Fazier badge" width="180" height="45" />
                     </a>
                 </div>
-                <div>
-                    <div class="font-bold mb-4" style="color: var(--logo-text)">Product</div>
-                    <ul class="space-y-2">
-                        <li><a href="/features.html" class="text-sm transition-colors"
-                                style="color: var(--text-dim)">Features</a></li>
-                        <li><a href="/pricing.html" class="text-sm transition-colors"
-                                style="color: var(--text-dim)">Pricing</a></li>
-                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Chrome
-                                Extension</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="font-bold mb-4" style="color: var(--logo-text)">Resources</div>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Blog</a></li>
-                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Help Center</a>
-                        </li>
-                        <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Templates</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="font-bold mb-4" style="color: var(--logo-text)">Legal</div>
-                    <ul class="space-y-2">
-                        <li><a href="/privacy.html" class="text-sm transition-colors"
-                                style="color: var(--text-dim)">Privacy</a></li>
-                        <li><a href="/terms.html" class="text-sm transition-colors"
-                                style="color: var(--text-dim)">Terms</a></li>
-                        <li><a href="/security.html" class="text-sm transition-colors"
-                                style="color: var(--text-dim)">Security</a></li>
-                    </ul>
-                </div>
             </div>
-            <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
-                style="border-color: var(--footer-border); color: var(--text-dim)">
-                <span>© 2026 CloseDraft. All rights reserved.</span>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
-                </div>
+            <div>
+                <div class="font-bold mb-4" style="color: var(--logo-text)">Product</div>
+                <ul class="space-y-2">
+                    <li><a href="/features.html" class="text-sm transition-colors"
+                            style="color: var(--text-dim)">Features</a></li>
+                    <li><a href="/pricing.html" class="text-sm transition-colors"
+                            style="color: var(--text-dim)">Pricing</a></li>
+                    <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Chrome
+                            Extension</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="font-bold mb-4" style="color: var(--logo-text)">Resources</div>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Blog</a></li>
+                    <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Help Center</a>
+                    </li>
+                    <li><a href="#" class="text-sm transition-colors" style="color: var(--text-dim)">Templates</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div class="font-bold mb-4" style="color: var(--logo-text)">Legal</div>
+                <ul class="space-y-2">
+                    <li><a href="/privacy.html" class="text-sm transition-colors"
+                            style="color: var(--text-dim)">Privacy</a></li>
+                    <li><a href="/terms.html" class="text-sm transition-colors"
+                            style="color: var(--text-dim)">Terms</a></li>
+                    <li><a href="/security.html" class="text-sm transition-colors"
+                            style="color: var(--text-dim)">Security</a></li>
+                </ul>
             </div>
         </div>
-    </footer>
+        <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
+            style="border-color: var(--footer-border); color: var(--text-dim)">
+            <span>© 2026 CloseDraft. All rights reserved.</span>
+            <div class="flex gap-6">
+                <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
+                <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
+                <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <!-- ============ THEME TOGGLE (bottom-right) ============ -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
