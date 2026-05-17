@@ -350,71 +350,71 @@ app.post('/api/generate-email', async (req, res) => {
 });
 
 app.post('/api/generate-all-attention', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  // Pro check
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('plan')
-    .eq('id', user.id)
-    .single();
-  if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
+    // Pro check
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .single();
+    if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
 
-  const { type = 'Follow-up', tone = 'Friendly', freelancerName } = req.body;
+    const { type = 'Follow-up', tone = 'Friendly', freelancerName } = req.body;
 
-  // Get all attention clients
-  const { data: clients } = await supabaseAdmin
-    .from('clients')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('archived', false);
+    // Get all attention clients
+    const { data: clients } = await supabaseAdmin
+        .from('clients')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('archived', false);
 
-  const attentionClients = clients.filter(c => {
-    if (c.deadline && new Date(c.deadline) < new Date()) return true;
-    if (!c.last_contacted) return true;
-    const daysStale = Math.ceil((new Date() - new Date(c.last_contacted)) / (1000 * 60 * 60 * 24));
-    return daysStale >= 7;
-  });
+    const attentionClients = clients.filter(c => {
+        if (c.deadline && new Date(c.deadline) < new Date()) return true;
+        if (!c.last_contacted) return true;
+        const daysStale = Math.ceil((new Date() - new Date(c.last_contacted)) / (1000 * 60 * 60 * 24));
+        return daysStale >= 7;
+    });
 
-  if (attentionClients.length === 0) {
-    return res.json({ drafts: [] });
-  }
-
-  const drafts = [];
-  for (const client of attentionClients) {
-    try {
-      const prompt = buildPrompt(client, type, tone, freelancerName || '');
-      const generatedText = await generateEmail(prompt);
-
-      let subjectA = '', subjectB = '', body = generatedText;
-      const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
-      const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
-      if (subjectAMatch && subjectBMatch) {
-        subjectA = subjectAMatch[1].trim();
-        subjectB = subjectBMatch[1].trim();
-        body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
-      } else {
-        const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
-        if (subjectMatch) {
-          subjectA = subjectMatch[1].trim();
-          subjectB = subjectA;
-          body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
-        }
-      }
-
-      drafts.push({
-        client: { id: client.id, name: client.name, email: client.email, business: client.business },
-        subjectA,
-        subjectB,
-        body
-      });
-    } catch (e) {
-      console.error(`Failed to generate for ${client.name}:`, e);
+    if (attentionClients.length === 0) {
+        return res.json({ drafts: [] });
     }
-  }
 
-  res.json({ drafts });
+    const drafts = [];
+    for (const client of attentionClients) {
+        try {
+            const prompt = buildPrompt(client, type, tone, freelancerName || '');
+            const generatedText = await generateEmail(prompt);
+
+            let subjectA = '', subjectB = '', body = generatedText;
+            const subjectAMatch = generatedText.match(/^Subject A:\s*(.+)$/m);
+            const subjectBMatch = generatedText.match(/^Subject B:\s*(.+)$/m);
+            if (subjectAMatch && subjectBMatch) {
+                subjectA = subjectAMatch[1].trim();
+                subjectB = subjectBMatch[1].trim();
+                body = generatedText.replace(/^Subject A:\s*.+\n+/m, '').replace(/^Subject B:\s*.+\n+/m, '').trim();
+            } else {
+                const subjectMatch = generatedText.match(/^Subject:\s*(.+)$/m);
+                if (subjectMatch) {
+                    subjectA = subjectMatch[1].trim();
+                    subjectB = subjectA;
+                    body = generatedText.replace(/^Subject:\s*.+\n+/, '').trim();
+                }
+            }
+
+            drafts.push({
+                client: { id: client.id, name: client.name, email: client.email, business: client.business },
+                subjectA,
+                subjectB,
+                body
+            });
+        } catch (e) {
+            console.error(`Failed to generate for ${client.name}:`, e);
+        }
+    }
+
+    res.json({ drafts });
 });
 
 async function generateEmailForClient(client, type, tone, freelancerName, res, user) {
@@ -477,59 +477,59 @@ async function generateEmailForClient(client, type, tone, freelancerName, res, u
 
 // ==================== SEND NOW (In-App Sending) ====================
 app.post('/api/send-now', async (req, res) => {
-  const user = await getUserFromToken(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { clientId, subject, body, type, tone, freelancerName } = req.body;
-  if (!clientId || !subject || !body) return res.status(400).json({ error: 'Missing fields' });
+    const { clientId, subject, body, type, tone, freelancerName } = req.body;
+    if (!clientId || !subject || !body) return res.status(400).json({ error: 'Missing fields' });
 
-  // Verify client belongs to user
-  const { data: client } = await supabase
-    .from('clients')
-    .select('*')
-    .eq('id', clientId)
-    .eq('user_id', user.id)
-    .single();
-  if (!client || !client.email) return res.status(400).json({ error: 'Invalid client or no email' });
+    // Verify client belongs to user
+    const { data: client } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('id', clientId)
+        .eq('user_id', user.id)
+        .single();
+    if (!client || !client.email) return res.status(400).json({ error: 'Invalid client or no email' });
 
-  try {
-    const { sendGmailEmail } = require('./lib/sendEmail');
-    const result = await sendGmailEmail(user.id, client.email, subject, body);
+    try {
+        const { sendGmailEmail } = require('./lib/sendEmail');
+        const result = await sendGmailEmail(user.id, client.email, subject, body);
 
-    // Save to email history
-    const { data: savedEmail } = await supabaseAdmin
-      .from('emails')
-      .insert([{
-        user_id: user.id,
-        client_id: clientId,
-        subject,
-        body,
-        type: type || 'Follow-up',
-        tone: tone || 'Professional'
-      }])
-      .select()
-      .single();
+        // Save to email history
+        const { data: savedEmail } = await supabaseAdmin
+            .from('emails')
+            .insert([{
+                user_id: user.id,
+                client_id: clientId,
+                subject,
+                body,
+                type: type || 'Follow-up',
+                tone: tone || 'Professional'
+            }])
+            .select()
+            .single();
 
-    // Record activity
-    await supabaseAdmin
-      .from('client_activities')
-      .insert({
-        client_id: clientId,
-        user_id: user.id,
-        activity_type: 'email_sent',
-        metadata: { subject, type, tone },
-        created_at: new Date().toISOString()
-      });
+        // Record activity
+        await supabaseAdmin
+            .from('client_activities')
+            .insert({
+                client_id: clientId,
+                user_id: user.id,
+                activity_type: 'email_sent',
+                metadata: { subject, type, tone },
+                created_at: new Date().toISOString()
+            });
 
-    // Send notifications
-    await sendDiscordNotification(user.id, `📧 Email sent to ${client.name} (${type})`, 'new_email');
-    await sendTelegramNotification(user.id, `📧 Email sent to ${client.name} (${type})`, 'new_email');
+        // Send notifications
+        await sendDiscordNotification(user.id, `📧 Email sent to ${client.name} (${type})`, 'new_email');
+        await sendTelegramNotification(user.id, `📧 Email sent to ${client.name} (${type})`, 'new_email');
 
-    res.json({ success: true, emailId: savedEmail?.id });
-  } catch (error) {
-    console.error('Send now error:', error);
-    res.status(500).json({ error: 'Failed to send email' });
-  }
+        res.json({ success: true, emailId: savedEmail?.id });
+    } catch (error) {
+        console.error('Send now error:', error);
+        res.status(500).json({ error: 'Failed to send email' });
+    }
 });
 
 // ==================== EMAIL HISTORY ====================
@@ -702,7 +702,7 @@ app.post('/api/create-checkout', async (req, res) => {
             metadata: { userId: user.id }
         });
         console.log('✅ Checkout created:', checkout.id);
-        await supabase.from('payments').insert([{
+        await supabaseAdmin.from('payments').insert([{
             user_id: user.id,
             checkout_id: checkout.id,
             product_id: productId,
@@ -723,38 +723,64 @@ app.post('/api/polar-webhook', async (req, res) => {
     try {
         if (event.type === 'checkout.updated') {
             const checkout = event.data;
-            await supabase.from('payments').update({
-                status: checkout.status,
-                updated_at: new Date().toISOString()
-            }).eq('checkout_id', checkout.id);
+            // Update or insert payment record
+            const { data: existingPayment } = await supabaseAdmin
+                .from('payments')
+                .select('id')
+                .eq('checkout_id', checkout.id)
+                .maybeSingle();
+
+            if (!existingPayment) {
+                // Insert if missing (shouldn't happen, but safe)
+                await supabaseAdmin.from('payments').insert({
+                    checkout_id: checkout.id,
+                    user_id: checkout.metadata?.userId,
+                    product_id: checkout.products?.[0]?.id,
+                    status: checkout.status,
+                    created_at: new Date().toISOString()
+                });
+            } else {
+                await supabaseAdmin
+                    .from('payments')
+                    .update({ status: checkout.status, updated_at: new Date().toISOString() })
+                    .eq('checkout_id', checkout.id);
+            }
 
             if (checkout.status === 'succeeded') {
-                const { data: payment } = await supabase
+                const { data: payment } = await supabaseAdmin
                     .from('payments')
                     .select('user_id, product_id')
                     .eq('checkout_id', checkout.id)
-                    .single();
+                    .maybeSingle();
                 if (payment) {
-                    let plan = 'pro_monthly';
-                    if (payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9') plan = 'pro_yearly';
-                    else if (payment.product_id === '5d5c4dd0-6a3b-4b76-bcec-fbd7bd22cd1b') plan = 'pro_monthly';
-                    await supabaseAdmin.from('profiles').update({ plan, updated_at: new Date().toISOString() }).eq('id', payment.user_id);
-                }
+                    let plan = payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9' ? 'pro_yearly' : 'pro_monthly';
+                    await supabaseAdmin
+                        .from('profiles')
+                        .update({ plan, updated_at: new Date().toISOString() })
+                        .eq('id', payment.user_id);
+                    // Send notifications (optional)
 
-                // inside if (checkout.status === 'succeeded') block, after updating plan
-                await sendDiscordNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
-                await sendTelegramNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
+                    // inside if (checkout.status === 'succeeded') block, after updating plan
+                    await sendDiscordNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
+                    await sendTelegramNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
+                }
             }
         }
-        
+
+
+
+
         if (event.type === 'subscription.created') {
             const subscription = event.data;
-            await supabase.from('payments').update({ subscription_id: subscription.id }).eq('checkout_id', subscription.checkoutId);
+            await supabaseAdmin
+                .from('payments')
+                .update({ subscription_id: subscription.id })
+                .eq('checkout_id', subscription.checkoutId);
         }
-                // ✅ NEW: Handle subscription updates (including expiration)
+        // ✅ NEW: Handle subscription updates (including expiration)
         if (event.type === 'subscription.updated') {
             const subscription = event.data;
-            const { data: payment } = await supabase
+            const { data: payment } = await supabaseAdmin
                 .from('payments')
                 .select('user_id')
                 .eq('subscription_id', subscription.id)
@@ -774,13 +800,20 @@ app.post('/api/polar-webhook', async (req, res) => {
         }
         if (event.type === 'subscription.canceled') {
             const subscription = event.data;
-            const { data: payment } = await supabase.from('payments').select('user_id').eq('subscription_id', subscription.id).single();
-            if (payment) {
-                await supabaseAdmin.from('profiles').update({ plan: 'free', updated_at: new Date().toISOString() }).eq('id', payment.user_id);
+            const { data: payment } = await supabaseAdmin
+                .from('payments')
+                .select('user_id')
+                .eq('subscription_id', subscription.id)
+                .maybeSingle();
 
-                // ✅ INSERT HERE
-                await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free`, 'plan_changed');
-                await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free`, 'plan_changed');
+            if (payment) {
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({ plan: 'free', updated_at: new Date().toISOString() })
+                    .eq('id', payment.user_id);
+
+                await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free (canceled)`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free (canceled)`, 'plan_changed');
             }
         }
         res.status(200).json({ received: true });
@@ -1031,10 +1064,10 @@ const { oauth2Client: discordOAuth2 } = new (require('google-auth-library').OAut
 app.get('/api/discord/auth-url', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { data: profile } = await supabaseAdmin.from('profiles').select('plan').eq('id', user.id).single();
     if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
-    
+
     const params = new URLSearchParams({
         client_id: process.env.DISCORD_CLIENT_ID,
         redirect_uri: process.env.DISCORD_REDIRECT_URI,
@@ -1278,10 +1311,10 @@ bot.onText(/^\/start$/, (msg) => {
 app.get('/api/user/telegram-link', async (req, res) => {
     const user = await getUserFromToken(req);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    
+
     const { data: profile } = await supabaseAdmin.from('profiles').select('plan').eq('id', user.id).single();
     if (profile?.plan === 'free') return res.status(403).json({ error: 'Pro plan required' });
-    
+
     // Generate a fresh random token
     const crypto = require('crypto');
     const token = crypto.randomBytes(16).toString('hex');
@@ -1760,7 +1793,6 @@ setInterval(async () => {
 }, 300000);
 
 const cron = require('node-cron');
-const { polarApi } = require('./lib/polar');
 
 // Run daily at 2 AM UTC
 cron.schedule('0 2 * * *', async () => {
@@ -1770,7 +1802,7 @@ cron.schedule('0 2 * * *', async () => {
         const subscriptions = await polarApi.subscriptions.list({ status: 'active' });
         for (const sub of subscriptions.items) {
             // Get the associated user from your payments table
-            const { data: payment } = await supabase
+            const { data: payment } = await supabaseAdmin
                 .from('payments')
                 .select('user_id')
                 .eq('subscription_id', sub.id)
