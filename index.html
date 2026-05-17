@@ -3,13 +3,13 @@
 
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HBF8V0GJPL');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-HBF8V0GJPL');
+    </script>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>CloseDraft | Never lose a client again</title>
@@ -223,6 +223,19 @@
 
         html.dark .theme-toggle .switch::after {
             transform: translateX(18px);
+        }
+
+        /* Open‑Launch badge theme switching */
+        .open-launch-dark {
+            display: none;
+        }
+
+        html.dark .open-launch-light {
+            display: none;
+        }
+
+        html.dark .open-launch-dark {
+            display: inline;
         }
     </style>
 </head>
@@ -676,7 +689,16 @@
                         <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
                                 class="text-gradient">Draft</span></span>
                     </div>
-                    <p class="text-sm" style="color: var(--text-dim)">The client memory freelancers love.</p>
+                    <p class="text-sm mb-3" style="color: var(--text-dim)">The client memory freelancers love.</p>
+                    <!-- Open‑Launch Featured Badge -->
+                    <a href="https://open-launch.com/projects/closedraft" target="_blank" rel="noopener">
+                        <img class="open-launch-light"
+                            src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-light.svg"
+                            alt="Featured on Open‑Launch" width="180" height="45" />
+                        <img class="open-launch-dark"
+                            src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-dark.svg"
+                            alt="Featured on Open‑Launch" width="180" height="45" />
+                    </a>
                 </div>
                 <div>
                     <div class="font-bold mb-4" style="color: var(--logo-text)">Product</div>
