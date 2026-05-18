@@ -721,51 +721,87 @@ app.post('/api/polar-webhook', async (req, res) => {
     console.log('📦 Polar webhook received:', event.type);
 
     try {
-        if (event.type === 'checkout.updated') {
-            const checkout = event.data;
-            // Update or insert payment record
-            const { data: existingPayment } = await supabaseAdmin
-                .from('payments')
-                .select('id')
-                .eq('checkout_id', checkout.id)
-                .maybeSingle();
+if (event.type === 'checkout.updated') {
+    const checkout = event.data;
+    console.log(`📦 Checkout ${checkout.id} status: ${checkout.status}`);
 
-            if (!existingPayment) {
-                // Insert if missing (shouldn't happen, but safe)
-                await supabaseAdmin.from('payments').insert({
-                    checkout_id: checkout.id,
-                    user_id: checkout.metadata?.userId,
-                    product_id: checkout.products?.[0]?.id,
-                    status: checkout.status,
-                    created_at: new Date().toISOString()
-                });
-            } else {
-                await supabaseAdmin
-                    .from('payments')
-                    .update({ status: checkout.status, updated_at: new Date().toISOString() })
-                    .eq('checkout_id', checkout.id);
-            }
+    // 1. Ensure payment record exists (update or insert)
+    const { data: existingPayment } = await supabaseAdmin
+        .from('payments')
+        .select('id')
+        .eq('checkout_id', checkout.id)
+        .maybeSingle();
 
-            if (checkout.status === 'succeeded') {
-                const { data: payment } = await supabaseAdmin
-                    .from('payments')
-                    .select('user_id, product_id')
-                    .eq('checkout_id', checkout.id)
-                    .maybeSingle();
-                if (payment) {
-                    let plan = payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9' ? 'pro_yearly' : 'pro_monthly';
-                    await supabaseAdmin
-                        .from('profiles')
-                        .update({ plan, updated_at: new Date().toISOString() })
-                        .eq('id', payment.user_id);
-                    // Send notifications (optional)
-
-                    // inside if (checkout.status === 'succeeded') block, after updating plan
-                    await sendDiscordNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
-                    await sendTelegramNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
-                }
-            }
+    if (!existingPayment) {
+        // Insert new payment record (safety net)
+        const userId = checkout.metadata?.userId || checkout.customer?.id;
+        const productId = checkout.products?.[0]?.id || 
+                          (checkout.product_id ? checkout.product_id : null);
+        
+        if (userId && productId) {
+            await supabaseAdmin.from('payments').insert({
+                checkout_id: checkout.id,
+                user_id: userId,
+                product_id: productId,
+                status: checkout.status,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            });
+            console.log(`✅ Inserted missing payment record for checkout ${checkout.id}`);
+        } else {
+            console.warn(`⚠️ Cannot insert payment: missing userId or productId for checkout ${checkout.id}`);
         }
+    } else {
+        // Update existing payment record
+        await supabaseAdmin
+            .from('payments')
+            .update({ 
+                status: checkout.status,
+                updated_at: new Date().toISOString()
+            })
+            .eq('checkout_id', checkout.id);
+        console.log(`✅ Updated payment status to ${checkout.status} for checkout ${checkout.id}`);
+    }
+
+    // 2. If checkout succeeded, upgrade the user's plan
+    if (checkout.status === 'succeeded') {
+        // Fetch the payment row again (could be newly inserted)
+        const { data: payment } = await supabaseAdmin
+            .from('payments')
+            .select('user_id, product_id')
+            .eq('checkout_id', checkout.id)
+            .maybeSingle();
+
+        if (payment && payment.user_id) {
+            // Map product ID to plan name
+            let plan = 'pro_monthly'; // default
+            if (payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9') {
+                plan = 'pro_yearly';
+            } else if (payment.product_id === '779abdfc-3dc4-4d22-9c71-edf61888d4fb') {
+                plan = 'pro_monthly';
+            } else {
+                // Fallback: try to infer from product_id pattern
+                console.log(`ℹ️ Unknown product_id: ${payment.product_id}, defaulting to pro_monthly`);
+            }
+
+            // Update user's profile
+            const { error: updateError } = await supabaseAdmin
+                .from('profiles')
+                .update({ plan, updated_at: new Date().toISOString() })
+                .eq('id', payment.user_id);
+
+            if (updateError) {
+                console.error(`❌ Failed to upgrade user ${payment.user_id}:`, updateError);
+            } else {
+                console.log(`✅ Upgraded user ${payment.user_id} to ${plan}`);
+                await sendDiscordNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `💳 Plan upgraded to ${plan}`, 'plan_changed');
+            }
+        } else {
+            console.error(`❌ No payment record found for succeeded checkout ${checkout.id}`);
+        }
+    }
+}
 
         if (event.type === 'subscription.created') {
     const subscription = event.data;
