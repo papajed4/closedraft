@@ -767,37 +767,80 @@ app.post('/api/polar-webhook', async (req, res) => {
             }
         }
 
-
-
-
         if (event.type === 'subscription.created') {
-            const subscription = event.data;
+    const subscription = event.data;
+    // Polar may use checkout_id or checkoutId depending on version
+    const checkoutId = subscription.checkout_id || subscription.checkoutId;
+    let updateSuccess = false;
+
+    if (checkoutId) {
+        const { error } = await supabaseAdmin
+            .from('payments')
+            .update({ 
+                subscription_id: subscription.id,
+                current_period_end: subscription.current_period_end
+            })
+            .eq('checkout_id', checkoutId);
+        if (error) {
+            console.error('❌ Failed to save subscription_id by checkout_id:', error);
+        } else {
+            console.log(`✅ Saved subscription_id ${subscription.id} for checkout ${checkoutId}`);
+            updateSuccess = true;
+        }
+    }
+
+    // Fallback: use user_id from metadata if checkout_id not found
+    if (!updateSuccess && subscription.metadata?.userId) {
+        const userId = subscription.metadata.userId;
+        const { error } = await supabaseAdmin
+            .from('payments')
+            .update({ 
+                subscription_id: subscription.id,
+                current_period_end: subscription.current_period_end
+            })
+            .eq('user_id', userId)
+            .eq('status', 'succeeded');
+        if (error) {
+            console.error('❌ Failed to save subscription_id by user_id:', error);
+        } else {
+            console.log(`✅ Saved subscription_id ${subscription.id} for user ${userId} (fallback)`);
+        }
+    }
+}
+        // ✅ Handle subscription updates (including expiration and renewal)
+if (event.type === 'subscription.updated') {
+    const subscription = event.data;
+    const { data: payment } = await supabaseAdmin
+        .from('payments')
+        .select('id, user_id')
+        .eq('subscription_id', subscription.id)
+        .maybeSingle();   // ← use maybeSingle() to avoid errors
+
+    if (payment) {
+        // Always update the current_period_end (useful for displaying expiry date)
+        await supabaseAdmin
+            .from('payments')
+            .update({ current_period_end: subscription.current_period_end })
+            .eq('id', payment.id);
+
+        // If subscription is no longer active, downgrade to Free
+        if (subscription.status !== 'active') {
+            console.log(`⚠️ Subscription ${subscription.id} is no longer active (status: ${subscription.status}) – downgrading user ${payment.user_id} to free`);
             await supabaseAdmin
-                .from('payments')
-                .update({ subscription_id: subscription.id })
-                .eq('checkout_id', subscription.checkoutId);
-        }
-        // ✅ NEW: Handle subscription updates (including expiration)
-        if (event.type === 'subscription.updated') {
-            const subscription = event.data;
-            const { data: payment } = await supabaseAdmin
-                .from('payments')
-                .select('user_id')
-                .eq('subscription_id', subscription.id)
-                .single();
+                .from('profiles')
+                .update({ plan: 'free', updated_at: new Date().toISOString() })
+                .eq('id', payment.user_id);
 
-            if (payment && subscription.status !== 'active') {
-                console.log(`⚠️ Subscription ${subscription.id} is no longer active (status: ${subscription.status}) – downgrading user ${payment.user_id} to free`);
-                await supabaseAdmin
-                    .from('profiles')
-                    .update({ plan: 'free', updated_at: new Date().toISOString() })
-                    .eq('id', payment.user_id);
-
-                // Send notifications (optional)
-                await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
-                await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
-            }
+            // Optional notifications
+            await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
+            await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
+        } else {
+            console.log(`✅ Subscription ${subscription.id} renewed – expiry updated to ${subscription.current_period_end}`);
         }
+    } else {
+        console.warn(`⚠️ No payment record found for subscription_id: ${subscription.id}`);
+    }
+}
         if (event.type === 'subscription.canceled') {
             const subscription = event.data;
             const { data: payment } = await supabaseAdmin
@@ -851,6 +894,28 @@ Improved version:`;
         console.error('Demo API error:', error);
         res.status(500).json({ error: 'Something went wrong.' });
     }
+});
+
+app.get('/api/my-subscription-status', async (req, res) => {
+    const user = await getUserFromToken(req);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { data: payment } = await supabaseAdmin
+        .from('payments')
+        .select('subscription_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (!payment?.subscription_id) {
+        return res.json({ active: false, message: 'No active subscription found' });
+    }
+
+    const sub = await polarApi.subscriptions.get({ id: payment.subscription_id });
+    res.json({
+        status: sub.status,
+        current_period_end: sub.current_period_end,
+        cancel_at_period_end: sub.cancel_at_period_end,
+    });
 });
 
 // ==================== SEQUENCES API ====================
@@ -1806,7 +1871,7 @@ cron.schedule('0 2 * * *', async () => {
                 .from('payments')
                 .select('user_id')
                 .eq('subscription_id', sub.id)
-                .single();
+                .maybeSingle();
 
             if (payment) {
                 // Check if the subscription is actually still active (Polar sometimes lags)
