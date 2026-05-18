@@ -848,30 +848,62 @@ if (event.type === 'subscription.updated') {
     const subscription = event.data;
     const { data: payment } = await supabaseAdmin
         .from('payments')
-        .select('id, user_id')
+        .select('id, user_id, product_id')
         .eq('subscription_id', subscription.id)
-        .maybeSingle();   // ← use maybeSingle() to avoid errors
+        .maybeSingle();
 
     if (payment) {
-        // Always update the current_period_end (useful for displaying expiry date)
+        // Always update the expiry date
         await supabaseAdmin
             .from('payments')
             .update({ current_period_end: subscription.current_period_end })
             .eq('id', payment.id);
 
-        // If subscription is no longer active, downgrade to Free
-        if (subscription.status !== 'active') {
-            console.log(`⚠️ Subscription ${subscription.id} is no longer active (status: ${subscription.status}) – downgrading user ${payment.user_id} to free`);
-            await supabaseAdmin
-                .from('profiles')
-                .update({ plan: 'free', updated_at: new Date().toISOString() })
-                .eq('id', payment.user_id);
+        // Determine the plan from product_id
+        let plan = 'pro_monthly';
+        if (payment.product_id === '63c76fe9-4ac3-40b3-b65f-25773c471aa9') {
+            plan = 'pro_yearly';
+        } else if (payment.product_id === '779abdfc-3dc4-4d22-9c71-edf61888d4fb') {
+            plan = 'pro_monthly';
+        }
 
-            // Optional notifications
-            await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
-            await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free (expired)`, 'plan_changed');
-        } else {
-            console.log(`✅ Subscription ${subscription.id} renewed – expiry updated to ${subscription.current_period_end}`);
+        // If subscription is active → upgrade to Pro
+        if (subscription.status === 'active') {
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('plan')
+                .eq('id', payment.user_id)
+                .single();
+
+            if (profile.plan !== plan) {
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({ plan, updated_at: new Date().toISOString() })
+                    .eq('id', payment.user_id);
+                console.log(`🔄 Subscription reactivated – upgraded user ${payment.user_id} from ${profile.plan} to ${plan}`);
+                await sendDiscordNotification(payment.user_id, `🔄 Pro plan restored`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `🔄 Pro plan restored`, 'plan_changed');
+            } else {
+                console.log(`✅ Subscription ${subscription.id} renewed – user already on ${plan}`);
+            }
+        } 
+        // If subscription is not active → downgrade to Free
+        else if (subscription.status !== 'active') {
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('plan')
+                .eq('id', payment.user_id)
+                .single();
+
+            if (profile.plan !== 'free') {
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({ plan: 'free', updated_at: new Date().toISOString() })
+                    .eq('id', payment.user_id);
+                console.log(`⚠️ Subscription ${subscription.id} no longer active (${subscription.status}) – downgraded user ${payment.user_id} to free`);
+                await sendDiscordNotification(payment.user_id, `⬇️ Plan downgraded to free`, 'plan_changed');
+                await sendTelegramNotification(payment.user_id, `⬇️ Plan downgraded to free`, 'plan_changed');
+            }
         }
     } else {
         console.warn(`⚠️ No payment record found for subscription_id: ${subscription.id}`);
