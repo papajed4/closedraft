@@ -3,15 +3,30 @@
 
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HBF8V0GJPL');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-HBF8V0GJPL');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CloseDraft Terms of Service – rules for using our AI‑powered client management platform. Includes subscription terms, acceptable use, and liability limits.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://closedraft.site/terms.html">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Terms of Service | CloseDraft">
+    <meta property="og:description"
+        content="Read the legal terms for using CloseDraft. Covers accounts, payments, AI usage, integrations, and more.">
+    <meta property="og:image" content="https://closedraft.site/favicon.svg">
+    <meta property="og:url" content="https://closedraft.site/terms.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Terms of Service | CloseDraft">
+    <meta name="twitter:description" content="CloseDraft Terms of Service – your agreement with us.">
+    <meta name="twitter:image" content="https://closedraft.site/favicon.svg">
     <title>Terms of Service | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +34,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -100,7 +116,6 @@
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
         }
@@ -108,7 +123,6 @@
         .glass-card {
             background: var(--card-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--card-border);
             box-shadow: 0 2px 16px rgba(0, 0, 0, 0.02);
             transition: all 0.25s ease;
@@ -126,14 +140,13 @@
         .text-gradient {
             background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: transparent;
         }
 
         .nav-glass {
             background: var(--nav-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--nav-border);
         }
 
@@ -156,7 +169,6 @@
             z-index: 999;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 100px;
             padding: 8px 12px;
@@ -165,8 +177,7 @@
             gap: 8px;
             cursor: pointer;
             box-shadow: var(--glass-shadow);
-            transition: all 0.3s ease;
-            user-select: none;
+            transition: all 0.3s;
         }
 
         .theme-toggle:hover {
@@ -179,7 +190,7 @@
             background: var(--toggle-bg);
             border-radius: 11px;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
         .theme-toggle .switch::after {
@@ -191,7 +202,7 @@
             height: 18px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
@@ -251,7 +262,7 @@
                     <a href="/login.html" class="font-medium transition-colors" style="color: var(--text-soft)">Sign
                         In</a>
                     <a href="/signup.html"
-                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">Get
+                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90">Get
                         Started</a>
                 </div>
                 <button id="mobileMenuBtn" class="md:hidden p-2" style="color: var(--text-soft)">
@@ -273,7 +284,7 @@
                 <a href="/features.html" class="block py-2 font-medium" style="color: var(--text-soft)">Features</a>
                 <a href="/pricing.html" class="block py-2 font-medium" style="color: var(--text-soft)">Pricing</a>
                 <a href="/resources.html" class="block py-2 font-medium" style="color: var(--text-soft)">Resources</a>
-                <div class="pt-3 space-y-3" style="border-top: 1px solid var(--glass-border);" id="mobileNavAuth">
+                <div class="pt-3 space-y-3 border-t" style="border-color: var(--glass-border);" id="mobileNavAuth">
                     <a href="/login.html" class="block py-2 font-medium" style="color: var(--text-soft)">Sign In</a>
                     <a href="/signup.html"
                         class="block text-center px-5 py-2.5 rounded-xl btn-primary text-white font-bold">Get
@@ -293,48 +304,47 @@
             </div>
 
             <div class="glass-panel rounded-3xl p-8 md:p-10 legal-content">
-                <p style="color: var(--text-soft)">Welcome to CloseDraft! By accessing or using our platform (the
-                    “Service”), including all related features like AI email generation, Gmail integration,
-                    Discord/Telegram notifications, and our Chrome Extension, you agree to these Terms of Service.
-                    Please read them carefully.</p>
+                <p>Welcome to CloseDraft! By accessing or using our platform (the “Service”), including all related
+                    features like AI email generation, Gmail integration, Discord/Telegram notifications, and our Chrome
+                    Extension, you agree to these Terms of Service. Please read them carefully.</p>
 
                 <div class="my-8">
                     <h3 class="font-semibold text-lg mb-3" style="color: var(--text-main)">Contents</h3>
                     <div class="flex flex-wrap gap-2">
-                        <a href="#definitions" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#definitions" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">1.
                             Definitions</a>
-                        <a href="#accounts" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#accounts" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">2.
                             Accounts</a>
-                        <a href="#subscriptions" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#subscriptions" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">3.
                             Subscriptions & Payments</a>
-                        <a href="#usage" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#usage" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">4.
                             Acceptable Use</a>
-                        <a href="#ip" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#ip" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">5.
                             Intellectual Property</a>
-                        <a href="#third-party" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#third-party" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">6.
                             Third‑Party Services</a>
-                        <a href="#disclaimers" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#disclaimers" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">7.
                             Disclaimers</a>
-                        <a href="#liability" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#liability" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">8.
                             Limitation of Liability</a>
-                        <a href="#indemnification" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#indemnification" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">9.
                             Indemnification</a>
-                        <a href="#termination" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#termination" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">10.
                             Termination</a>
-                        <a href="#governing" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#governing" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">11.
                             Governing Law</a>
-                        <a href="#contact" class="px-4 py-2 rounded-full border text-sm transition-all"
+                        <a href="#contact" class="px-4 py-2 rounded-full border text-sm"
                             style="border-color: var(--card-border); background: var(--card-bg); color: var(--text-soft)">12.
                             Contact</a>
                     </div>
@@ -425,10 +435,9 @@
                     availability or practices.</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <div class="glass-card rounded-2xl p-6 text-center">
-                        <div class="flex justify-center mb-3">
-                            <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/gmail/default.svg"
-                                alt="Gmail" width="28" height="28" />
-                        </div>
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/gmail/default.svg"
+                                alt="Gmail" width="28" height="28"></div>
                         <h3 class="font-semibold mb-2" style="color: var(--text-main)">Gmail (Google APIs)</h3>
                         <p class="text-sm" style="color: var(--text-soft)">You authorize CloseDraft to send emails and
                             access your inbox <strong>solely to detect replies</strong>. Google’s <a
@@ -436,38 +445,34 @@
                             applies.</p>
                     </div>
                     <div class="glass-card rounded-2xl p-6 text-center">
-                        <div class="flex justify-center mb-3">
-                            <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/discord/default.svg"
-                                alt="Discord" width="28" height="28" />
-                        </div>
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/discord/default.svg"
+                                alt="Discord" width="28" height="28"></div>
                         <h3 class="font-semibold mb-2" style="color: var(--text-main)">Discord</h3>
                         <p class="text-sm" style="color: var(--text-soft)">You consent to receive automated
                             notifications. You can disconnect at any time from Settings.</p>
                     </div>
                     <div class="glass-card rounded-2xl p-6 text-center">
-                        <div class="flex justify-center mb-3">
-                            <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/telegram/default.svg"
-                                alt="Telegram" width="28" height="28" />
-                        </div>
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/telegram/default.svg"
+                                alt="Telegram" width="28" height="28"></div>
                         <h3 class="font-semibold mb-2" style="color: var(--text-main)">Telegram</h3>
                         <p class="text-sm" style="color: var(--text-soft)">You consent to receive automated
                             notifications. You can disconnect at any time from Settings.</p>
                     </div>
                     <div class="glass-card rounded-2xl p-6 text-center">
-                        <div class="flex justify-center mb-3">
-                            <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/chrome/default.svg"
-                                alt="Chrome" width="28" height="28" />
-                        </div>
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/chrome/default.svg"
+                                alt="Chrome" width="28" height="28"></div>
                         <h3 class="font-semibold mb-2" style="color: var(--text-main)">Chrome Extension</h3>
                         <p class="text-sm" style="color: var(--text-soft)">The CloseDraft Chrome Extension injects a
                             button into Gmail’s compose window. It only accesses the recipient’s email address to match
                             with your CloseDraft clients.</p>
                     </div>
                     <div class="glass-card rounded-2xl p-6 text-center sm:col-span-2">
-                        <div class="flex justify-center mb-3">
-                            <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/polar/default.svg"
-                                alt="Polar" width="28" height="28" />
-                        </div>
+                        <div class="flex justify-center mb-3"><img
+                                src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/polar/light.svg"
+                                alt="Polar" width="28" height="28"></div>
                         <h3 class="font-semibold mb-2" style="color: var(--text-main)">Polar.sh</h3>
                         <p class="text-sm" style="color: var(--text-soft)">All payment data is processed by Polar.sh. By
                             subscribing, you agree to Polar’s <a href="https://polar.sh/legal/terms"
@@ -537,13 +542,11 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center"><svg
+                                class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                        <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
+                            </svg></div><span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
                                 class="text-gradient">Draft</span></span>
                     </div>
                     <p class="text-sm" style="color: var(--text-dim)">The client memory freelancers love.</p>
@@ -584,34 +587,17 @@
             <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
                 style="border-color: var(--footer-border); color: var(--text-dim)">
                 <span>© 2026 CloseDraft. All rights reserved.</span>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
-                </div>
+                <div class="flex gap-6"><a href="#" class="hover:opacity-80">Twitter</a><a href="#"
+                        class="hover:opacity-80">LinkedIn</a><a href="#" class="hover:opacity-80">YouTube</a></div>
             </div>
         </div>
     </footer>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
+        <i class="fas fa-sun text-sm"></i>
         <div class="switch"></div>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+        <i class="fas fa-moon text-sm"></i>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -624,8 +610,7 @@
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('closeDraft_theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
     </script>
 </body>

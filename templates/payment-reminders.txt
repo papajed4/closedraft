@@ -1,0 +1,77 @@
+CloseDraft – Payment Reminder Templates
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TEMPLATE 1: Friendly Reminder (3 days before due date)
+
+Subject: Friendly reminder: invoice #[number] due on [date]
+
+Hi [Client Name],
+
+Just a quick heads up that invoice [number] for [project] is due on [date].
+
+No action needed if you've already scheduled it.
+
+Thanks again for the great collaboration.
+
+Best,
+[Your Name]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TEMPLATE 2: On the due date
+
+Subject: Invoice #[number] due today – [Project Name]
+
+Hi [Client Name],
+
+This is a quick reminder that invoice [number] for [amount] is due today.
+
+You can pay via [payment method/link].
+
+Let me know if you have any questions.
+
+Thank you,
+[Your Name]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TEMPLATE 3: Gentle follow‑up (5 days overdue)
+
+Subject: Following up on overdue invoice #[number]
+
+Hi [Client Name],
+
+I noticed that invoice [number] for [project] is now 5 days overdue.
+
+Could you please let me know when you expect to make payment? If there's any issue, just let me know and we can work something out.
+
+Thank you for your attention.
+
+Best,
+[Your Name]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TEMPLATE 4: Final notice (14+ days overdue)
+
+Subject: Overdue invoice #[number] – final notice
+
+Hi [Client Name],
+
+Invoice [number] for [amount] is now [X] days overdue. I've tried reaching out a couple of times without success.
+
+Please make payment by [date] to avoid any disruption. If you've already paid, kindly disregard this message.
+
+If there's a specific reason for the delay, please let me know – I'm happy to help.
+
+Thank you,
+[Your Name]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PRO TIPS:
+• Always include the invoice number and amount.
+• Offer a solution (payment plan, new due date) before threatening late fees.
+• Keep a polite, professional tone – you want future work from them.
+• Use CloseDraft to automate these reminders directly from your Gmail.

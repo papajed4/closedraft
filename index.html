@@ -10,16 +10,30 @@
         gtag('js', new Date());
         gtag('config', 'G-HBF8V0GJPL');
     </script>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description"
+        content="CloseDraft: The client memory that reminds you who to follow up with and helps you write the perfect email. Never lose a client to a forgotten inbox again.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://closedraft.site/">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="CloseDraft | Never lose a client to forgotten follow‑ups">
+    <meta property="og:description"
+        content="Client memory with proactive nudges. CloseDraft remembers who you need to reach and helps you write the email – so you never lose a client to a forgotten inbox again.">
+    <meta property="og:image" content="https://closedraft.site/favicon.svg">
+    <meta property="og:url" content="https://closedraft.site/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CloseDraft | Never lose a client to forgotten follow‑ups">
+    <meta name="twitter:description"
+        content="Client memory with proactive nudges. CloseDraft reminds you who needs a follow‑up and helps you write the email.">
+    <meta name="twitter:image" content="https://closedraft.site/favicon.svg">
     <title>CloseDraft | Never lose a client again</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-
+        rel="stylesheet">
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -42,7 +56,6 @@
             }
         }
     </script>
-
     <style>
         /* ========== LIGHT THEME (default) ========== */
         :root {
@@ -126,7 +139,6 @@
         .glass {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
             transition: all 0.3s ease;
@@ -134,7 +146,6 @@
 
         .glass:hover {
             background: rgba(255, 255, 255, 0.1);
-            border-color: var(--glass-border-hover);
         }
 
         .gradient-primary {
@@ -144,14 +155,13 @@
         .text-gradient {
             background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: transparent;
         }
 
         .nav-glass {
             background: var(--nav-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--nav-border);
         }
 
@@ -171,7 +181,6 @@
             background: radial-gradient(circle at 50% 50%, var(--hero-glow) 0%, transparent 70%);
         }
 
-        /* Toggle switch */
         .theme-toggle {
             position: fixed;
             bottom: 24px;
@@ -179,7 +188,6 @@
             z-index: 999;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 100px;
             padding: 8px 12px;
@@ -188,8 +196,7 @@
             gap: 8px;
             cursor: pointer;
             box-shadow: var(--glass-shadow);
-            transition: all 0.3s ease;
-            user-select: none;
+            transition: all 0.3s;
         }
 
         .theme-toggle:hover {
@@ -202,7 +209,7 @@
             background: var(--toggle-bg);
             border-radius: 11px;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
         .theme-toggle .switch::after {
@@ -214,8 +221,8 @@
             height: 18px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         html.dark .theme-toggle .switch {
@@ -224,9 +231,9 @@
 
         html.dark .theme-toggle .switch::after {
             transform: translateX(18px);
+            background: white;
         }
 
-        /* Launch badges: light/dark switching */
         .badge-dark {
             display: none;
         }
@@ -246,7 +253,6 @@
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 nav-glass">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <!-- Logo -->
             <div class="flex items-center gap-2">
                 <div
                     class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -258,8 +264,6 @@
                 <a href="/" class="text-xl font-bold tracking-tight" style="color: var(--logo-text)">Close<span
                         class="text-gradient">Draft</span></a>
             </div>
-
-            <!-- Desktop Nav Links -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="/features.html" class="font-medium transition-colors"
                     style="color: var(--text-soft)">Features</a>
@@ -268,16 +272,12 @@
                 <a href="/resources.html" class="font-medium transition-colors"
                     style="color: var(--text-soft)">Resources</a>
             </div>
-
-            <!-- Auth Buttons (Desktop) -->
             <div class="hidden md:flex items-center space-x-4" id="navAuth">
                 <a href="/login.html" class="font-medium transition-colors" style="color: var(--text-soft)">Sign In</a>
                 <a href="/signup.html"
-                    class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">Get
+                    class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90">Get
                     Started</a>
             </div>
-
-            <!-- Mobile Hamburger Button -->
             <button id="mobileMenuBtn" class="md:hidden p-2" style="color: var(--text-soft)">
                 <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
@@ -289,15 +289,13 @@
                 </svg>
             </button>
         </div>
-
-        <!-- Mobile Menu Dropdown -->
         <div id="mobileMenu" class="md:hidden hidden"
             style="background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border);">
             <div class="px-6 py-4 space-y-3">
                 <a href="/features.html" class="block py-2 font-medium" style="color: var(--text-soft)">Features</a>
                 <a href="/pricing.html" class="block py-2 font-medium" style="color: var(--text-soft)">Pricing</a>
                 <a href="/resources.html" class="block py-2 font-medium" style="color: var(--text-soft)">Resources</a>
-                <div class="pt-3 space-y-3" style="border-top: 1px solid var(--glass-border);" id="mobileNavAuth">
+                <div class="pt-3 space-y-3 border-t" style="border-color: var(--glass-border);" id="mobileNavAuth">
                     <a href="/login.html" class="block py-2 font-medium" style="color: var(--text-soft)">Sign In</a>
                     <a href="/signup.html"
                         class="block text-center px-5 py-2.5 rounded-xl btn-primary text-white font-bold">Get
@@ -311,58 +309,43 @@
         <!-- Hero Section -->
         <section class="relative pt-40 pb-24 px-6 overflow-hidden hero-gradient">
             <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-
                 <!-- Left Column - Text -->
-<div class="space-y-8">
-    <div class="inline-flex items-center px-4 py-2 rounded-full glass"
-        style="border-color: var(--glass-border);">
-        <span class="flex -space-x-2 mr-3">
-            <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold border-2 border-white">JD</div>
-            <div class="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs font-bold border-2 border-white">AM</div>
-            <div class="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white">SC</div>
-        </span>
-        <span class="text-sm font-medium" style="color: var(--badge-text)">
-            Built for freelancers, by a freelancer
-        </span>
-    </div>
-
-    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]"
-        style="color: var(--logo-text)">
-        Stop losing clients to
-        <span class="text-gradient">forgotten follow‑ups.</span>
-    </h1>
-
-    <p class="text-xl max-w-lg leading-relaxed" style="color: var(--text-soft)">
-        CloseDraft remembers who you need to reach — and helps you write the perfect email in seconds.
-    </p>
-
-    <div class="flex flex-col sm:flex-row gap-4">
-        <a href="/signup.html"
-            class="px-8 py-4 rounded-xl btn-primary text-white font-bold text-lg hover:opacity-90 transition-all shadow-lg shadow-blue-500/25 text-center">
-            Start Free Trial
-        </a>
-        <a href="/features.html"
-            class="px-8 py-4 rounded-xl glass font-medium text-lg hover:bg-white/10 transition-all text-center"
-            style="color: var(--logo-text)">
-            See how it works →
-        </a>
-    </div>
-
-    <div class="flex items-center gap-6 text-sm" style="color: var(--text-dim)">
-        <span class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M5 13l4 4L19 7" />
-            </svg>
-            No credit card required
-        </span>
-        <span class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M5 13l4 4L19 7" />
-            </svg>
-            Free 14-day trial
-        </span>
-    </div>
-</div>
+                <div class="space-y-8">
+                    <div class="inline-flex items-center px-4 py-2 rounded-full glass"
+                        style="border-color: var(--glass-border);">
+                        <span class="flex -space-x-2 mr-3">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg"
+                                class="w-6 h-6 rounded-full border-2 border-white object-cover" alt="Freelancer face">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg"
+                                class="w-6 h-6 rounded-full border-2 border-white object-cover" alt="Freelancer face">
+                            <img src="https://randomuser.me/api/portraits/women/45.jpg"
+                                class="w-6 h-6 rounded-full border-2 border-white object-cover" alt="Freelancer face">
+                        </span>
+                        <span class="text-sm font-medium" style="color: var(--badge-text)">Built for freelancers, by a
+                            freelancer</span>
+                    </div>
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]"
+                        style="color: var(--logo-text)">
+                        Stop losing clients to <span class="text-gradient">forgotten follow‑ups.</span>
+                    </h1>
+                    <p class="text-xl max-w-lg leading-relaxed" style="color: var(--text-soft)">
+                        CloseDraft remembers who you need to reach — and helps you write the perfect email in seconds.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="/signup.html"
+                            class="px-8 py-4 rounded-xl btn-primary text-white font-bold text-lg hover:opacity-90 text-center shadow-lg shadow-blue-500/25">Start
+                            Free Trial</a>
+                        <a href="/features.html"
+                            class="px-8 py-4 rounded-xl glass font-medium text-lg hover:bg-white/10 text-center"
+                            style="color: var(--logo-text)">See how it works →</a>
+                    </div>
+                    <div class="flex items-center gap-6 text-sm" style="color: var(--text-dim)">
+                        <span class="flex items-center gap-1"><i class="fas fa-check text-accent text-xs"></i> No credit
+                            card required</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-check text-accent text-xs"></i> Free
+                            14-day trial</span>
+                    </div>
+                </div>
 
                 <!-- Right Column - Dashboard Preview -->
                 <div class="relative grid grid-cols-12 gap-4">
@@ -398,18 +381,13 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-span-4 rounded-2xl glass p-6 flex flex-col justify-center items-center text-center border"
                         style="background: var(--card-bg); border-color: var(--card-border);">
-                        <svg class="w-8 h-8 text-primary mb-3" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <i class="fas fa-exclamation-triangle text-primary text-2xl mb-2"></i>
                         <div class="text-2xl font-bold" style="color: var(--logo-text)">3</div>
                         <div class="text-[10px] uppercase tracking-wider" style="color: var(--badge-text)">Need
                             Attention</div>
                     </div>
-
                     <div class="col-span-12 rounded-xl p-4 glass flex items-center gap-4"
                         style="background: var(--card-bg); border-color: var(--card-border);">
                         <div
@@ -420,7 +398,7 @@
                             </div>
                             <div class="text-xs" style="color: var(--text-dim)">Follow-up · Generated 2 min ago</div>
                         </div>
-                        <span class="text-xl" style="color: var(--badge-text)">✨</span>
+                        <i class="fas fa-magic text-xl" style="color: var(--badge-text)"></i>
                     </div>
                 </div>
             </div>
@@ -434,14 +412,13 @@
                 <div class="flex flex-col items-center justify-center text-center">
                     <div class="w-20 h-20 rounded-2xl border flex items-center justify-center mb-6 backdrop-blur-sm shadow-sm"
                         style="background: var(--card-bg); border-color: var(--card-border);">
-                        <img src="https://thesvg.org/icons/gmail/default.svg" alt="Gmail" class="w-10 h-10">
+                        <img src="https://thesvg.org/icons/gmail/default.svg" alt="Gmail logo" class="w-10 h-10">
                     </div>
                     <h3 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--logo-text)">Connect Your Gmail
                     </h3>
-                    <p class="max-w-2xl leading-relaxed text-lg" style="color: var(--text-soft)">
-                        Securely connect your Gmail account and let CloseDraft automatically generate, schedule, and
-                        send personalized follow-up sequences directly from your inbox.
-                    </p>
+                    <p class="max-w-2xl leading-relaxed text-lg" style="color: var(--text-soft)">Securely connect your
+                        Gmail account and let CloseDraft automatically generate, schedule, and send personalized
+                        follow-up sequences directly from your inbox.</p>
                     <div class="flex flex-wrap justify-center gap-3 mt-8">
                         <div class="px-4 py-2 rounded-full border text-sm font-medium"
                             style="background: var(--card-bg); border-color: var(--card-border); color: var(--logo-text)">
@@ -457,7 +434,6 @@
             </div>
         </section>
 
-
         <!-- Premium Features Bento Grid -->
         <section class="py-20 px-6 max-w-7xl mx-auto">
             <div class="text-center mb-16">
@@ -468,35 +444,29 @@
                 <p class="mt-4 max-w-2xl mx-auto" style="color: var(--text-soft)">CloseDraft grows with your business.
                     Unlock automated follow‑ups, real‑time alerts, and deep integrations on the Pro plan.</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- AutoDraft -->
-                <div class="glass rounded-2xl p-8 hover:shadow-lg transition-shadow"
+                <div class="glass rounded-2xl p-8 hover:shadow-lg"
                     style="background: var(--card-bg); border-color: var(--card-border);">
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-6">
                         <i class="fas fa-bolt text-blue-600 dark:text-blue-400 text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3" style="color: var(--logo-text)">AutoDraft</h3>
-                    <p style="color: var(--text-soft)">Set‑and‑forget email sequences. Single or bulk campaigns send
-                        automatically via Gmail, with reply detection that stops follow‑ups once a client responds.</p>
+                    <p class="text-sm" style="color: var(--text-soft)">Set‑and‑forget email sequences. Single or bulk
+                        campaigns send automatically via Gmail, with reply detection that stops follow‑ups once a client
+                        responds.</p>
                 </div>
-
-                <!-- Gmail Sync -->
-                <div class="glass rounded-2xl p-8 hover:shadow-lg transition-shadow"
+                <div class="glass rounded-2xl p-8 hover:shadow-lg"
                     style="background: var(--card-bg); border-color: var(--card-border);">
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-6">
                         <i class="fab fa-google text-blue-600 dark:text-blue-400 text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3" style="color: var(--logo-text)">Gmail Sync</h3>
-                    <p style="color: var(--text-soft)">Connect your Gmail and let CloseDraft send automated follow‑ups
-                        directly from your inbox. Reply detection keeps conversations natural and stops over‑emailing.
-                    </p>
+                    <p class="text-sm" style="color: var(--text-soft)">Connect your Gmail and let CloseDraft send
+                        automated follow‑ups directly from your inbox. Reply detection keeps conversations natural.</p>
                 </div>
-
-                <!-- Discord & Telegram Alerts -->
-                <div class="glass rounded-2xl p-8 hover:shadow-lg transition-shadow"
+                <div class="glass rounded-2xl p-8 hover:shadow-lg"
                     style="background: var(--card-bg); border-color: var(--card-border);">
                     <div class="flex gap-3 mb-6">
                         <div
@@ -509,57 +479,42 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-3" style="color: var(--logo-text)">Real‑time Alerts</h3>
-                    <p style="color: var(--text-soft)">Get instant Discord or Telegram notifications when emails are
-                        sent, clients go inactive, or payment deadlines approach. Full control over which events ping
-                        you.</p>
+                    <p class="text-sm" style="color: var(--text-soft)">Get instant Discord or Telegram notifications
+                        when emails are sent, clients go inactive, or payment deadlines approach.</p>
                 </div>
-
-                <!-- Chrome Extension -->
-                <div class="glass rounded-2xl p-8 hover:shadow-lg transition-shadow"
+                <div class="glass rounded-2xl p-8 hover:shadow-lg"
                     style="background: var(--card-bg); border-color: var(--card-border);">
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-6">
                         <i class="fab fa-chrome text-blue-600 dark:text-blue-400 text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3" style="color: var(--logo-text)">Chrome Extension</h3>
-                    <p style="color: var(--text-soft)">Generate AI‑powered replies directly inside Gmail's compose
-                        window. CloseDraft matches the recipient to your client list and inserts the draft instantly—no
-                        tab switching.</p>
+                    <p class="text-sm" style="color: var(--text-soft)">Generate AI‑powered replies directly inside
+                        Gmail's compose window. No tab switching.</p>
                 </div>
-
-                <!-- Invoice Generator -->
-                <div class="glass rounded-2xl p-8 hover:shadow-lg transition-shadow"
+                <div class="glass rounded-2xl p-8 hover:shadow-lg"
                     style="background: var(--card-bg); border-color: var(--card-border);">
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-6">
                         <i class="fas fa-file-invoice text-blue-600 dark:text-blue-400 text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3" style="color: var(--logo-text)">Invoice Generator</h3>
-                    <p style="color: var(--text-soft)">Turn any client record into a professional PDF invoice with one
-                        click. Auto‑generated numbers, project details, and a clean layout ready to print or email.</p>
+                    <p class="text-sm" style="color: var(--text-soft)">Turn any client record into a professional PDF
+                        invoice with one click.</p>
                 </div>
-
-                <!-- Activity Timeline -->
-                <div class="glass rounded-2xl p-8 hover:shadow-lg transition-shadow"
+                <div class="glass rounded-2xl p-8 hover:shadow-lg"
                     style="background: var(--card-bg); border-color: var(--card-border);">
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-6">
                         <i class="fas fa-history text-blue-600 dark:text-blue-400 text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3" style="color: var(--logo-text)">Activity Timeline</h3>
-                    <p style="color: var(--text-soft)">See every interaction—emails sent, status changes, contact
-                        marks—in a permanent, scrollable history inside each client's detail panel.</p>
+                    <p class="text-sm" style="color: var(--text-soft)">See every interaction—emails sent, status
+                        changes, contact marks—in a permanent history.</p>
                 </div>
             </div>
-
-            <div class="text-center mt-10">
-                <a href="/pricing.html" class="inline-flex items-center gap-2 font-medium transition-colors"
-                    style="color: var(--logo-accent)">
-                    View Pro plans
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                </a>
+            <div class="text-center mt-10"><a href="/pricing.html" class="inline-flex items-center gap-2 font-medium"
+                    style="color: var(--logo-accent)">View Pro plans <i class="fas fa-arrow-right text-xs"></i></a>
             </div>
         </section>
 
@@ -567,33 +522,13 @@
         <section class="py-24 px-6" style="background: var(--banner-bg);">
             <div class="max-w-7xl mx-auto">
                 <div class="text-center mb-16">
-                    <div class="flex justify-center gap-1 mb-4 text-amber-400">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                    </div>
+                    <div class="flex justify-center gap-1 mb-4 text-amber-400"><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i></div>
                     <h2 class="text-3xl font-bold" style="color: var(--logo-text)">Loved by freelancers</h2>
-                    <p style="color: var(--text-soft) mt-2">Join hundreds of freelancers who've transformed their client
-                        communication</p>
+                    <p class="mt-2" style="color: var(--text-soft)">Join hundreds of freelancers who've transformed
+                        their client communication</p>
                 </div>
-
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="p-8 rounded-2xl glass"
                         style="background: var(--card-bg); border-color: var(--card-border);">
@@ -673,43 +608,38 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center"><svg
+                                class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
+                            </svg></div>
                         <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
                                 class="text-gradient">Draft</span></span>
                     </div>
                     <p class="text-sm mb-3" style="color: var(--text-dim)">The client memory freelancers love.</p>
-                    <!-- Badges -->
                     <div class="flex flex-wrap items-center gap-3">
-                        <!-- Open‑Launch -->
                         <a href="https://open-launch.com/projects/closedraft" target="_blank" rel="noopener">
                             <img class="badge-light"
                                 src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-light.svg"
-                                alt="Featured on Open‑Launch" width="180" height="45" />
+                                alt="Featured on Open‑Launch" width="180" height="45">
                             <img class="badge-dark"
                                 src="https://open-launch.com/api/badge/a2c17e0e-a6c7-489b-b6af-3fb5848e0fe7/featured-dark.svg"
-                                alt="Featured on Open‑Launch" width="180" height="45" />
+                                alt="Featured on Open‑Launch" width="180" height="45">
                         </a>
-                        <!-- Fazier -->
                         <a href="https://fazier.com/launches/closedraft.site" target="_blank" rel="noopener">
                             <img class="badge-light"
                                 src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=light"
-                                alt="Fazier badge" width="180" height="45" />
+                                alt="Fazier badge" width="180" height="45">
                             <img class="badge-dark"
                                 src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=dark"
-                                alt="Fazier badge" width="180" height="45" />
+                                alt="Fazier badge" width="180" height="45">
                         </a>
-                        <!-- EarlyHunt -->
                         <a href="https://earlyhunt.com/project/closedraft-never-lose-a-client-again" target="_blank"
                             rel="noopener">
                             <img class="badge-light" src="https://earlyhunt.com/badges/earlyhunt-badge-light.svg"
-                                alt="Featured on EarlyHunt" width="265" height="58" />
+                                alt="Featured on EarlyHunt" width="265" height="58">
                             <img class="badge-dark" src="https://earlyhunt.com/badges/earlyhunt-badge-dark.svg"
-                                alt="Featured on EarlyHunt" width="265" height="58" />
+                                alt="Featured on EarlyHunt" width="265" height="58">
                         </a>
                     </div>
                 </div>
@@ -749,53 +679,30 @@
             <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
                 style="border-color: var(--footer-border); color: var(--text-dim)">
                 <span>© 2026 CloseDraft. All rights reserved.</span>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
-                </div>
+                <div class="flex gap-6"><a href="#" class="hover:opacity-80">Twitter</a><a href="#"
+                        class="hover:opacity-80">LinkedIn</a><a href="#" class="hover:opacity-80">YouTube</a></div>
             </div>
         </div>
     </footer>
 
-    <!-- ============ THEME TOGGLE (bottom-right) ============ -->
+    <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
-        <!-- Sun icon (light) -->
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
+        <i class="fas fa-sun text-sm"></i>
         <div class="switch"></div>
-        <!-- Moon icon (dark) -->
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+        <i class="fas fa-moon text-sm"></i>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/nav.js"></script>
-
     <script>
-            // ── Theme toggle ─────────────────────────────────────
             (function () {
                 const saved = localStorage.getItem('closeDraft_theme');
                 if (saved === 'dark') document.documentElement.classList.add('dark');
             })();
-
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('closeDraft_theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
     </script>
 </body>

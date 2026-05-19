@@ -12,6 +12,22 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Free resources for freelancers: blog articles on follow‑up tips, payment advice, and growth strategies. Plus free email templates and a weekly newsletter.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://closedraft.site/resources.html">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Resources | CloseDraft">
+    <meta property="og:description"
+        content="Free resources for freelancers: blog, email templates, FAQs, and newsletter. Everything you need to master client communication.">
+    <meta property="og:image" content="https://closedraft.site/favicon.svg">
+    <meta property="og:url" content="https://closedraft.site/resources.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Resources | CloseDraft">
+    <meta name="twitter:description"
+        content="Free resources for freelancers: blog, email templates, FAQs, and newsletter.">
+    <meta name="twitter:image" content="https://closedraft.site/favicon.svg">
     <title>Resources | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +35,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -106,7 +123,6 @@
         .glass-card {
             background: var(--card-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--card-border);
             box-shadow: var(--card-shadow);
             transition: all 0.25s ease;
@@ -124,14 +140,13 @@
         .text-gradient {
             background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: transparent;
         }
 
         .nav-glass {
             background: var(--nav-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--nav-border);
         }
 
@@ -159,7 +174,6 @@
             transform: rotate(180deg);
         }
 
-        /* Theme toggle */
         .theme-toggle {
             position: fixed;
             bottom: 24px;
@@ -167,7 +181,6 @@
             z-index: 999;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 100px;
             padding: 8px 12px;
@@ -176,8 +189,7 @@
             gap: 8px;
             cursor: pointer;
             box-shadow: var(--glass-shadow);
-            transition: all 0.3s ease;
-            user-select: none;
+            transition: all 0.3s;
         }
 
         .theme-toggle:hover {
@@ -190,7 +202,7 @@
             background: var(--toggle-bg);
             border-radius: 11px;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
         .theme-toggle .switch::after {
@@ -202,7 +214,7 @@
             height: 18px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
@@ -244,7 +256,7 @@
                     <a href="/login.html" class="font-medium transition-colors" style="color: var(--text-soft)">Sign
                         In</a>
                     <a href="/signup.html"
-                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">Get
+                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90">Get
                         Started</a>
                 </div>
                 <button id="mobileMenuBtn" class="md:hidden p-2" style="color: var(--text-soft)">
@@ -266,7 +278,7 @@
                 <a href="/features.html" class="block py-2 font-medium" style="color: var(--text-soft)">Features</a>
                 <a href="/pricing.html" class="block py-2 font-medium" style="color: var(--text-soft)">Pricing</a>
                 <a href="/resources.html" class="block py-2 font-medium" style="color: var(--logo-accent)">Resources</a>
-                <div class="pt-3 space-y-3" style="border-top: 1px solid var(--glass-border);" id="mobileNavAuth">
+                <div class="pt-3 space-y-3 border-t" style="border-color: var(--glass-border);" id="mobileNavAuth">
                     <a href="/login.html" class="block py-2 font-medium" style="color: var(--text-soft)">Sign In</a>
                     <a href="/signup.html"
                         class="block text-center px-5 py-2.5 rounded-xl btn-primary text-white font-bold">Get
@@ -278,7 +290,6 @@
 
     <main class="pt-32 px-6 pb-20">
         <div class="max-w-5xl mx-auto">
-
             <div class="text-center mb-16">
                 <span class="text-accent font-bold tracking-[0.2em] uppercase text-xs">Learn & Grow</span>
                 <h1 class="text-4xl md:text-6xl font-bold mt-4 mb-4" style="color: var(--logo-text)">Resources for
@@ -291,25 +302,20 @@
             <section class="mb-16">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                            stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
-                        </svg>
+                        <i class="fas fa-newspaper text-blue-600 dark:text-blue-400 text-lg"></i>
                     </div>
                     <h2 class="text-2xl font-bold" style="color: var(--text-main)">Latest from the Blog</h2>
+                    <a href="/blog/index.html"
+                        class="text-sm text-blue-600 dark:text-blue-400 hover:underline ml-auto">View all →</a>
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-6">
-                    <!-- Article 1 - Email Tips -->
-                    <div class="glass-card rounded-2xl overflow-hidden p-0">
+                    <!-- Article 1 -->
+                    <a href="/blog/how-to-write-follow-ups-that-get-replies.html"
+                        class="glass-card rounded-2xl overflow-hidden p-0 hover:shadow-lg transition">
                         <div
                             class="h-32 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 flex items-center justify-center">
-                            <svg class="w-10 h-10 text-blue-600 dark:text-blue-400/60" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
-                                <path
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
+                            <i class="fas fa-envelope-open-text text-blue-600 dark:text-blue-400/60 text-3xl"></i>
                         </div>
                         <div class="p-5">
                             <div class="flex items-center gap-2 mb-2">
@@ -322,20 +328,16 @@
                                 Actually Get Replies</h3>
                             <p class="text-sm mb-4" style="color: var(--text-soft)">5 proven templates that turn ghosts
                                 into clients.</p>
-                            <a href="#" class="text-sm font-medium transition-colors"
-                                style="color: var(--logo-accent)">Read article →</a>
+                            <span class="text-sm font-medium" style="color: var(--logo-accent)">Read article →</span>
                         </div>
-                    </div>
+                    </a>
 
-                    <!-- Article 2 - Freelancing -->
-                    <div class="glass-card rounded-2xl overflow-hidden p-0">
+                    <!-- Article 2 -->
+                    <a href="/blog/freelancers-guide-to-getting-paid.html"
+                        class="glass-card rounded-2xl overflow-hidden p-0 hover:shadow-lg transition">
                         <div
                             class="h-32 bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900/30 dark:to-sky-900/30 flex items-center justify-center">
-                            <svg class="w-10 h-10 text-blue-600 dark:text-blue-400/60" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <i class="fas fa-dollar-sign text-blue-600 dark:text-blue-400/60 text-3xl"></i>
                         </div>
                         <div class="p-5">
                             <div class="flex items-center gap-2 mb-2">
@@ -347,19 +349,16 @@
                                 Paid on Time</h3>
                             <p class="text-sm mb-4" style="color: var(--text-soft)">Stop chasing invoices and start
                                 getting paid when you're supposed to.</p>
-                            <a href="#" class="text-sm font-medium transition-colors"
-                                style="color: var(--logo-accent)">Read article →</a>
+                            <span class="text-sm font-medium" style="color: var(--logo-accent)">Read article →</span>
                         </div>
-                    </div>
+                    </a>
 
-                    <!-- Article 3 - Growth -->
-                    <div class="glass-card rounded-2xl overflow-hidden p-0">
+                    <!-- Article 3 -->
+                    <a href="/blog/how-i-tripled-my-response-rate.html"
+                        class="glass-card rounded-2xl overflow-hidden p-0 hover:shadow-lg transition">
                         <div
                             class="h-32 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center">
-                            <svg class="w-10 h-10 text-blue-600 dark:text-blue-400/60" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
-                                <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
+                            <i class="fas fa-chart-line text-blue-600 dark:text-blue-400/60 text-3xl"></i>
                         </div>
                         <div class="p-5">
                             <div class="flex items-center gap-2 mb-2">
@@ -371,10 +370,9 @@
                                 One Simple Change</h3>
                             <p class="text-sm mb-4" style="color: var(--text-soft)">The psychology behind why some
                                 emails get ignored (and how to fix it).</p>
-                            <a href="#" class="text-sm font-medium transition-colors"
-                                style="color: var(--logo-accent)">Read article →</a>
+                            <span class="text-sm font-medium" style="color: var(--logo-accent)">Read article →</span>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </section>
 
@@ -382,11 +380,7 @@
             <section class="mb-16">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                            stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                        </svg>
+                        <i class="fas fa-file-alt text-blue-600 dark:text-blue-400 text-lg"></i>
                     </div>
                     <h2 class="text-2xl font-bold" style="color: var(--text-main)">Free Email Templates</h2>
                 </div>
@@ -395,116 +389,71 @@
                     <div class="glass-card rounded-2xl p-6">
                         <div
                             class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                                stroke-width="2" viewBox="0 0 24 24">
-                                <path
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
+                            <i class="fas fa-envelope-open-text text-blue-600 dark:text-blue-400 text-xl"></i>
                         </div>
                         <h3 class="font-bold mb-2" style="color: var(--text-main)">Follow-up Templates</h3>
                         <p class="text-sm mb-4" style="color: var(--text-soft)">Gentle reminders that don't sound
                             desperate.</p>
                         <ul class="space-y-2 mb-4">
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The "Just Checking In"
-                            </li>
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Value Add Follow-up
-                            </li>
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The "Breaking Up" Email
-                            </li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The "Just
+                                Checking In"</li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The Value
+                                Add Follow-up</li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The
+                                "Breaking Up" Email</li>
                         </ul>
-                        <a href="#" class="text-sm font-medium transition-colors"
-                            style="color: var(--logo-accent)">Download templates →</a>
+                        <a href="/templates/follow-up-templates.txt" download
+                            class="text-sm font-medium transition-colors" style="color: var(--logo-accent)">Download
+                            templates →</a>
                     </div>
                     <!-- Payment Reminders -->
                     <div class="glass-card rounded-2xl p-6">
                         <div
                             class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                                stroke-width="2" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <i class="fas fa-credit-card text-blue-600 dark:text-blue-400 text-xl"></i>
                         </div>
                         <h3 class="font-bold mb-2" style="color: var(--text-main)">Payment Reminders</h3>
                         <p class="text-sm mb-4" style="color: var(--text-soft)">Get paid without the awkward
                             conversation.</p>
                         <ul class="space-y-2 mb-4">
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Friendly Reminder
-                            </li>
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Firm Follow-up
-                            </li>
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Final Notice
-                            </li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The
+                                Friendly Reminder</li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The Firm
+                                Follow-up</li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The Final
+                                Notice</li>
                         </ul>
-                        <a href="#" class="text-sm font-medium transition-colors"
-                            style="color: var(--logo-accent)">Download templates →</a>
+                        <a href="/templates/payment-reminders.txt" download
+                            class="text-sm font-medium transition-colors" style="color: var(--logo-accent)">Download
+                            templates →</a>
                     </div>
                     <!-- Cold Outreach -->
                     <div class="glass-card rounded-2xl p-6">
                         <div
                             class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                                stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <i class="fas fa-search text-blue-600 dark:text-blue-400 text-xl"></i>
                         </div>
                         <h3 class="font-bold mb-2" style="color: var(--text-main)">Cold Outreach</h3>
                         <p class="text-sm mb-4" style="color: var(--text-soft)">Land new clients with emails that get
                             opened.</p>
                         <ul class="space-y-2 mb-4">
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Compliment Opener
-                            </li>
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Value-First Approach
-                            </li>
-                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                                The Quick Question
-                            </li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The
+                                Compliment Opener</li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The
+                                Value-First Approach</li>
+                            <li class="flex items-center gap-2 text-sm" style="color: var(--text-soft)"><i
+                                    class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs"></i> The Quick
+                                Question</li>
                         </ul>
-                        <a href="#" class="text-sm font-medium transition-colors"
+                        <a href="/templates/cold-outreach.txt" download class="text-sm font-medium transition-colors"
                             style="color: var(--logo-accent)">Download templates →</a>
                     </div>
                 </div>
@@ -514,24 +463,15 @@
             <section class="mb-16">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                            stroke-width="2" viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
-                            <line x1="12" y1="17" x2="12.01" y2="17" />
-                        </svg>
+                        <i class="fas fa-question-circle text-blue-600 dark:text-blue-400 text-lg"></i>
                     </div>
                     <h2 class="text-2xl font-bold" style="color: var(--text-main)">Frequently Asked Questions</h2>
                 </div>
                 <div class="space-y-3">
                     <details class="glass-card p-5 group cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">
-                            How do I get started with CloseDraft?
-                            <svg class="w-5 h-5 transition-transform group-open:rotate-180"
-                                style="color: var(--text-dim)" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" />
-                            </svg>
+                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">How
+                            do I get started with CloseDraft?<i
+                                class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                         </summary>
                         <p class="text-sm mt-4 pt-4"
                             style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Sign up for a
@@ -539,13 +479,9 @@
                             process takes less than 2 minutes.</p>
                     </details>
                     <details class="glass-card p-5 group cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">
-                            How does the AI email generation work?
-                            <svg class="w-5 h-5 transition-transform group-open:rotate-180"
-                                style="color: var(--text-dim)" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" />
-                            </svg>
+                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">How
+                            does the AI email generation work?<i
+                                class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                         </summary>
                         <p class="text-sm mt-4 pt-4"
                             style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">CloseDraft uses
@@ -554,13 +490,9 @@
                             so every email feels personal and relevant.</p>
                     </details>
                     <details class="glass-card p-5 group cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">
-                            Can I import my existing clients?
-                            <svg class="w-5 h-5 transition-transform group-open:rotate-180"
-                                style="color: var(--text-dim)" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" />
-                            </svg>
+                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">Can
+                            I import my existing clients?<i
+                                class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                         </summary>
                         <p class="text-sm mt-4 pt-4"
                             style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Yes! Use the CSV
@@ -568,13 +500,9 @@
                             Project, Amount, Status. You can also add clients manually one by one.</p>
                     </details>
                     <details class="glass-card p-5 group cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">
-                            Is my data secure?
-                            <svg class="w-5 h-5 transition-transform group-open:rotate-180"
-                                style="color: var(--text-dim)" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" />
-                            </svg>
+                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">Is
+                            my data secure?<i
+                                class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                         </summary>
                         <p class="text-sm mt-4 pt-4"
                             style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Absolutely. We
@@ -584,12 +512,8 @@
                     </details>
                     <details class="glass-card p-5 group cursor-pointer">
                         <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">
-                            What's the difference between Free and Pro?
-                            <svg class="w-5 h-5 transition-transform group-open:rotate-180"
-                                style="color: var(--text-dim)" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" />
-                            </svg>
+                            What's the difference between Free and Pro?<i
+                                class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                         </summary>
                         <p class="text-sm mt-4 pt-4"
                             style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Free includes 10
@@ -599,13 +523,9 @@
                                 style="color: var(--logo-accent)">Pricing page</a> for full details.</p>
                     </details>
                     <details class="glass-card p-5 group cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">
-                            Do you offer refunds?
-                            <svg class="w-5 h-5 transition-transform group-open:rotate-180"
-                                style="color: var(--text-dim)" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M19 9l-7 7-7-7" />
-                            </svg>
+                        <summary class="font-bold flex items-center justify-between" style="color: var(--text-main)">Do
+                            you offer refunds?<i
+                                class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                         </summary>
                         <p class="text-sm mt-4 pt-4"
                             style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Yes! We offer a
@@ -623,17 +543,16 @@
                         your inbox</h2>
                     <p class="mb-6" style="color: var(--text-soft)">Join 5,000+ freelancers getting weekly email tips,
                         templates, and strategies.</p>
-                    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" action="#" method="POST">
                         <input type="email" placeholder="Enter your email"
                             class="flex-1 px-5 py-3 rounded-xl border transition-all"
-                            style="background: var(--input-bg); border-color: var(--input-border); color: var(--text-main);" />
+                            style="background: var(--input-bg); border-color: var(--input-border); color: var(--text-main);">
                         <button type="submit"
-                            class="px-6 py-3 rounded-xl btn-primary font-bold hover:opacity-90 transition-opacity">Subscribe</button>
+                            class="px-6 py-3 rounded-xl btn-primary font-bold hover:opacity-90">Subscribe</button>
                     </form>
                     <p class="text-xs mt-4" style="color: var(--text-dim)">No spam. Unsubscribe anytime.</p>
                 </div>
             </section>
-
         </div>
     </main>
 
@@ -643,12 +562,11 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center"><svg
+                                class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
+                            </svg></div>
                         <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
                                 class="text-gradient">Draft</span></span>
                     </div>
@@ -690,34 +608,17 @@
             <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
                 style="border-color: var(--footer-border); color: var(--text-dim)">
                 <span>© 2026 CloseDraft. All rights reserved.</span>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
-                </div>
+                <div class="flex gap-6"><a href="#" class="hover:opacity-80">Twitter</a><a href="#"
+                        class="hover:opacity-80">LinkedIn</a><a href="#" class="hover:opacity-80">YouTube</a></div>
             </div>
         </div>
     </footer>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
+        <i class="fas fa-sun text-sm"></i>
         <div class="switch"></div>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+        <i class="fas fa-moon text-sm"></i>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -730,8 +631,7 @@
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('closeDraft_theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
     </script>
 </body>

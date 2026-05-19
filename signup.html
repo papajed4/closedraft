@@ -3,26 +3,38 @@
 
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HBF8V0GJPL');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-HBF8V0GJPL');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Sign up for CloseDraft – the client memory tool that reminds you who to follow up with and helps you write the perfect email. Start free, no credit card required.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://closedraft.site/signup.html">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Sign Up | CloseDraft">
+    <meta property="og:description"
+        content="Create your free CloseDraft account. Stop losing clients to forgotten follow‑ups.">
+    <meta property="og:image" content="https://closedraft.site/favicon.svg">
+    <meta property="og:url" content="https://closedraft.site/signup.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sign Up | CloseDraft">
+    <meta name="twitter:description" content="Create your free CloseDraft account. Never forget a follow‑up again.">
+    <meta name="twitter:image" content="https://closedraft.site/favicon.svg">
     <title>Sign Up | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -43,7 +55,6 @@
             }
         }
     </script>
-
     <style>
         /* ========== LIGHT THEME (default) ========== */
         :root {
@@ -106,7 +117,6 @@
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
             transition: all 0.3s ease;
@@ -185,7 +195,6 @@
             }
         }
 
-        /* Toggle switch */
         .theme-toggle {
             position: fixed;
             bottom: 24px;
@@ -193,7 +202,6 @@
             z-index: 999;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 100px;
             padding: 8px 12px;
@@ -202,8 +210,7 @@
             gap: 8px;
             cursor: pointer;
             box-shadow: var(--glass-shadow);
-            transition: all 0.3s ease;
-            user-select: none;
+            transition: all 0.3s;
         }
 
         .theme-toggle:hover {
@@ -216,7 +223,7 @@
             background: var(--toggle-bg);
             border-radius: 11px;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
         .theme-toggle .switch::after {
@@ -228,7 +235,7 @@
             height: 18px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
@@ -246,15 +253,13 @@
 
     <!-- Background Ambience -->
     <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
-        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-500"
+        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full blur-[150px]"
             style="background: var(--blob1)"></div>
-        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-500"
+        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full blur-[150px]"
             style="background: var(--blob2)"></div>
     </div>
 
-    <!-- Main Content -->
     <div class="w-full max-w-md">
-
         <!-- Logo -->
         <div class="flex items-center justify-center gap-2 mb-8">
             <div
@@ -276,16 +281,7 @@
             <!-- Google Sign Up Button -->
             <button onclick="signUpWithGoogle()" id="googleSignUpBtn"
                 class="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-sm border border-gray-200">
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                    <path fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                </svg>
+                <i class="fab fa-google text-red-500"></i>
                 Sign up with Google
             </button>
 
@@ -293,27 +289,18 @@
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t" style="border-color: var(--divider)"></div>
                 </div>
-                <div class="relative flex justify-center text-xs">
-                    <span class="px-3 bg-transparent" style="color: var(--text-dim)">or</span>
-                </div>
+                <div class="relative flex justify-center text-xs"><span class="px-3 bg-transparent"
+                        style="color: var(--text-dim)">or</span></div>
             </div>
 
             <!-- Email Signup Form -->
             <form id="signupForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold mb-1.5 uppercase tracking-wider"
-                        style="color: var(--text-dim)">Full Name</label>
-                    <input type="text" id="signupName" required placeholder="John Doe"
-                        class="w-full px-4 py-3 rounded-xl input-glass">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold mb-1.5 uppercase tracking-wider"
-                        style="color: var(--text-dim)">Email</label>
-                    <input type="email" id="signupEmail" required placeholder="you@example.com"
-                        class="w-full px-4 py-3 rounded-xl input-glass">
-                </div>
-
+                <div><label class="block text-xs font-bold mb-1.5 uppercase tracking-wider"
+                        style="color: var(--text-dim)">Full Name</label><input type="text" id="signupName" required
+                        placeholder="John Doe" class="w-full px-4 py-3 rounded-xl input-glass"></div>
+                <div><label class="block text-xs font-bold mb-1.5 uppercase tracking-wider"
+                        style="color: var(--text-dim)">Email</label><input type="email" id="signupEmail" required
+                        placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl input-glass"></div>
                 <div>
                     <label class="block text-xs font-bold mb-1.5 uppercase tracking-wider"
                         style="color: var(--text-dim)">Password</label>
@@ -321,16 +308,9 @@
                         <input type="password" id="signupPassword" required placeholder="••••••••" minlength="8"
                             class="w-full px-4 py-3 rounded-xl input-glass pr-12">
                         <button type="button" onclick="togglePassword('signupPassword')"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70"
                             style="color: var(--text-dim)">
-                            <svg id="signupEyeIcon" class="w-5 h-5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                </path>
-                            </svg>
+                            <i id="signupEyeIcon" class="fas fa-eye-slash"></i>
                         </button>
                     </div>
                     <div class="mt-2 h-1.5 rounded-full overflow-hidden" style="background: var(--strength-bg)">
@@ -338,104 +318,60 @@
                     </div>
                     <p class="text-xs mt-1" style="color: var(--text-dim)">At least 8 characters</p>
                 </div>
-
                 <div class="flex items-start gap-2">
                     <input type="checkbox" id="agreeTerms" required
                         class="w-4 h-4 mt-0.5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0">
-                    <label for="agreeTerms" class="text-xs" style="color: var(--text-dim)">
-                        I agree to the <a href="/terms.html" class="hover:opacity-80 transition-opacity"
-                            style="color: var(--logo-accent)">Terms of Service</a>
-                        and <a href="/privacy.html" class="hover:opacity-80 transition-opacity"
-                            style="color: var(--logo-accent)">Privacy Policy</a>
-                    </label>
+                    <label for="agreeTerms" class="text-xs" style="color: var(--text-dim)">I agree to the <a
+                            href="/terms.html" class="hover:opacity-80" style="color: var(--logo-accent)">Terms of
+                            Service</a> and <a href="/privacy.html" class="hover:opacity-80"
+                            style="color: var(--logo-accent)">Privacy Policy</a></label>
                 </div>
-
                 <button type="submit" id="signupSubmitBtn"
-                    class="w-full gradient-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">
-                    Create Account
-                </button>
+                    class="w-full gradient-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">Create
+                    Account</button>
             </form>
-
-            <p class="text-center text-sm mt-6" style="color: var(--text-soft)">
-                Already have an account?
-                <a href="/login.html" class="hover:opacity-80 transition-opacity font-medium"
-                    style="color: var(--logo-accent)">Sign in</a>
-            </p>
+            <p class="text-center text-sm mt-6" style="color: var(--text-soft)">Already have an account? <a
+                    href="/login.html" class="hover:opacity-80 font-medium" style="color: var(--logo-accent)">Sign
+                    in</a></p>
         </div>
-
-        <!-- Footer -->
-        <p class="text-center text-xs mt-8" style="color: var(--text-dim)">
-            © 2026 CloseDraft. All rights reserved.
-        </p>
+        <p class="text-center text-xs mt-8" style="color: var(--text-dim)">© 2026 CloseDraft. All rights reserved.</p>
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="toast">
-        <svg id="toastIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <span id="toastMsg" class="text-sm"></span>
-    </div>
+    <div id="toast" class="toast"><i id="toastIcon" class="fas fa-info-circle text-sm"></i><span id="toastMsg"
+            class="text-sm"></span></div>
 
-    <!-- ============ THEME TOGGLE (bottom-right) ============ -->
+    <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
-        <!-- Sun icon (light) -->
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
+        <i class="fas fa-sun text-sm"></i>
         <div class="switch"></div>
-        <!-- Moon icon (dark) -->
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+        <i class="fas fa-moon text-sm"></i>
     </div>
 
     <script>
         function togglePassword(inputId) {
             const input = document.getElementById(inputId);
-            const eyeIcon = inputId === 'loginPassword'
-                ? document.getElementById('loginEyeIcon')
-                : document.getElementById('signupEyeIcon');
-
+            const eyeIcon = document.getElementById(inputId === 'signupPassword' ? 'signupEyeIcon' : 'loginEyeIcon');
             if (input.type === 'password') {
                 input.type = 'text';
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-                `;
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
             } else {
                 input.type = 'password';
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                `;
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
             }
         }
-
-        // ── Theme toggle ─────────────────────────────────────
         (function () {
             const saved = localStorage.getItem('closeDraft_theme');
             if (saved === 'dark') document.documentElement.classList.add('dark');
         })();
-
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('closeDraft_theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
 </body>

@@ -3,15 +3,30 @@
 
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HBF8V0GJPL');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-HBF8V0GJPL');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Welcome to CloseDraft. Tell us about your freelance business and we'll customise your experience. Import clients or start with demo data.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://closedraft.site/onboarding.html">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Welcome | CloseDraft">
+    <meta property="og:description"
+        content="Set up your CloseDraft account in minutes. Tell us about your freelance workflow and import your clients.">
+    <meta property="og:image" content="https://closedraft.site/favicon.svg">
+    <meta property="og:url" content="https://closedraft.site/onboarding.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Welcome | CloseDraft">
+    <meta name="twitter:description" content="Set up your CloseDraft account in minutes.">
+    <meta name="twitter:image" content="https://closedraft.site/favicon.svg">
     <title>Welcome | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +34,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -147,7 +163,6 @@
         .glass {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
         }
@@ -269,7 +284,6 @@
             border-color: rgba(239, 68, 68, 0.2);
         }
 
-        /* Theme toggle */
         .theme-toggle {
             position: fixed;
             bottom: 24px;
@@ -277,7 +291,6 @@
             z-index: 999;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 100px;
             padding: 8px 12px;
@@ -286,8 +299,7 @@
             gap: 8px;
             cursor: pointer;
             box-shadow: var(--glass-shadow);
-            transition: all 0.3s ease;
-            user-select: none;
+            transition: all 0.3s;
         }
 
         .theme-toggle:hover {
@@ -300,7 +312,7 @@
             background: var(--toggle-bg);
             border-radius: 11px;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
         .theme-toggle .switch::after {
@@ -312,7 +324,7 @@
             height: 18px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
@@ -329,14 +341,13 @@
 <body class="min-h-screen flex items-center justify-center p-5 relative">
 
     <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
-        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-500"
+        <div class="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full blur-[150px]"
             style="background: var(--blob1)"></div>
-        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-500"
+        <div class="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full blur-[150px]"
             style="background: var(--blob2)"></div>
     </div>
 
     <div class="w-full max-w-xl">
-
         <!-- Logo -->
         <div class="flex items-center justify-center gap-2 mb-10">
             <div
@@ -367,14 +378,10 @@
                     clients?</h1>
                 <p class="text-sm" style="color: var(--text-soft)">We'll tailor CloseDraft to solve exactly this.</p>
             </div>
-
             <div class="space-y-3" id="step1Options">
                 <div class="option-card flex items-center gap-4"
                     onclick="selectPainPoint(this, 'forgetting-followups', 'You lose deals because follow-ups slip your mind. CloseDraft flags every client who needs attention — before they go cold.')">
-                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg></div>
+                    <div class="check-indicator"><i class="fas fa-check text-white opacity-0 text-xs"></i></div>
                     <div>
                         <p class="font-semibold" style="color: var(--option-text)">I forget to follow up</p>
                         <p class="text-xs mt-0.5" style="color: var(--option-sub)">Days pass, then weeks, and the
@@ -383,10 +390,7 @@
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectPainPoint(this, 'chasing-invoices', 'You do the work but payments drag on. CloseDraft drafts polite but firm payment reminders using your actual project details.')">
-                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg></div>
+                    <div class="check-indicator"><i class="fas fa-check text-white opacity-0 text-xs"></i></div>
                     <div>
                         <p class="font-semibold" style="color: var(--option-text)">I'm always chasing payments</p>
                         <p class="text-xs mt-0.5" style="color: var(--option-sub)">Invoicing is fine, collecting is the
@@ -395,10 +399,7 @@
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectPainPoint(this, 'getting-ghosted', 'You send proposals and hear nothing back. CloseDraft writes follow-ups that feel personal, not pushy — doubling your reply rate.')">
-                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg></div>
+                    <div class="check-indicator"><i class="fas fa-check text-white opacity-0 text-xs"></i></div>
                     <div>
                         <p class="font-semibold" style="color: var(--option-text)">Clients ghost me after proposals</p>
                         <p class="text-xs mt-0.5" style="color: var(--option-sub)">I pitch, they vanish, I never know
@@ -406,9 +407,7 @@
                     </div>
                 </div>
             </div>
-
             <div id="step1Insight" class="hidden mt-4"></div>
-
             <button onclick="goToStep2()" id="step1Btn" disabled
                 class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl mt-6 opacity-40 cursor-not-allowed transition-all text-sm">Continue</button>
         </div>
@@ -420,14 +419,10 @@
                     manage?</h1>
                 <p class="text-sm" style="color: var(--text-soft)">This determines your starting setup.</p>
             </div>
-
             <div class="space-y-3" id="step2Options">
                 <div class="option-card flex items-center gap-4"
                     onclick="selectScale(this, '1-5', 'Perfect. We\'ll start you with a clean slate and 2 sample clients so you can see how tracking works immediately.')">
-                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg></div>
+                    <div class="check-indicator"><i class="fas fa-check text-white opacity-0 text-xs"></i></div>
                     <div>
                         <p class="font-semibold" style="color: var(--option-text)">1 to 5 clients</p>
                         <p class="text-xs mt-0.5" style="color: var(--option-sub)">Selective and intentional</p>
@@ -435,10 +430,7 @@
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectScale(this, '6-15', 'You\'re busy. We\'ll pre-load 5 sample clients across different statuses so the dashboard feels real from day one.')">
-                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg></div>
+                    <div class="check-indicator"><i class="fas fa-check text-white opacity-0 text-xs"></i></div>
                     <div>
                         <p class="font-semibold" style="color: var(--option-text)">6 to 15 clients</p>
                         <p class="text-xs mt-0.5" style="color: var(--option-sub)">Growing steadily, staying busy</p>
@@ -446,44 +438,32 @@
                 </div>
                 <div class="option-card flex items-center gap-4"
                     onclick="selectScale(this, '15-plus', 'You need scale. We\'ll load 8 sample clients and show you the batch workflow — bulk emails, bulk status updates, the works.')">
-                    <div class="check-indicator"><svg class="w-3 h-3 text-white opacity-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                        </svg></div>
+                    <div class="check-indicator"><i class="fas fa-check text-white opacity-0 text-xs"></i></div>
                     <div>
                         <p class="font-semibold" style="color: var(--option-text)">15 or more clients</p>
                         <p class="text-xs mt-0.5" style="color: var(--option-sub)">Running a full operation</p>
                     </div>
                 </div>
             </div>
-
             <div id="step2Insight" class="hidden mt-4"></div>
-
             <button onclick="goToImportStep()" id="step2Btn" disabled
                 class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl mt-6 opacity-40 cursor-not-allowed transition-all text-sm">Continue</button>
         </div>
 
-        <!-- ============ STEP 3: Import Clients (Optional) ============ -->
+        <!-- ============ STEP 3: Import Clients ============ -->
         <div id="importStep" class="hidden">
             <div class="text-center mb-8">
                 <h1 class="text-2xl font-bold mb-2" style="color: var(--text-main)">Bring your clients with you</h1>
                 <p class="text-sm" style="color: var(--text-soft)">Upload a CSV, paste from a spreadsheet, or skip —
                     we'll handle the formatting.</p>
             </div>
-
             <div class="import-area mb-4" onclick="document.getElementById('csvFileInput').click()">
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
-                <svg class="w-10 h-10 mx-auto mb-3" style="color: var(--text-dim)" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-                    </path>
-                </svg>
+                <i class="fas fa-cloud-upload-alt text-3xl mb-3" style="color: var(--text-dim)"></i>
                 <p class="font-medium text-sm" style="color: var(--text-main)">Click to upload a CSV file</p>
                 <p class="text-xs mt-1" style="color: var(--text-dim)">We expect columns: Name, Business, Email,
                     Project, Amount</p>
             </div>
-
             <div class="relative mb-4">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t" style="border-color: var(--divider)"></div>
@@ -491,7 +471,6 @@
                 <div class="relative flex justify-center text-xs"><span class="px-3"
                         style="color: var(--text-dim); background: var(--bg-start)">or paste raw data</span></div>
             </div>
-
             <textarea id="pasteInput" rows="4"
                 placeholder="Sarah Chen, Bright Analytics, sarah@bright.com, Dashboard Redesign, 3500&#10;Marcus Lee, DesignCo, marcus@designco.io, Brand Identity, 2200&#10;..."
                 class="w-full px-4 py-3 rounded-xl border text-sm resize-none transition-all"
@@ -500,7 +479,6 @@
                 class="w-full py-2.5 rounded-xl text-sm font-medium border transition-all mb-4"
                 style="background: var(--card-bg); border-color: var(--card-border); color: var(--text-soft);">Parse
                 pasted data</button>
-
             <div id="importPreview" class="hidden">
                 <div class="flex items-center justify-between mb-3">
                     <p class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-dim)">Preview</p>
@@ -520,26 +498,18 @@
                     </table>
                 </div>
             </div>
-
             <button onclick="finishOnboarding()" id="importContinueBtn"
-                class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl transition-all text-sm">
-                Continue to dashboard
-            </button>
-            <p class="text-center mt-3">
-                <a href="#" onclick="finishOnboarding()" class="text-xs transition-colors"
-                    style="color: var(--text-dim)">Skip — I'll add clients later</a>
-            </p>
+                class="w-full gradient-primary text-white font-semibold py-3.5 rounded-xl transition-all text-sm">Continue
+                to dashboard</button>
+            <p class="text-center mt-3"><a href="#" onclick="finishOnboarding()" class="text-xs transition-colors"
+                    style="color: var(--text-dim)">Skip — I'll add clients later</a></p>
         </div>
 
         <!-- ============ STEP 4: Processing ============ -->
         <div id="processingStep" class="hidden text-center py-10">
             <div
                 class="w-12 h-12 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20">
-                <svg class="w-6 h-6 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                    </path>
-                </svg>
+                <i class="fas fa-spinner fa-spin text-white text-xl"></i>
             </div>
             <h2 class="text-xl font-bold mb-2" style="color: var(--text-main)" id="processingTitle">Building your
                 workspace...</h2>
@@ -553,37 +523,19 @@
                     style="background: var(--logo-accent); animation-delay: 0.4s"></div>
             </div>
         </div>
-
-        <p class="text-center mt-8">
-            <a href="/app.html" class="text-xs transition-colors" style="color: var(--text-dim)">Skip everything — go to
-                dashboard</a>
-        </p>
+        <p class="text-center mt-8"><a href="/app.html" class="text-xs transition-colors"
+                style="color: var(--text-dim)">Skip everything — go to dashboard</a></p>
     </div>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
+        <i class="fas fa-sun text-sm"></i>
         <div class="switch"></div>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+        <i class="fas fa-moon text-sm"></i>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-            // Theme toggle
             (function () {
                 const saved = localStorage.getItem('closeDraft_theme');
                 if (saved === 'dark') document.documentElement.classList.add('dark');
@@ -591,8 +543,7 @@
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('closeDraft_theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
 
         const supabaseClient = window.supabase.createClient(
@@ -620,22 +571,15 @@
             selectedPainPoint = value;
             const insightDiv = document.getElementById('step1Insight');
             insightDiv.className = 'insight-box mt-4';
+            let insightHtml = '';
             if (value === 'forgetting-followups') {
-                insightDiv.innerHTML = `
-            <p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p>
-            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">Your dashboard will <strong style="color: var(--text-main)">proactively show you every client who hasn't been contacted in 7+ days</strong>. One click writes a personalised follow‑up. You'll never wonder "who am I forgetting?" again.</p>
-            <p class="text-xs mt-3" style="color: var(--text-dim)">After you sign up, you'll see demo clients that need attention immediately.</p>`;
+                insightHtml = '<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p><p class="text-sm leading-relaxed" style="color: var(--text-soft)">Your dashboard will <strong style="color: var(--text-main)">proactively show you every client who hasn\'t been contacted in 7+ days</strong>. One click writes a personalised follow‑up. You\'ll never wonder "who am I forgetting?" again.</p><p class="text-xs mt-3" style="color: var(--text-dim)">After you sign up, you\'ll see demo clients that need attention immediately.</p>';
             } else if (value === 'chasing-invoices') {
-                insightDiv.innerHTML = `
-            <p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p>
-            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">CloseDraft <strong style="color: var(--text-main)">drafts polite but firm payment reminders</strong> using your actual project details. You can set them to go out automatically via Gmail. No more awkward payment chases.</p>
-            <p class="text-xs mt-3" style="color: var(--text-dim)">Your dashboard will highlight clients with "Payment Due" status right at the top.</p>`;
+                insightHtml = '<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p><p class="text-sm leading-relaxed" style="color: var(--text-soft)">CloseDraft <strong style="color: var(--text-main)">drafts polite but firm payment reminders</strong> using your actual project details. You can set them to go out automatically via Gmail. No more awkward payment chases.</p><p class="text-xs mt-3" style="color: var(--text-dim)">Your dashboard will highlight clients with "Payment Due" status right at the top.</p>';
             } else if (value === 'getting-ghosted') {
-                insightDiv.innerHTML = `
-            <p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p>
-            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">CloseDraft's AI writes <strong style="color: var(--text-main)">personal, non‑pushy follow‑ups</strong> that double your reply rate. It remembers the context of your last conversation so every email feels human.</p>
-            <p class="text-xs mt-3" style="color: var(--text-dim)">You'll also see which clients have gone silent so you can act before they ghost.</p>`;
+                insightHtml = '<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">How CloseDraft helps</p><p class="text-sm leading-relaxed" style="color: var(--text-soft)">CloseDraft\'s AI writes <strong style="color: var(--text-main)">personal, non‑pushy follow‑ups</strong> that double your reply rate. It remembers the context of your last conversation so every email feels human.</p><p class="text-xs mt-3" style="color: var(--text-dim)">You\'ll also see which clients have gone silent so you can act before they ghost.</p>';
             }
+            insightDiv.innerHTML = insightHtml;
             insightDiv.classList.remove('hidden');
             document.getElementById('step1Btn').disabled = false;
             document.getElementById('step1Btn').classList.remove('opacity-40', 'cursor-not-allowed');
@@ -648,16 +592,11 @@
             selectedScale = value;
             const insightDiv = document.getElementById('step2Insight');
             insightDiv.className = 'insight-box mt-4';
-            if (value === '1-5') {
-                insightDiv.innerHTML = `<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p>
-            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">We'll start you with <strong style="color: var(--text-main)">2 sample clients</strong> that need attention right away. You'll see exactly how CloseDraft prevents forgotten follow‑ups from day one.</p>`;
-            } else if (value === '6-15') {
-                insightDiv.innerHTML = `<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p>
-            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">We'll load <strong style="color: var(--text-main)">5 sample clients</strong> across different statuses. Your dashboard will immediately show you who needs a follow‑up, who hasn't paid, and let you write them with one click.</p>`;
-            } else if (value === '15-plus') {
-                insightDiv.innerHTML = `<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p>
-            <p class="text-sm leading-relaxed" style="color: var(--text-soft)">We'll load <strong style="color: var(--text-main)">8 sample clients</strong> and show you the batch workflow — bulk emails, bulk status updates. You'll see how CloseDraft scales with your business.</p>`;
-            }
+            let insightHtml = '';
+            if (value === '1-5') insightHtml = '<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p><p class="text-sm leading-relaxed" style="color: var(--text-soft)">We\'ll start you with <strong style="color: var(--text-main)">2 sample clients</strong> that need attention right away. You\'ll see exactly how CloseDraft prevents forgotten follow‑ups from day one.</p>';
+            else if (value === '6-15') insightHtml = '<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p><p class="text-sm leading-relaxed" style="color: var(--text-soft)">We\'ll load <strong style="color: var(--text-main)">5 sample clients</strong> across different statuses. Your dashboard will immediately show you who needs a follow‑up, who hasn\'t paid, and let you write them with one click.</p>';
+            else if (value === '15-plus') insightHtml = '<p class="text-xs font-bold text-accent uppercase tracking-wider mb-2">Your setup</p><p class="text-sm leading-relaxed" style="color: var(--text-soft)">We\'ll load <strong style="color: var(--text-main)">8 sample clients</strong> and show you the batch workflow — bulk emails, bulk status updates. You\'ll see how CloseDraft scales with your business.</p>';
+            insightDiv.innerHTML = insightHtml;
             insightDiv.classList.remove('hidden');
             document.getElementById('step2Btn').disabled = false;
             document.getElementById('step2Btn').classList.remove('opacity-40', 'cursor-not-allowed');
@@ -683,14 +622,14 @@
             const lines = ['stepLine1', 'stepLine2', 'stepLine3'];
             labels.forEach((id, i) => {
                 const el = document.getElementById(id);
-                if (i + 1 < step) { el.style.color = 'var(--text-dim)'; }
-                else if (i + 1 === step) { el.style.color = 'var(--step-label-active)'; }
-                else { el.style.color = 'var(--step-label-inactive)'; }
+                if (i + 1 < step) el.style.color = 'var(--text-dim)';
+                else if (i + 1 === step) el.style.color = 'var(--step-label-active)';
+                else el.style.color = 'var(--step-label-inactive)';
             });
             lines.forEach((id, i) => {
                 const el = document.getElementById(id);
-                if (i + 1 < step) { el.classList.add('done'); }
-                else { el.classList.remove('done'); }
+                if (i + 1 < step) el.classList.add('done');
+                else el.classList.remove('done');
             });
         }
 
@@ -734,12 +673,8 @@
             const count = document.getElementById('importCount');
             preview.classList.remove('hidden');
             count.textContent = `${parsedClients.length} clients detected`;
-            body.innerHTML = parsedClients.slice(0, 5).map(c =>
-                `<tr><td class="py-1 pr-2" style="color: var(--text-main)">${c.name}</td><td class="py-1 pr-2" style="color: var(--text-soft)">${c.business || '—'}</td><td class="py-1 pr-2" style="color: var(--text-soft)">${c.email || '—'}</td><td class="py-1" style="color: var(--text-soft)">${c.project || '—'}</td></tr>`
-            ).join('');
-            if (parsedClients.length > 5) {
-                body.innerHTML += `<tr><td colspan="4" class="py-2 text-xs" style="color: var(--text-dim)">+${parsedClients.length - 5} more</td></tr>`;
-            }
+            body.innerHTML = parsedClients.slice(0, 5).map(c => `<tr><td class="py-1 pr-2" style="color: var(--text-main)">${c.name}</td><td class="py-1 pr-2" style="color: var(--text-soft)">${c.business || '—'}</td><td class="py-1 pr-2" style="color: var(--text-soft)">${c.email || '—'}</td><td class="py-1" style="color: var(--text-soft)">${c.project || '—'}</td></tr>`).join('');
+            if (parsedClients.length > 5) body.innerHTML += `<tr><td colspan="4" class="py-2 text-xs" style="color: var(--text-dim)">+${parsedClients.length - 5} more</td></tr>`;
         }
 
         async function finishOnboarding() {

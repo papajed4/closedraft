@@ -3,24 +3,37 @@
 
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HBF8V0GJPL');
-</script>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HBF8V0GJPL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-HBF8V0GJPL');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CloseDraft pricing: Free plan with 10 clients and 15 AI emails/month, or Pro for unlimited clients, AI emails, Gmail integration, AutoDraft, and notifications. Start free, cancel anytime.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://closedraft.site/pricing.html">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Pricing | CloseDraft">
+    <meta property="og:description"
+        content="Simple, transparent pricing for freelancers. Start free, upgrade when you're ready. No contracts, cancel anytime.">
+    <meta property="og:image" content="https://closedraft.site/favicon.svg">
+    <meta property="og:url" content="https://closedraft.site/pricing.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pricing | CloseDraft">
+    <meta name="twitter:description"
+        content="Simple, transparent pricing for freelancers. Start free, upgrade when you're ready.">
+    <meta name="twitter:image" content="https://closedraft.site/favicon.svg">
     <title>Pricing | CloseDraft</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-
-    <!-- Tailwind -->
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -41,15 +54,12 @@
             }
         }
     </script>
-
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://txibbsaodcpaturobeok.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4aWJic2FvZGNwYXR1cm9iZW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODkyODQsImV4cCI6MjA5MTI2NTI4NH0.1omA2j3QaFzr83KxqpQOSrRngu6mGkJB2d_PYDGNR24';
         window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
-
     <style>
         :root {
             --bg-start: #F8FAFC;
@@ -129,7 +139,6 @@
         .glass {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
             transition: all 0.25s ease;
@@ -142,14 +151,13 @@
         .text-gradient {
             background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: transparent;
         }
 
         .nav-glass {
             background: var(--nav-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--nav-border);
         }
 
@@ -177,7 +185,6 @@
             transform: rotate(180deg);
         }
 
-        /* Theme toggle */
         .theme-toggle {
             position: fixed;
             bottom: 24px;
@@ -185,7 +192,6 @@
             z-index: 999;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 100px;
             padding: 8px 12px;
@@ -194,8 +200,7 @@
             gap: 8px;
             cursor: pointer;
             box-shadow: var(--glass-shadow);
-            transition: all 0.3s ease;
-            user-select: none;
+            transition: all 0.3s;
         }
 
         .theme-toggle:hover {
@@ -208,7 +213,7 @@
             background: var(--toggle-bg);
             border-radius: 11px;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
         .theme-toggle .switch::after {
@@ -220,7 +225,7 @@
             height: 18px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
@@ -232,7 +237,6 @@
             transform: translateX(18px);
         }
 
-        /* Billing toggle */
         .billing-toggle:checked+.billing-toggle-track {
             background: #2563EB;
         }
@@ -267,7 +271,7 @@
                     <a href="/login.html" class="font-medium transition-colors" style="color: var(--text-soft)">Sign
                         In</a>
                     <a href="/signup.html"
-                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90 transition-opacity">Get
+                        class="px-5 py-2.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-blue-500/25 hover:opacity-90">Get
                         Started</a>
                 </div>
                 <button id="mobileMenuBtn" class="md:hidden p-2" style="color: var(--text-soft)">
@@ -289,7 +293,7 @@
                 <a href="/features.html" class="block py-2 font-medium" style="color: var(--text-soft)">Features</a>
                 <a href="/pricing.html" class="block py-2 font-medium" style="color: var(--logo-accent)">Pricing</a>
                 <a href="/resources.html" class="block py-2 font-medium" style="color: var(--text-soft)">Resources</a>
-                <div class="pt-3 space-y-3" style="border-top: 1px solid var(--glass-border);" id="mobileNavAuth">
+                <div class="pt-3 space-y-3 border-t" style="border-color: var(--glass-border);" id="mobileNavAuth">
                     <a href="/login.html" class="block py-2 font-medium" style="color: var(--text-soft)">Sign In</a>
                     <a href="/signup.html"
                         class="block text-center px-5 py-2.5 rounded-xl btn-primary text-white font-bold">Get
@@ -300,21 +304,18 @@
     </nav>
 
     <main class="pt-28">
-        <!-- Hero -->
         <section class="py-16 px-6 text-center">
             <span class="text-accent font-bold tracking-[0.2em] uppercase text-xs">Simple Pricing</span>
             <h1 class="text-4xl md:text-5xl font-bold mt-4 mb-4" style="color: var(--logo-text)">Choose the plan that
                 fits you</h1>
             <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-soft)">Start free, upgrade when you're ready.
                 No contracts, cancel anytime.</p>
-
-            <!-- Billing Toggle -->
             <div class="flex items-center justify-center gap-4 mt-8">
                 <span class="text-sm font-medium" style="color: var(--logo-text)" id="monthlyLabel">Monthly</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="billingToggle" class="sr-only peer billing-toggle"
                         onchange="toggleBilling()">
-                    <div class="w-14 h-7 rounded-full peer-focus:outline-none peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"
+                    <div class="w-14 h-7 rounded-full peer-focus:outline-none after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"
                         style="background: var(--toggle-bg);"></div>
                 </label>
                 <span class="text-sm font-medium" style="color: var(--text-dim)" id="yearlyLabel">Yearly <span
@@ -323,156 +324,71 @@
             </div>
         </section>
 
-        <!-- Pricing Cards -->
         <section class="py-8 px-6 max-w-6xl mx-auto">
             <div class="grid md:grid-cols-2 gap-8">
-
                 <!-- Free Plan -->
                 <div class="glass rounded-3xl p-8">
                     <h3 class="text-2xl font-bold mb-2" style="color: var(--text-main)">Free</h3>
                     <p class="mb-6" style="color: var(--text-soft)">Perfect for trying out CloseDraft</p>
-                    <div class="mb-6">
-                        <span class="text-5xl font-bold" style="color: var(--text-main)">$0</span>
-                        <span style="color: var(--text-dim)">/month</span>
-                    </div>
+                    <div class="mb-6"><span class="text-5xl font-bold" style="color: var(--text-main)">$0</span><span
+                            style="color: var(--text-dim)">/month</span></div>
                     <a href="/signup.html"
                         class="block w-full py-3 rounded-xl border font-medium text-center hover:bg-gray-50 transition-all mb-8"
-                        style="border-color: var(--card-border); color: var(--text-main);">
-                        Get Started
-                    </a>
+                        style="border-color: var(--card-border); color: var(--text-main);">Get Started</a>
                     <ul class="space-y-4">
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">10 clients</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">15 AI emails/month</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Basic templates</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Email support</span>
-                        </li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">10 clients</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">15 AI emails/month</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Basic templates</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Email support</span></li>
                     </ul>
                 </div>
-
-                <!-- Pro Plan (Highlighted) -->
+                <!-- Pro Plan -->
                 <div class="glass rounded-3xl p-8 relative"
                     style="border: 2px solid var(--pro-card-border); box-shadow: 0 0 30px var(--pro-card-glow);">
                     <div
                         class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
-                        Most Popular
-                    </div>
+                        Most Popular</div>
                     <h3 class="text-2xl font-bold mb-2" style="color: var(--text-main)">Pro</h3>
                     <p class="mb-6" style="color: var(--text-soft)">For serious freelancers</p>
-                    <div class="mb-2">
-                        <span class="text-5xl font-bold" style="color: var(--text-main)" id="proPrice">$29</span>
-                        <span style="color: var(--text-dim)" id="proPeriod">/month</span>
+                    <div class="mb-2"><span class="text-5xl font-bold" style="color: var(--text-main)"
+                            id="proPrice">$29</span><span style="color: var(--text-dim)" id="proPeriod">/month</span>
                     </div>
-
-                    <!-- ROI hook -->
-                    <p class="text-xs font-medium mb-3 leading-relaxed" style="color: var(--check-color)">
-                        Pays for itself with one recovered invoice or 2 hours saved
-                    </p>
-
-                    <!-- Money‑back guarantee -->
-                    <div class="flex items-center gap-2 mb-6">
-                        <svg class="w-4 h-4 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-xs" style="color: var(--text-dim)">30‑day money‑back guarantee</span>
-                    </div>
+                    <p class="text-xs font-medium mb-3 leading-relaxed" style="color: var(--check-color)">Pays for
+                        itself with one recovered invoice or 2 hours saved</p>
+                    <div class="flex items-center gap-2 mb-6"><i
+                            class="fas fa-check-circle text-accent text-sm"></i><span class="text-xs"
+                            style="color: var(--text-dim)">30‑day money‑back guarantee</span></div>
                     <button onclick="handleUpgrade('monthly')" id="proMonthlyBtn"
-                        class="block w-full py-3 rounded-xl btn-primary font-bold text-center hover:opacity-90 transition-all mb-8 shadow-lg shadow-blue-500/25">
-                        Start Free Trial
-                    </button>
+                        class="block w-full py-3 rounded-xl btn-primary font-bold text-center hover:opacity-90 mb-8 shadow-lg shadow-blue-500/25">Start
+                        Free Trial</button>
                     <button onclick="handleUpgrade('yearly')" id="proYearlyBtn"
-                        class="hidden w-full py-3 rounded-xl btn-primary font-bold text-center hover:opacity-90 transition-all mb-8 shadow-lg shadow-blue-500/25">
-                        Get Pro Yearly
-                    </button>
+                        class="hidden w-full py-3 rounded-xl btn-primary font-bold text-center hover:opacity-90 mb-8 shadow-lg shadow-blue-500/25">Get
+                        Pro Yearly</button>
                     <ul class="space-y-4">
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)"><strong
-                                    style="color: var(--text-main)">Unlimited</strong> clients</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)"><strong
-                                    style="color: var(--text-main)">Unlimited</strong> AI emails</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">All templates + custom tones</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Gmail integration & reply detection</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">AutoDraft automated campaigns</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Discord & Telegram notifications</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Chrome Extension</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Invoice generator & activity timeline</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" style="color: var(--check-color)" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span style="color: var(--text-soft)">Priority support</span>
-                        </li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)"><strong
+                                    style="color: var(--text-main)">Unlimited</strong> clients</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)"><strong
+                                    style="color: var(--text-main)">Unlimited</strong> AI emails</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">All templates + custom tones</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Gmail integration & reply detection</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">AutoDraft automated campaigns</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Discord & Telegram notifications</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Chrome Extension</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Invoice generator & activity timeline</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-accent text-sm"></i><span
+                                style="color: var(--text-soft)">Priority support</span></li>
                     </ul>
                 </div>
             </div>
@@ -493,72 +409,82 @@
                 </div>
                 <div style="border-color: var(--table-row-border);">
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Clients</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Clients</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">10</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Unlimited</span>
                     </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">AI emails / month</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">AI emails / month</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">15</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Unlimited</span>
                     </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Email templates</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Email templates</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">Basic</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Full library +
-                            custom tones</span></div>
+                            custom tones</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">AutoDraft campaigns</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">AutoDraft campaigns</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Unlimited single &
-                            bulk</span></div>
+                            bulk</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Automated sending</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Automated sending</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Via Gmail</span>
                     </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Reply detection</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Reply detection</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Auto‑stops
-                            campaigns</span></div>
+                            campaigns</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Gmail integration</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Gmail integration</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Send & receive
-                            tracking</span></div>
+                            tracking</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Discord notifications</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Discord notifications</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Private channel +
-                            mentions</span></div>
+                            mentions</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Telegram notifications</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Telegram notifications</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Direct bot
-                            messages</span></div>
+                            messages</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Chrome Extension</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Chrome Extension</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Gmail compose
-                            button</span></div>
+                            button</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Invoice generator</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Invoice generator</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">One‑click
-                            PDF</span></div>
+                            PDF</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Client activity timeline</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Client activity timeline</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">—</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Full
-                            history</span></div>
+                            history</span>
+                    </div>
                     <div class="grid grid-cols-3 px-6 py-3 border-b" style="border-color: var(--table-row-border);">
-                        <span style="color: var(--text-soft)" class="text-sm">Bulk import / export</span><span
+                        <span class="text-sm" style="color: var(--text-soft)">Bulk import / export</span><span
                             class="text-sm text-center" style="color: var(--text-dim)">CSV import (limited)</span><span
                             class="text-sm text-center font-medium" style="color: var(--check-color)">Full CSV import &
-                            export</span></div>
-                    <div class="grid grid-cols-3 px-6 py-3"><span style="color: var(--text-soft)"
-                            class="text-sm">Priority support</span><span class="text-sm text-center"
+                            export</span>
+                    </div>
+                    <div class="grid grid-cols-3 px-6 py-3"><span class="text-sm"
+                            style="color: var(--text-soft)">Priority support</span><span class="text-sm text-center"
                             style="color: var(--text-dim)">—</span><span class="text-sm text-center font-medium"
                             style="color: var(--check-color)">Dedicated help</span></div>
                 </div>
@@ -572,113 +498,75 @@
             <div class="space-y-3">
                 <details class="glass rounded-xl p-5 group">
                     <summary class="font-bold cursor-pointer flex items-center justify-between"
-                        style="color: var(--text-main)">
-                        Can I cancel anytime?
-                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" style="color: var(--text-dim)"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
+                        style="color: var(--text-main)">Can I cancel anytime?<i
+                            class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                     </summary>
                     <p class="text-sm mt-4 pt-4"
-                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">
-                        Yes — no contracts, no commitments. You can cancel your Pro plan at any time through the
-                        <strong style="color: var(--text-main)">Polar Customer Portal</strong> (link in your purchase
-                        receipt email).
-                        Your account will revert to the Free plan at the end of your billing period, and your data stays
-                        safe.
-                    </p>
+                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Yes — no contracts,
+                        no commitments. You can cancel your Pro plan at any time through the <strong
+                            style="color: var(--text-main)">Polar Customer Portal</strong> (link in your purchase
+                        receipt email). Your account will revert to the Free plan at the end of your billing period, and
+                        your data stays safe.</p>
                 </details>
                 <details class="glass rounded-xl p-5 group">
                     <summary class="font-bold cursor-pointer flex items-center justify-between"
-                        style="color: var(--text-main)">
-                        Is there a free trial?
-                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" style="color: var(--text-dim)"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
+                        style="color: var(--text-main)">Is there a free trial?<i
+                            class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                     </summary>
                     <p class="text-sm mt-4 pt-4"
-                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">
-                        Yes! The <strong style="color: var(--text-main)">Free plan</strong> lets you manage up to 10
-                        clients and generate
-                        15 AI‑powered emails per month — no credit card required. Upgrade to Pro whenever you need
-                        unlimited
-                        clients, AI emails, Gmail integration, AutoDraft campaigns, and Discord/Telegram notifications.
-                    </p>
+                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Yes! The <strong
+                            style="color: var(--text-main)">Free plan</strong> lets you manage up to 10 clients and
+                        generate 15 AI‑powered emails per month — no credit card required. Upgrade to Pro whenever you
+                        need unlimited clients, AI emails, Gmail integration, AutoDraft campaigns, and Discord/Telegram
+                        notifications.</p>
                 </details>
                 <details class="glass rounded-xl p-5 group">
                     <summary class="font-bold cursor-pointer flex items-center justify-between"
-                        style="color: var(--text-main)">
-                        Do you offer refunds?
-                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" style="color: var(--text-dim)"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
+                        style="color: var(--text-main)">Do you offer refunds?<i
+                            class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                     </summary>
                     <p class="text-sm mt-4 pt-4"
-                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">
-                        Yes. We offer a <strong style="color: var(--text-main)">30‑day money‑back guarantee</strong> on
-                        annual Pro plans.
-                        If you're not satisfied within the first month, email us and we'll refund you in full.
+                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Yes. We offer a
+                        <strong style="color: var(--text-main)">30‑day money‑back guarantee</strong> on annual Pro
+                        plans. If you're not satisfied within the first month, email us and we'll refund you in full.
                         Monthly plans are non‑refundable but you can cancel anytime to stop future charges.
                     </p>
                 </details>
                 <details class="glass rounded-xl p-5 group">
                     <summary class="font-bold cursor-pointer flex items-center justify-between"
-                        style="color: var(--text-main)">
-                        How do I manage my subscription?
-                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" style="color: var(--text-dim)"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
+                        style="color: var(--text-main)">How do I manage my subscription?<i
+                            class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                     </summary>
                     <p class="text-sm mt-4 pt-4"
-                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">
-                        After purchasing a Pro plan, you'll receive an email from <strong
-                            style="color: var(--text-main)">Polar.sh</strong>
+                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">After purchasing a
+                        Pro plan, you'll receive an email from <strong style="color: var(--text-main)">Polar.sh</strong>
                         (our payment partner). Inside that email is a link to your <strong
-                            style="color: var(--text-main)">Polar Customer
-                            Portal</strong>. From there you can upgrade, downgrade, switch between monthly and yearly
-                        billing,
-                        update your payment method, or cancel your subscription — all self‑serve, no support tickets
-                        needed.
-                    </p>
+                            style="color: var(--text-main)">Polar Customer Portal</strong>. From there you can upgrade,
+                        downgrade, switch between monthly and yearly billing, update your payment method, or cancel your
+                        subscription — all self‑serve.</p>
                 </details>
                 <details class="glass rounded-xl p-5 group">
                     <summary class="font-bold cursor-pointer flex items-center justify-between"
-                        style="color: var(--text-main)">
-                        Can I upgrade or downgrade later?
-                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" style="color: var(--text-dim)"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
+                        style="color: var(--text-main)">Can I upgrade or downgrade later?<i
+                            class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                     </summary>
                     <p class="text-sm mt-4 pt-4"
-                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">
-                        Absolutely. You can upgrade from Free to Pro anytime — your data, clients, emails, and templates
-                        stay exactly as they are. If you ever need to downgrade back to Free, you'll keep everything but
-                        Pro‑only features (unlimited clients, Gmail integration, AutoDraft, Discord/Telegram) will be
-                        paused
-                        until you re‑subscribe.
-                    </p>
+                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">Absolutely. You can
+                        upgrade from Free to Pro anytime — your data, clients, emails, and templates stay exactly as
+                        they are. If you ever need to downgrade back to Free, you'll keep everything but Pro‑only
+                        features (unlimited clients, Gmail integration, AutoDraft, Discord/Telegram) will be paused
+                        until you re‑subscribe.</p>
                 </details>
                 <details class="glass rounded-xl p-5 group">
                     <summary class="font-bold cursor-pointer flex items-center justify-between"
-                        style="color: var(--text-main)">
-                        What happens when I hit the free limits?
-                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" style="color: var(--text-dim)"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
+                        style="color: var(--text-main)">What happens when I hit the free limits?<i
+                            class="fas fa-chevron-down transition-transform group-open:rotate-180 text-sm"></i>
                     </summary>
                     <p class="text-sm mt-4 pt-4"
-                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">
-                        When you reach 10 clients or 15 AI emails in a month, you'll see a friendly upgrade prompt in
-                        the
-                        dashboard. Your existing data stays safe — you just won't be able to add new clients or generate
-                        more
-                        AI emails until the next month or until you upgrade to Pro for unlimited access.
-                    </p>
+                        style="color: var(--text-soft); border-top: 1px solid var(--faq-divider);">When you reach 10
+                        clients or 15 AI emails in a month, you'll see a friendly upgrade prompt in the dashboard. Your
+                        existing data stays safe — you just won't be able to add new clients or generate more AI emails
+                        until the next month or until you upgrade to Pro for unlimited access.</p>
                 </details>
             </div>
         </section>
@@ -690,26 +578,23 @@
                 <p class="text-blue-100 mb-8 text-lg">Start your free trial today. No credit card required.</p>
                 <a href="/signup.html"
                     class="inline-block px-10 py-4 rounded-xl bg-white font-bold text-lg hover:scale-105 transition-transform shadow-xl"
-                    style="color: #2563EB;">
-                    Get Started Free
-                </a>
+                    style="color: #2563EB;">Get Started Free</a>
                 <p class="text-blue-200 text-sm mt-4">No credit card required · 14‑day trial · Cancel anytime</p>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (same as index) -->
     <footer class="pt-20 pb-10 border-t" style="background: var(--footer-bg); border-color: var(--footer-border);">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-7 h-7 gradient-primary rounded-lg flex items-center justify-center"><svg
+                                class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
+                            </svg></div>
                         <span class="text-lg font-bold" style="color: var(--logo-text)">Close<span
                                 class="text-gradient">Draft</span></span>
                     </div>
@@ -751,45 +636,22 @@
             <div class="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
                 style="border-color: var(--footer-border); color: var(--text-dim)">
                 <span>© 2026 CloseDraft. All rights reserved.</span>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:opacity-80 transition-opacity">Twitter</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">LinkedIn</a>
-                    <a href="#" class="hover:opacity-80 transition-opacity">YouTube</a>
-                </div>
+                <div class="flex gap-6"><a href="#" class="hover:opacity-80">Twitter</a><a href="#"
+                        class="hover:opacity-80">LinkedIn</a><a href="#" class="hover:opacity-80">YouTube</a></div>
             </div>
         </div>
     </footer>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark / light mode">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
+        <i class="fas fa-sun text-sm"></i>
         <div class="switch"></div>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            style="color: var(--text-soft)">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+        <i class="fas fa-moon text-sm"></i>
     </div>
 
     <script>
-        const PRODUCT_IDS = {
-            monthly: '779abdfc-3dc4-4d22-9c71-edf61888d4fb',
-            yearly: '63a563d9-736c-4f2f-b68e-c9b24916f5be',
-            lifetime: 'a64e6dfd-ddbb-4c47-b409-bfceb3efebac'
-        };
-
+        const PRODUCT_IDS = { monthly: '779abdfc-3dc4-4d22-9c71-edf61888d4fb', yearly: '63a563d9-736c-4f2f-b68e-c9b24916f5be', lifetime: 'a64e6dfd-ddbb-4c47-b409-bfceb3efebac' };
         let isYearly = false;
-
         function toggleBilling() {
             isYearly = !isYearly;
             document.getElementById('proPrice').textContent = isYearly ? '$24' : '$29';
@@ -799,27 +661,18 @@
             document.getElementById('proMonthlyBtn').classList.toggle('hidden', isYearly);
             document.getElementById('proYearlyBtn').classList.toggle('hidden', !isYearly);
         }
-
-        async function getAuthToken() {
-            const { data: { session } } = await window.supabase.auth.getSession();
-            return session?.access_token || null;
-        }
-
+        async function getAuthToken() { const { data: { session } } = await window.supabase.auth.getSession(); return session?.access_token || null; }
         async function checkAuth() {
             const { data: { user } } = await window.supabase.auth.getUser();
             if (user) {
                 const navAuth = document.getElementById('navAuth');
                 if (navAuth) {
                     const initial = (user.user_metadata?.full_name || user.email).charAt(0).toUpperCase();
-                    navAuth.innerHTML = `
-                        <a href="/app.html" class="btn-primary text-white px-5 py-2 rounded-xl text-sm font-bold">Dashboard</a>
-                        <div class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">${initial}</div>
-                    `;
+                    navAuth.innerHTML = `<a href="/app.html" class="btn-primary text-white px-5 py-2 rounded-xl text-sm font-bold">Dashboard</a><div class="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-bold text-sm">${initial}</div>`;
                 }
             }
             return user;
         }
-
         async function handleUpgrade(plan) {
             const user = await checkAuth();
             if (!user) { window.location.href = '/login.html?redirect=pricing'; return; }
@@ -828,29 +681,14 @@
             const token = await getAuthToken();
             if (!token) { window.location.href = '/login.html?redirect=pricing'; return; }
             try {
-                const response = await fetch('/api/create-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ productId })
-                });
+                const response = await fetch('/api/create-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ productId }) });
                 const data = await response.json();
-                if (response.ok && data.url) { window.location.href = data.url; }
-                else { alert('Failed to start checkout. Please try again.'); }
+                if (response.ok && data.url) window.location.href = data.url;
+                else alert('Failed to start checkout. Please try again.');
             } catch (error) { alert('Something went wrong. Please try again.'); }
         }
-
-        // Theme toggle
-        (function () {
-            const saved = localStorage.getItem('closeDraft_theme');
-            if (saved === 'dark') document.documentElement.classList.add('dark');
-        })();
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('closeDraft_theme', isDark ? 'dark' : 'light');
-        }
-
+        (function () { const saved = localStorage.getItem('closeDraft_theme'); if (saved === 'dark') document.documentElement.classList.add('dark'); })();
+        function toggleTheme() { const html = document.documentElement; html.classList.toggle('dark'); localStorage.setItem('closeDraft_theme', html.classList.contains('dark') ? 'dark' : 'light'); }
         checkAuth();
     </script>
 </body>
